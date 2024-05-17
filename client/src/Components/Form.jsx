@@ -1,8 +1,21 @@
 import React from "react";
-import { FormControl, InputLabel, Input, FormHelperText } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
 
 const Form = () => {
-  return <></>;
+  const { register, control } = useForm();
+
+  return (
+    <>
+      <div>
+        <form>
+          <label htmlFor="firstName">First Name</label>
+          <input {...register("firstName")} />
+        </form>
+        <DevTool control={control} />
+      </div>
+    </>
+  );
 };
 
 export default Form;
