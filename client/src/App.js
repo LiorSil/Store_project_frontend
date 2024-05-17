@@ -3,9 +3,10 @@ import Login from "./Pages/Login/Login";
 import SignUp from "./Pages/SignUp/SignUp";
 import Form from "./Components/Form";
 const App = () => {
+  console.log("isRendered");
   return (
     <>
-      <Form />
+      {/* <Form /> */}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
