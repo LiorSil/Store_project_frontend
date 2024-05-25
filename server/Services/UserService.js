@@ -1,6 +1,6 @@
 // UserService.js
 
-const UserRepository = require("../Repositories/UserRepo");
+const UserRepository = require("../Repositories/UserRepository");
 
 /**
  * Get a user by their ID.
@@ -17,7 +17,11 @@ const getUserById = async (id) => {
  * @returns {Promise<object>} Created user object.
  */
 const createUser = async (userData) => {
-  return await UserRepository.createUser(userData);
+  try {
+    return await UserRepository.createUser(userData);
+  } catch (error) {
+    throw new Error("Failed to create a new user in the database.");
+  }
 };
 
 /**

@@ -40,12 +40,19 @@ const userSchema = new mongoose.Schema({
       product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
-        required: true,
+        default: null,
         quantity: { type: Number, required: true },
         date: { type: Date, default: Date.now, required: true },
       },
     },
   ],
+  allowOthersToSeePurchasedProducts: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = mongoose.model("User", userSchema, "users");
+
+module.exports = User;
+

@@ -1,71 +1,79 @@
 import React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useForm } from "react-hook-form";
-
+import {
+  Button,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Grid,
+  Box,
+  Typography,
+  Stack,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { DevTool } from "@hookform/devtools";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import { styled } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
-import { green } from "@mui/material/colors";
-import { blue } from "@mui/material/colors";
 
 import classes from "./SignUp.module.css";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
   } = useForm({});
-
-  const onSubmit = (data) => console.log("DATA:", { ...data });
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        alert("Sign up successful");
+      } else {
+        alert("Sign up failed");
+      }
+    } catch (error) {
+      console.error("Error occurred during sign up:", error);
+    }
+  };
   return (
     <>
-      <div className={classes[`registration-form`]}>
+      <Stack className={classes[`registration-form`]} direction="column">
         <Box
           component={"form"}
           onSubmit={handleSubmit(onSubmit)}
           sx={{ mt: 3 }}
         >
+          <Typography component="h1" variant="h5" gutterBottom>
+            Sign Up
+          </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               {/** First Name Field*/}
               <TextField
-                autoComplete="fname"
                 name="firstName"
-                fullWidth
                 id="firstName"
                 label="First Name"
-                autoFocus
                 noValidate
                 {...register("firstName", {
                   required: "First name is required",
-                  pattern: {
-                    value: /^[A-Za-z]+$/i,
-                    message: "invalid first name",
-                  },
                   validate: {
                     adminCheck: (value) =>
                       value !== "admin" || "admin is not allowed",
                     noSpecialCharacters: (value) =>
                       !/[!@#$%^&*(),.?":{}|<>]/.test(value) ||
                       "Special characters are not allowed",
+                    atLeastTwoLetters: (value) =>
+                      value.length >= 2 ||
+                      "First name must be at least 2 characters",
                   },
                 })}
+                error={errors.firstName ? true : false}
               />
               {errors.firstName && <p>{errors.firstName.message}</p>}
             </Grid>
@@ -77,60 +85,56 @@ const SignUp = () => {
             <Grid item xs={12} sm={6}>
               {/** First Name Field*/}
               <TextField
-                autoComplete="lname"
                 name="lastName"
                 fullWidth
                 id="lastName"
-                label="First Name"
-                autoFocus
+                label="Last Name"
                 noValidate
                 {...register("lastName", {
                   required: "Last name is required",
-                  pattern: {
-                    value: /^[A-Za-z]+$/i,
-                    message: "invalid last name",
-                  },
                   validate: {
                     adminCheck: (value) =>
                       value !== "admin" || "admin is not allowed",
                     noSpecialCharacters: (value) =>
                       !/[!@#$%^&*(),.?":{}|<>]/.test(value) ||
                       "Special characters are not allowed",
+                    atLeastTwoLetters: (value) =>
+                      value.length >= 2 ||
+                      "Last name must be at least 2 characters",
                   },
                 })}
+                error={errors.lastName ? true : false}
               />
               {errors.lastName && <p>{errors.lastName.message}</p>}
             </Grid>
 
-            {/** username */}
+            {/* /** username  */}
             <Grid item xs={12}>
               <TextField
-                autoComplete="uname"
                 name="username"
                 fullWidth
                 id="username"
                 label="UserName"
-                autoFocus
                 noValidate
                 {...register("username", {
                   required: "Username is required",
-                  pattern: {
-                    value: /^[A-Za-z0-9]{1,10}$/i,
-                    message: "invalid username",
-                  },
                   validate: {
                     adminCheck: (value) =>
-                      value !== "admin" || "admin is not allowed",
+                      !value.startsWith("admin") || "admin is not allowed",
                     noSpecialCharacters: (value) =>
                       !/[!@#$%^&*(),.?":{}|<>]/.test(value) ||
                       "Special characters are not allowed",
+                    atLeastFourCharacters: (value) =>
+                      value.length >= 4 ||
+                      "Username must be at least 4 characters",
                   },
                 })}
+                error={errors.username ? true : false}
               />
               {errors.username && <p>{errors.username.message}</p>}
             </Grid>
 
-            {/** Password Field*/}
+            {/** Password Field */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -139,14 +143,9 @@ const SignUp = () => {
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="new-password"
                 {...register("password", {
                   required: "Password is required",
-                  pattern: {
-                    value:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    message: "invalid password",
-                  },
+
                   validate: {
                     minLength: (value) =>
                       value.length >= 8 ||
@@ -166,6 +165,7 @@ const SignUp = () => {
                   },
                 })}
                 noValidate
+                error={errors.password ? true : false}
               />
               {errors.password && <p>{errors.password.message}</p>}
             </Grid>
@@ -173,24 +173,47 @@ const SignUp = () => {
 
             {/* set grid for checkbox */}
             <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="Allow others to see my orders"
+              <Controller
+                name="allowOthersToSeePurchasedProducts"
+                control={control}
+                defaultValue={false}
+                render={({ field: { onChange, value } }) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={value}
+                        onChange={(e) => onChange(e.target.checked)}
+                      />
+                    }
+                    label="Allow others to see my orders"
+                  />
+                )}
               />
-            </Grid>
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
+              <Grid item xs={12}>
+                <Grid container justifyContent="space-between">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2, width: 150 }}
+                  >
+                    Sign Up
+                  </Button>
+                  <Button
+                    variant="text"
+                    color="primary"
+                    sx={{ mt: 3, mb: 2, width: 150 }}
+                    onClick={() => navigate("/")}
+                  >
+                    Back to Login
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
         </Box>
-      </div>
+      </Stack>
 
       <DevTool control={control} />
     </>
