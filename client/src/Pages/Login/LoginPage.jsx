@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import classes from "./Login.module.css";
+import classes from "./LoginPage.module.css";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "universal-cookie";
 
 import {
   TextField,
@@ -15,7 +17,10 @@ import {
   Box,
 } from "@mui/material";
 
-function Login() {
+function LoginPage() {
+  const cookies = new Cookies();
+  const [user, setUser] = useState(null);
+
   const {
     register,
     control,
@@ -24,9 +29,26 @@ function Login() {
   } = useForm();
   const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    // Handle login logic here
+  const onSubmit = async (data) => {
+    const resp = await fetch("http://localhost:5000/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (resp.ok) {
+      const { token } = await resp.json();
+      const decodedToken = jwtDecode(token);
+      setUser(decodedToken);
+      cookies.set("token", token, {
+        expires: new Date(decodedToken.exp * 1000),
+      });
+
+      navigate("/home");
+    } else {
+      alert("Login failed");
+    }
   };
 
   const handleSignUpRedirect = () => {
@@ -44,20 +66,20 @@ function Login() {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  name="email"
+                  name="username"
                   fullWidth
-                  id="email"
-                  label="Email"
+                  id="username"
+                  label="Username"
                   variant="outlined"
-                  {...register("email", {
-                    required: "Email is required",
+                  {...register("username", {
+                    required: "Username is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                      message: "Invalid email address",
+                      value: /^[a-zA-Z0-9]+$/,
+                      message: "Invalid username address",
                     },
                   })}
-                  error={!!errors.email}
-                  helperText={errors.email ? errors.email.message : ""}
+                  error={!!errors.username}
+                  helperText={errors.username ? errors.username.message : ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -106,4 +128,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;

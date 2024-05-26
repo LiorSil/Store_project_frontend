@@ -13,9 +13,9 @@ import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { DevTool } from "@hookform/devtools";
 
-import classes from "./SignUp.module.css";
+import classes from "./SignUpPage.module.css";
 
-const SignUp = () => {
+const SignUpPage = () => {
   const navigate = useNavigate();
   const {
     register,
@@ -25,7 +25,7 @@ const SignUp = () => {
   } = useForm({});
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:5000/users", {
+      const response = await fetch("http://localhost:5000/users/signUp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,7 +204,7 @@ const SignUp = () => {
                     variant="text"
                     color="primary"
                     sx={{ mt: 3, mb: 2, width: 150 }}
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/login")}
                   >
                     Back to Login
                   </Button>
@@ -220,4 +220,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignUpPage;
