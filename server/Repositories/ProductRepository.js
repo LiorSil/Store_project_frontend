@@ -1,23 +1,12 @@
 const Product = require("../Models/ProductModel");
 
-/**
- * Get a product by its ID.
- * @param {string} id - Product ID.
- * @returns {Promise<object|null>} Product object or null if not found.
- */
-const getProductById = async (id) => {
-  try {
-    return await Product.findById(id);
-  } catch (error) {
-    console.error("Error fetching product:", error.message);
-    return null;
-  }
-};
+
 
 /**
- * Create a new product.
- * @param {object} productData - Product data (fields like name, description, price, etc.).
- * @returns {Promise<object>} Created product object.
+ * Creates a new product in the database.
+ * @param {Object} productData - The data of the product to be created.
+ * @returns {Promise<Object>} - The created product.
+ * @throws {Error} - If there is an error creating the product.
  */
 const createProduct = async (productData) => {
   try {
@@ -30,39 +19,20 @@ const createProduct = async (productData) => {
 };
 
 /**
- * Update a product by its ID.
- * @param {string} id - Product ID.
- * @param {object} productData - Updated product data.
- * @returns {Promise<object|null>} Updated product object or null if not found.
+ * Retrieves all products from the database.
+ * @returns {Promise<Array<Object>>} - The array of products.
  */
-const updateProductById = async (id, productData) => {
-  try {
-    return await Product.findByIdAndUpdate(id, productData, { new: true });
-  } catch (error) {
-    console.error("Error updating product:", error.message);
-    return null;
-  }
-};
-
-/**
- * Delete a product by its ID.
- * @param {string} id - Product ID.
- * @returns {Promise<object|null>} Deleted product object or null if not found.
- */
-const deleteProductById = async (id) => {
-  try {
-    return await Product.findByIdAndDelete(id);
-  } catch (error) {
-    console.error("Error deleting product:", error.message);
-    return null;
-  }
-};
+const getProducts = async () => {
+  return await Product.find();
+}
 
 module.exports = {
-  getProductById,
   createProduct,
-  updateProductById,
-  deleteProductById,
+  getProducts,
 };
 
 // Path: server/Repositories/ProductRepository.js
+
+
+
+

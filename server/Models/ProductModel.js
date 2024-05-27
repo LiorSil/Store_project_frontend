@@ -4,22 +4,12 @@ const productSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    validate: {
-      validator: function (v) {
-        return /^[A-Za-z]+$/i.test(v);
-      },
-      message: (props) => `${props.value} is not a valid product title!`,
-    },
+
   },
   category: {
     type: String,
     required: true,
-    validate: {
-      validator: function (v) {
-        return /^[A-Za-z]+$/i.test(v);
-      },
-      message: (props) => `${props.value} is not a valid category!`,
-    },
+
   },
   description: {
     type: String,
@@ -38,6 +28,24 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  bought: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Product = mongoose.model("Product", productSchema, "products");
+
+module.exports = Product;
+
+/**
+  * Product Model:
+  * title: String
+  * category: String
+  * description: String
+  * price: Number
+  * quantity: Number
+  * image: String
+  * bought: Number
+ */
+
