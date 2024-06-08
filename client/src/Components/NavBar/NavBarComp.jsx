@@ -26,7 +26,11 @@ const NavBarComp = ({ pages, onSelectedPage, selectedPage }) => {
     <AppBar
       position="static"
       color="primary"
-      sx={{ margin: "0 auto", maxWidth: `${totalWidth}px` }}
+      sx={{
+        margin: "0 auto",
+        maxWidth: `${totalWidth}px`,
+        borderRadius: 4,
+      }}
     >
       <Toolbar>
         <Stack

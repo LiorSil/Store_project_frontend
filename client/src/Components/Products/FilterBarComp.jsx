@@ -54,9 +54,10 @@ const FilterBarComp = ({ categories, onFilterChange }) => {
     <Box
       sx={{
         padding: 1,
-        border: 1,
+        border: 2,
         backgroundColor: "#d0ddf7",
-        borderRadius: 1,
+        borderRadius: 2,
+        borderColor: "primary.main",
         boxShadow: 0,
         display: "flex",
         gap: 2,

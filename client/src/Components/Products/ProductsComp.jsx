@@ -23,7 +23,13 @@ const ProductsComp = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", padding: 1 }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100vh",
+        padding: 1,
+      }}
+    >
       <CartComp isOpen={isCartOpen} toggleCart={toggleCart} />
       <Box
         sx={{
