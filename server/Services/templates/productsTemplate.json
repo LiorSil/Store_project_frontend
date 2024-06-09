@@ -1,0 +1,38 @@
+[
+  {
+    "title": "red shirt",
+    "category": "clothing",
+    "description": "a red shirt",
+    "price": 10.0,
+    "quantity": 10,
+    "bought": 0,
+    "imageReference": "red_shirt.png"
+  },
+  {
+    "title": "blue jeans",
+    "category": "clothing",
+    "description": "a pair of blue jeans",
+    "price": 20.0,
+    "quantity": 10,
+    "bought": 0,
+    "imageReference": "blue_jeans.png"
+  },
+  {
+    "title": "black shoes",
+    "category": "clothing",
+    "description": "a pair of black shoes",
+    "price": 30.0,
+    "quantity": 10,
+    "bought": 0,
+    "imageReference": "black_shoes.png"
+  },
+  {
+    "title": "casio watch",
+    "category": "electronics",
+    "description": "a casio watch",
+    "price": 50.0,
+    "quantity": 10,
+    "bought": 0,
+    "imageReference": "casio_watch.png"
+  }
+]

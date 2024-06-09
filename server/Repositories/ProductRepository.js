@@ -1,6 +1,22 @@
-const Product = require("../Models/ProductModel");
+const ProductModel = require("../Models/ProductModel");
 
+/**
+ * Retrieves a product from the database.
+ * @param {string} productId - The ID of the product to retrieve.
+ * @returns {Promise<Object>} - The product object.
+ */
 
+const getProduct = async (productId) => {
+  return await ProductModel.findById(productId);
+};
+
+/**
+ * Retrieves all products from the database.
+ * @returns {Promise<Array<Object>>} - The array of products.
+ */
+const getProducts = async () => {
+  return await ProductModel.find();
+};
 
 /**
  * Creates a new product in the database.
@@ -10,7 +26,7 @@ const Product = require("../Models/ProductModel");
  */
 const createProduct = async (productData) => {
   try {
-    const product = new Product(productData);
+    const product = new ProductModel(productData);
     return await product.save();
   } catch (error) {
     console.error("Error creating product:", error.message);
@@ -18,21 +34,10 @@ const createProduct = async (productData) => {
   }
 };
 
-/**
- * Retrieves all products from the database.
- * @returns {Promise<Array<Object>>} - The array of products.
- */
-const getProducts = async () => {
-  return await Product.find();
-}
-
 module.exports = {
-  createProduct,
+  getProduct,
   getProducts,
+  createProduct,
 };
 
 // Path: server/Repositories/ProductRepository.js
-
-
-
-

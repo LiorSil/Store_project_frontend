@@ -1,5 +1,19 @@
 const ProductRepository = require("../Repositories/ProductRepository");
 
+
+const getProduct = async (productId) => {
+  return await ProductRepository.getProduct(productId);
+};
+
+/**
+ * Get all products.
+ * @returns {Promise<Array<object>>} Array of product objects.
+ */
+const getProducts = async () => {
+  return await ProductRepository.getProducts();
+};
+
+
 /**
  * Create a new product.
  * @param {object} productData - Product data (fields like title, category, etc.).
@@ -12,14 +26,6 @@ const createProduct = async (productData) => {
   } catch (error) {
     throw new Error("Failed to create a new product in the database.");
   }
-};
-
-/**
- * Get all products.
- * @returns {Promise<Array<object>>} Array of product objects.
- */
-const getProducts = async () => {
-  return await ProductRepository.getProducts();
 };
 
 /**
