@@ -34,7 +34,7 @@ const ProductsListComp = () => {
           <ProductItem key={product._id} product={product} />
         ))
       ) : (
-        <Typography variant="h6">No products found</Typography>
+        <Typography variant="h6">No products found </Typography>
       )}
     </Box>
   );
