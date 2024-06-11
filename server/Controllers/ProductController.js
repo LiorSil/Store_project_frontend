@@ -27,13 +27,17 @@ router.get("/", async (req, res) => {
     const uniqueImageReferences = [
       ...new Set(plainProducts.map((product) => product.imageReference)),
     ];
-    const imageUrls = await Promise.all(
-      uniqueImageReferences.map((ref) => ImageService.getImage(ref))
-    );
-    const imageUrlMap = uniqueImageReferences.reduce((acc, ref, idx) => {
-      acc[ref] = imageUrls[idx];
-      return acc;
-    }, {});
+    const imageUrlMap = {};
+    for (const ref of uniqueImageReferences) {
+      try {
+        const imageUrl = await ImageService.getImage(ref);
+        imageUrlMap[ref] = imageUrl;
+      } catch (error) {
+        // If fetching image fails, set imageUrl to null
+        imageUrlMap[ref] = null;
+      }
+    }
+
     const productsWithImages = plainProducts.map((product) => ({
       ...product,
       imageUrl: imageUrlMap[product.imageReference],
