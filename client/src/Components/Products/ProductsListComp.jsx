@@ -27,6 +27,7 @@ const ProductsListComp = () => {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "flex-start",
+        gap: 2,
       }}
     >
       {products ? (
