@@ -19,8 +19,6 @@ import {
 
 function LoginPage() {
   const cookies = new Cookies();
-  const [user, setUser] = useState(null);
-
   const {
     register,
     control,
@@ -40,7 +38,6 @@ function LoginPage() {
     if (resp.ok) {
       const { token } = await resp.json();
       const decodedToken = jwtDecode(token);
-      setUser(decodedToken);
       cookies.set("token", token, {
         expires: new Date(decodedToken.exp * 1000),
       });

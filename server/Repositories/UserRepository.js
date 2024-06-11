@@ -1,6 +1,5 @@
 const User = require("../Models/UserModel");
 
-
 const createUser = async (userData) => {
   try {
     const user = new User(userData);
