@@ -5,7 +5,7 @@ import useFetch from "../../Hooks/useFetch";
 import { LoadingComp } from "../Utils/LoadingComp";
 import classes from "./ProductsListComp.module.css";
 
-const ProductsListComp = () => {
+const ProductsListComp = ({ filters }) => {
   const {
     data: products,
     isLoading,
@@ -31,9 +31,21 @@ const ProductsListComp = () => {
       }}
     >
       {products ? (
-        products.map((product) => (
-          <ProductItem key={product._id} product={product} />
-        ))
+        products
+          .filter((product) => {
+            const categoryMatch =
+              ["all"].includes(filters.category.toLowerCase()) ||
+              product.category === filters.category.toLowerCase();
+
+            const priceMatch = product.price <= filters.price;
+
+            const textMatch =
+              filters.text === "" ||
+              product.title.toLowerCase().includes(filters.text.toLowerCase());
+
+            return categoryMatch && priceMatch && textMatch;
+          })
+          .map((product) => <ProductItem key={product._id} product={product} />)
       ) : (
         <Typography variant="h6">No products found </Typography>
       )}

@@ -6,10 +6,11 @@ import FilterBarComp from "./FilterBarComp";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const ProductsComp = () => {
+  const categories = ["All", "Clothing", "Jewelry", "Sports", "Electronics"];
   const [isCartOpen, setCartOpen] = useState(false);
   const [filters, setFilters] = useState({
-    category: "",
-    price: 100,
+    category: "all",
+    price: 1000,
     text: "",
   });
 
@@ -30,6 +31,7 @@ const ProductsComp = () => {
         padding: 1,
       }}
     >
+      {console.log(filters)}
       <CartComp isOpen={isCartOpen} toggleCart={toggleCart} />
       <Box
         sx={{
@@ -48,7 +50,7 @@ const ProductsComp = () => {
             <ShoppingCartIcon />
           </IconButton>
           <FilterBarComp
-            categories={["Electronics", "Books", "Clothing"]}
+            categories={categories}
             onFilterChange={handleFilterChange}
           />
         </Box>

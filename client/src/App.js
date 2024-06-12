@@ -4,8 +4,6 @@ import SignUpPage from "./Pages/SignUp/SignUpPage";
 import HomePage from "./Pages/Home/HomePage";
 import ErrorPage from "./Pages/Error/ErrorPage";
 
-
-
 const App = () => {
   return (
     <>

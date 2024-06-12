@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 
 const FilterBarComp = ({ categories, onFilterChange }) => {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [maxPrice, setMaxPrice] = useState(150);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [maxPrice, setMaxPrice] = useState(1000);
   const [searchText, setSearchText] = useState("");
 
   const handleCategoryChange = (event) => {
@@ -44,10 +44,10 @@ const FilterBarComp = ({ categories, onFilterChange }) => {
   };
 
   const handleClearFilters = () => {
-    setSelectedCategory("");
-    setMaxPrice(100);
+    setSelectedCategory("All");
+    setMaxPrice(1000);
     setSearchText("");
-    onFilterChange({ category: "", price: 100, text: "" });
+    onFilterChange({ category: "All", price: 1000, text: "" });
   };
 
   return (
@@ -99,8 +99,8 @@ const FilterBarComp = ({ categories, onFilterChange }) => {
           onChange={handleMaxPriceChange}
           valueLabelDisplay="auto"
           min={0}
-          max={150}
-          sx={{ width: "150%" }}
+          max={1000}
+          sx={{ width: "200%" }}
           valueLabelFormat={(value) => `$${value}`}
         />
       </Box>
