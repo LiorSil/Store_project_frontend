@@ -31,7 +31,6 @@ const ProductsComp = () => {
         padding: 1,
       }}
     >
-      {console.log(filters)}
       <CartComp isOpen={isCartOpen} toggleCart={toggleCart} />
       <Box
         sx={{

@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../Redux/Reducers/cartReducer";
+
 const ProductItemComp = ({ product }) => {
+  //redux
+  const dispatch = useDispatch();
+
   const [quantity, setQuantity] = useState(1);
 
   const handleIncrement = () => {
@@ -10,6 +16,10 @@ const ProductItemComp = ({ product }) => {
 
   const handleDecrement = () => {
     setQuantity(quantity > 1 ? quantity - 1 : 1);
+  };
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ ...product, quantity }));
   };
 
   return (
@@ -70,6 +80,7 @@ const ProductItemComp = ({ product }) => {
             color="primary"
             size="large"
             aria-label="add to shopping cart"
+            onClick={handleAddToCart}
           >
             <AddShoppingCartIcon />
           </IconButton>
