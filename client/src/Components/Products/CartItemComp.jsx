@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import {
   incrementCartItemCount,
   decrementCartItemCount,
+  removeCartItem,
 } from "../../Redux/Reducers/cartReducer";
 
 const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
@@ -29,20 +30,35 @@ const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
   };
 
   return (
-    <ListItem alignItems="flex-start">
+    <ListItem
+      sx={{
+        borderBottom: "1px solid lightgray",
+        padding: "8px 0",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+      alignItems="flex-start"
+    >
       <ListItemAvatar>
-        <Avatar alt={cartItem.title} src={cartItem.imageUrl} />
+        <Avatar
+          alt={cartItem.title}
+          src={cartItem.imageUrl}
+          sx={{ width: 100, height: 100, borderRadius: 2 }}
+        />
       </ListItemAvatar>
+
       <ListItemText
+        sx={{
+          border: 1,
+          borderStyle: "solid",
+          borderColor: "primary.main",
+          borderRadius: 2,
+          padding: "8px",
+        }}
         primary={cartItem.title}
         secondary={
-          <React.Fragment>
-            <Typography
-              sx={{ display: "inline" }}
-              component="span"
-              variant="body2"
-              color="text.primary"
-            >
+          <>
+            <Typography component="span" variant="body2" color="text.primary">
               Total: ${total}
             </Typography>
             <br />
@@ -54,23 +70,33 @@ const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
             >
               Quantity: {cartItem.quantity}
             </Typography>
-          </React.Fragment>
+            <Box mt={2} display="flex" alignItems="center">
+              <Button
+                variant="outlined"
+                onClick={() => handleDecrement(cartItem)}
+              >
+                -
+              </Button>
+              <Typography variant="body2" style={{ margin: "0 8px" }}>
+                {cartItem.quantity}
+              </Typography>
+              <Button
+                variant="outlined"
+                onClick={() => handleIncrement(cartItem)}
+              >
+                +
+              </Button>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => dispatch(removeCartItem(cartItem._id))}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </>
         }
       />
-      <Box ml="auto" display="flex" alignItems="center">
-        <Button variant="outlined" onClick={() => handleDecrement(cartItem)}>
-          -
-        </Button>
-        <Typography variant="body2" style={{ margin: "0 8px" }}>
-          {cartItem.quantity}
-        </Typography>
-        <Button variant="outlined" onClick={() => handleIncrement(cartItem)}>
-          +
-        </Button>
-        <IconButton edge="end" aria-label="delete">
-          <DeleteIcon />
-        </IconButton>
-      </Box>
     </ListItem>
   );
 };

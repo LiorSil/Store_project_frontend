@@ -19,9 +19,11 @@ app.get("/api", (req, res) => {
 const userController = require("./Controllers/UserController");
 const imageController = require("./Controllers/ImageController");
 const productController = require("./Controllers/ProductController");
+const orderController = require("./Controllers/OrderController");
 app.use("/users", userController);
 app.use("/images", imageController);
 app.use("/products", productController);
+app.use("/orders", orderController);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
