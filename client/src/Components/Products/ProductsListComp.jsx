@@ -1,18 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import ProductItem from "./ProductItemComp";
 import useFetch from "../../Hooks/useFetch";
-import { LoadingComp } from "../Utils/LoadingComp";
+import { LoadingComp } from "../Utils/indexUtil";
 import classes from "./ProductsListComp.module.css";
 
 const ProductsListComp = ({ filters }) => {
-  const {
-    data: products,
-    isLoading,
-    error,
-  } = useFetch("http://localhost:5000/products");
+  const { data: products, loading, error, fetchData } = useFetch();
 
-  if (isLoading) {
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const options = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        await fetchData("http://localhost:5000/products", options);
+      } catch (error) {
+        console.error("Error fetching products:", error.message);
+      }
+    };
+
+    fetchProducts();
+  }, [filters.category, filters.price, filters.text, fetchData]);
+
+  if (loading) {
     return <LoadingComp />;
   }
 
@@ -30,7 +44,7 @@ const ProductsListComp = ({ filters }) => {
         gap: 2,
       }}
     >
-      {products ? (
+      {products && products.length > 0 ? (
         products
           .filter((product) => {
             const categoryMatch =
@@ -47,7 +61,7 @@ const ProductsListComp = ({ filters }) => {
           })
           .map((product) => <ProductItem key={product._id} product={product} />)
       ) : (
-        <Typography variant="h6">No products found </Typography>
+        <Typography variant="h6">No products found</Typography>
       )}
     </Box>
   );

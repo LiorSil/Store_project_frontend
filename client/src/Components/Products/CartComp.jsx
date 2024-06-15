@@ -1,21 +1,72 @@
-import React from "react";
-import { Drawer, Box, IconButton } from "@mui/material";
+import React, { useState } from "react";
+import { Drawer, Box, IconButton, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector, useDispatch } from "react-redux";
+import { totalPriceReducer, clearCart } from "../../Redux/Reducers/cartReducer";
+import { ConfirmComp, LoadingComp } from "../Utils/indexUtil";
 import CartItemComp from "./CartItemComp";
-import { totalPriceReducer } from "../../Redux/Reducers/cartReducer";
+import useFetch from "../../Hooks/useFetch";
 
-const CartComp = ({ isOpen, toggleCart }) => {
+const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
   const cart = useSelector((state) => state.cart);
   const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const { fetchData, loading, error } = useFetch(); // Destructure fetchData, loading, and error from useFetch
+
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
+
+  const handleConfirmOrder = async () => {
+    try {
+      const orderData = {
+        customer: "6651dfc44ca89b8180fd524b", // Replace with actual customer ID
+        customerRegisterDate: new Date().toISOString(), // Use ISO string for date
+        items: cart.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount: totalPrice, // Include totalAmount in orderData
+        orderDate: new Date().toISOString(), // Use ISO string for date
+      };
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      };
+
+      // Perform the POST request using fetchData from useFetch hook
+      await fetchData("http://localhost:5000/orders", options);
+
+      // Clear the cart after successful order creation
+      dispatch(clearCart());
+      handleCloseDialog();
+      toggleCart();
+      onGetSuccessMessage("success");
+    } catch (error) {
+      console.error("Error placing order: ", error.message);
+      // Handle error (e.g., show error message)
+    }
+  };
+
+  if (loading) return <LoadingComp />; // Show loading indicator if fetching data
+
+  if (error) {
+    return <div>Error: {error.message}</div>; // Show error message if fetch fails
+  }
 
   return (
     <Drawer
       anchor="left"
       open={isOpen}
       onClose={toggleCart}
-      sx={{ position: "fixed", top: 0, zIndex: 9999, height: "100vh" }}
+      sx={{ position: "fixed", top: 0, zIndex: 1000, height: "100vh" }}
     >
       <Box
         sx={{
@@ -48,6 +99,21 @@ const CartComp = ({ isOpen, toggleCart }) => {
         >
           Total: ${totalPrice}
         </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialog}
+          sx={{ marginBottom: 2 }}
+        >
+          Place Order
+        </Button>
+        <ConfirmComp
+          open={openDialog}
+          onClose={handleCloseDialog}
+          onConfirm={handleConfirmOrder}
+          title="Confirm Order"
+          description="Are you sure you want to place this order?"
+        />
       </Box>
     </Drawer>
   );

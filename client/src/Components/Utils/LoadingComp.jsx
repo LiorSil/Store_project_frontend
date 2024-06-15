@@ -1,6 +1,6 @@
 import { CircularProgress, Box } from "@mui/material";
 
-export const LoadingComp = () => {
+const LoadingComp = () => {
   return (
     <Box
       display="flex"
@@ -12,3 +12,5 @@ export const LoadingComp = () => {
     </Box>
   );
 };
+
+export default LoadingComp;

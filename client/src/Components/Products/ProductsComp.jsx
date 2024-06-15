@@ -4,15 +4,22 @@ import CartComp from "./CartComp";
 import ProductsListComp from "./ProductsListComp";
 import FilterBarComp from "./FilterBarComp";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { NoticeMessageComp } from "../Utils/indexUtil";
 
 const ProductsComp = () => {
   const categories = ["All", "Clothing", "Jewelry", "Sports", "Electronics"];
+  const [orderConfirmed, setOrderConfirmed] = useState(""); // Add state for order confirmation [1
   const [isCartOpen, setCartOpen] = useState(false);
   const [filters, setFilters] = useState({
     category: "all",
     price: 1000,
     text: "",
   });
+
+  const handleOrderConfirmed = (message) => {
+    setOrderConfirmed(message);
+  };
 
   const toggleCart = () => {
     setCartOpen(!isCartOpen);
@@ -31,7 +38,11 @@ const ProductsComp = () => {
         padding: 1,
       }}
     >
-      <CartComp isOpen={isCartOpen} toggleCart={toggleCart} />
+      <CartComp
+        isOpen={isCartOpen}
+        toggleCart={toggleCart}
+        onGetSuccessMessage={handleOrderConfirmed}
+      />
       <Box
         sx={{
           flex: 1,
@@ -55,6 +66,13 @@ const ProductsComp = () => {
         </Box>
         <ProductsListComp filters={filters} />
       </Box>
+      {orderConfirmed === "success" && (
+        <NoticeMessageComp
+          message="Order placed successfully"
+          IconComp={CheckCircleIcon}
+          onClose={() => setOrderConfirmed("")}
+        />
+      )}
     </Box>
   );
 };
