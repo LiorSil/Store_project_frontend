@@ -1,6 +1,7 @@
 const OrderService = require("../Services/OrderService");
 const express = require("express");
 const router = express.Router();
+const validateToken = require("../Services/Util");
 
 /**
  * Creates a new order in the database.
@@ -11,6 +12,14 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    req.body.customer = decodedToken.userId;
     const order = await OrderService.createOrder(req.body);
     res.status(201).json(order);
   } catch (error) {

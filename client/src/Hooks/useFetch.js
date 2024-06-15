@@ -10,12 +10,14 @@ const useFetch = () => {
     try {
       const response = await fetch(url, options);
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(response.statusText || "HTTP error occurred");
       }
       const data = await response.json();
       setData(data);
+      return data;
     } catch (error) {
       setError(error);
+      return null;
     } finally {
       setLoading(false);
     }

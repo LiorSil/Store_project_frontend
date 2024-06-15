@@ -24,6 +24,7 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm({});
   const onSubmit = async (data) => {
+    data = { customerRegisterDate: new Date().toISOString(), ...data };
     try {
       const response = await fetch("http://localhost:5000/users/signUp", {
         method: "POST",
@@ -34,6 +35,7 @@ const SignUpPage = () => {
       });
       if (response.ok) {
         alert("Sign up successful");
+        navigate("/login");
       } else {
         alert("Sign up failed");
       }

@@ -4,10 +4,8 @@ import { DevTool } from "@hookform/devtools";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import classes from "./LoginPage.module.css";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "universal-cookie";
-
 import {
   TextField,
   Button,
@@ -16,6 +14,9 @@ import {
   Container,
   Box,
 } from "@mui/material";
+import useFetch from "../../Hooks/useFetch";
+import classes from "./LoginPage.module.css";
+import LoadingComp from "../../Components/Utils/LoadingComp";
 
 function LoginPage() {
   const cookies = new Cookies();
@@ -26,27 +27,28 @@ function LoginPage() {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { data, loading, error, fetchData } = useFetch();
 
   const onSubmit = async (data) => {
-    const resp = await fetch("http://localhost:5000/users/login", {
+    fetchData("http://localhost:5000/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
-    if (resp.ok) {
-      const { token } = await resp.json();
-      const decodedToken = jwtDecode(token);
-      cookies.set("token", token, {
-        expires: new Date(decodedToken.exp * 1000),
-      });
-
-      navigate("/home");
-    } else {
-      alert("Login failed");
-    }
   };
+  if (loading) return <LoadingComp />;
+  if (error) return <Typography color="error">{error.message}</Typography>;
+
+  if (data) {
+    const { token } = data;
+    const decodedToken = jwtDecode(token);
+    cookies.set("token", token, {
+      expires: new Date(decodedToken.exp * 1000),
+    });
+    navigate("/home");
+  }
 
   const handleSignUpRedirect = () => {
     navigate("/SignUp");
@@ -101,6 +103,7 @@ function LoginPage() {
                   variant="contained"
                   color="primary"
                   startIcon={<LoginIcon />}
+                  disabled={loading}
                 >
                   Sign In
                 </Button>
@@ -118,6 +121,7 @@ function LoginPage() {
               </Grid>
             </Grid>
           </form>
+          {error && <Typography color="error">{error.message}</Typography>}
         </Box>
       </Container>
       <DevTool control={control} />

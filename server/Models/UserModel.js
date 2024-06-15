@@ -54,9 +54,12 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  customerRegisterDate: {
+    type: Date,
+    default: new Date().toLocaleString("he-Il", { timeZone: "Asia/Jerusalem" }),
+  },
 });
 
 const User = mongoose.model("User", userSchema, "users");
 
 module.exports = User;
-

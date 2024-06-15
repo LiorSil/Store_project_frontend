@@ -4,8 +4,10 @@ import ProductItem from "./ProductItemComp";
 import useFetch from "../../Hooks/useFetch";
 import { LoadingComp } from "../Utils/indexUtil";
 import classes from "./ProductsListComp.module.css";
+import Cookies from "universal-cookie";
 
 const ProductsListComp = ({ filters }) => {
+  const cookies = new Cookies();
   const { data: products, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
@@ -15,6 +17,7 @@ const ProductsListComp = ({ filters }) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.get("token"),
           },
         };
         await fetchData("http://localhost:5000/products", options);

@@ -37,7 +37,8 @@ const orderSchema = new Schema({
   },
   orderDate: {
     type: Date,
-    default: Date.now,
+    //just add 3 hours to the current time
+    default: new Date().toLocaleString("he-Il", { timeZone: "Asia/Jerusalem" }),
   },
 });
 

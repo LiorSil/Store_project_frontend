@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Importing CheckCircleIcon from MUI
 
 const StyledDialog = styled(Box)({
   position: "fixed",
@@ -16,13 +15,13 @@ const StyledDialog = styled(Box)({
   textAlign: "center",
 });
 
-const GreenCheckCircleIcon = styled(CheckCircleIcon)({
-  color: "green",
-  fontSize: 48,
-  marginBottom: 20,
-});
+const NoticeMessageComp = ({ message, onClose, color, IconComp }) => {
+  const IconComponent = styled(IconComp)(({ color }) => ({
+    color: color || "green", // Default to green if color prop is not provided
+    fontSize: 48,
+    marginBottom: 20,
+  }));
 
-const NoticeMessageComp = ({ message, onClose }) => {
   const handleClose = () => {
     onClose();
   };
@@ -43,7 +42,14 @@ const NoticeMessageComp = ({ message, onClose }) => {
       }}
     >
       <StyledDialog>
-        <GreenCheckCircleIcon /> {/* Green CheckCircleIcon added here */}
+        <IconComponent
+          color={color}
+          styled={{
+            fontSize: 48,
+            marginBottom: 20,
+          }}
+        />{" "}
+        {/* Render the chosen icon component */}
         <Typography variant="body1" sx={{ marginBottom: 2 }}>
           {message}
         </Typography>

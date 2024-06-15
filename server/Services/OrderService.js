@@ -1,4 +1,5 @@
 const OrderRepository = require("../Repositories/OrderRepository");
+const UserService = require("./UserService");
 
 /**
  * Creates a new order in the database.
@@ -7,8 +8,17 @@ const OrderRepository = require("../Repositories/OrderRepository");
  */
 
 const createOrder = async (orderData) => {
-  orderData.customer = orderData.customer.toString();
-  //if orderData.items is an array of objects
+  const user = await UserService.getUserById(orderData.customer.toString());
+  if (user && user.customerRegisterDate) {
+    orderData.customerRegisterDate = user.customerRegisterDate;
+    console.log(
+      "Customer register date is available for this user",
+      orderData.customerRegisterDate
+    );
+  } else {
+    console.log("Customer register date is not available for this user.");
+  }
+
   if (orderData.items && orderData.items.length > 0) {
     orderData.items = orderData.items.map((item) => {
       item.productId = item.productId.toString();
@@ -21,9 +31,6 @@ const createOrder = async (orderData) => {
   } else {
     orderData.items = [];
   }
-  orderData.orderDate = new Date();
-  console.log("orderData", orderData);
-
   return await OrderRepository.createOrder(orderData);
 };
 

@@ -5,6 +5,7 @@ import ProductsListComp from "./ProductsListComp";
 import FilterBarComp from "./FilterBarComp";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 import { NoticeMessageComp } from "../Utils/indexUtil";
 
 const ProductsComp = () => {
@@ -69,7 +70,16 @@ const ProductsComp = () => {
       {orderConfirmed === "success" && (
         <NoticeMessageComp
           message="Order placed successfully"
+          color="green"
           IconComp={CheckCircleIcon}
+          onClose={() => setOrderConfirmed("")}
+        />
+      )}
+      {orderConfirmed === "error" && (
+        <NoticeMessageComp
+          message="Error placing order"
+          color="red"
+          IconComp={FeedbackIcon}
           onClose={() => setOrderConfirmed("")}
         />
       )}

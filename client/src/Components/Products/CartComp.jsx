@@ -6,24 +6,20 @@ import { totalPriceReducer, clearCart } from "../../Redux/Reducers/cartReducer";
 import { ConfirmComp, LoadingComp } from "../Utils/indexUtil";
 import CartItemComp from "./CartItemComp";
 import useFetch from "../../Hooks/useFetch";
+import Cookies from "universal-cookie";
 
 const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
   const cart = useSelector((state) => state.cart);
   const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
-
   const [openDialog, setOpenDialog] = useState(false);
-
   const { fetchData, loading, error } = useFetch(); // Destructure fetchData, loading, and error from useFetch
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
-
   const handleConfirmOrder = async () => {
     try {
       const orderData = {
-        customer: "6651dfc44ca89b8180fd524b", // Replace with actual customer ID
-        customerRegisterDate: new Date().toISOString(), // Use ISO string for date
         items: cart.map((item) => ({
           productId: item._id,
           quantity: item.quantity,
@@ -33,25 +29,31 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
         orderDate: new Date().toISOString(), // Use ISO string for date
       };
 
+      const cookies = new Cookies();
       const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + cookies.get("token"),
         },
         body: JSON.stringify(orderData),
       };
 
       // Perform the POST request using fetchData from useFetch hook
-      await fetchData("http://localhost:5000/orders", options);
+      const success = await fetchData("http://localhost:5000/orders", options);
 
       // Clear the cart after successful order creation
       dispatch(clearCart());
       handleCloseDialog();
       toggleCart();
-      onGetSuccessMessage("success");
+      if (success) {
+        onGetSuccessMessage("success");
+      } else {
+        onGetSuccessMessage("error");
+      }
     } catch (error) {
       console.error("Error placing order: ", error.message);
-      // Handle error (e.g., show error message)
+      onGetSuccessMessage("error");
     }
   };
 

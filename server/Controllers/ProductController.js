@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const ProductService = require("../Services/ProductService");
 const ImageService = require("../Services/ImageService");
+const validateToken = require("../Services/Util");
 
 router.post("/createProducts", async (req, res) => {
   try {
@@ -19,6 +20,13 @@ router.post("/createProducts", async (req, res) => {
  */
 router.get("/", async (req, res) => {
   try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
     const products = await ProductService.getProducts();
 
     // Convert each product to a plain JavaScript object
@@ -50,3 +58,5 @@ router.get("/", async (req, res) => {
 });
 
 module.exports = router;
+
+// Path: Server/Services/ProductService.js

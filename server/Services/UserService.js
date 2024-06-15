@@ -15,7 +15,6 @@ const createUser = async (userData) => {
   }
 };
 
-
 const authenticateUser = async (userData) => {
   const user = await UserRepository.getUserByUsername(userData.username);
   if (!user) {
@@ -27,8 +26,12 @@ const authenticateUser = async (userData) => {
   return user;
 };
 
+const getUserById = async (userId) => {
+  return await UserRepository.getUserById(userId);
+};
 
 module.exports = {
   createUser,
   authenticateUser,
+  getUserById,
 };
