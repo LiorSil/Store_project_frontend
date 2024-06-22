@@ -34,6 +34,22 @@ const createOrder = async (orderData) => {
   return await OrderRepository.createOrder(orderData);
 };
 
+/**
+ * Get all orders of a user
+ * @param {String} userId - The id of the user
+ * @returns {Promise<Array>} - The orders of the user
+ */
+
+const getOrdersByUserId = async (userId) => {
+  try {
+    return await OrderRepository.getOrdersByUserId(userId);
+  } catch (error) {
+    console.error("Error getting orders:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   createOrder,
+  getOrdersByUserId,
 };

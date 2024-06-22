@@ -12,6 +12,7 @@ const HomePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedPage, setSelectedPage] = useState(null);
+  //insert the start to useEffect
 
   const currentPath = useMemo(() => {
     const path = location.pathname.split("/").pop();

@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 // Redux
 import { Provider } from "react-redux";
 import store from "./Redux/store";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import App from "./App";
 import "./index.css";
@@ -16,12 +17,16 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
+const theme = createTheme();
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
     </BrowserRouter>
   </Provider>
 );
