@@ -34,10 +34,25 @@ const createProduct = async (productData) => {
   }
 };
 
+/**
+ * Get product by id
+ * @param {String} productId - The id of the product
+ * @returns {Promise<Object>} - The product
+ */
+const getProductById = async (productId) => {
+  try {
+    return await ProductModel.findById(productId);
+  } catch (error) {
+    console.error("Error getting product by id:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   getProduct,
   getProducts,
   createProduct,
+  getProductById,
 };
 
 // Path: server/Repositories/ProductRepository.js

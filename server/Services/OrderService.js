@@ -1,5 +1,7 @@
 const OrderRepository = require("../Repositories/OrderRepository");
 const UserService = require("./UserService");
+const ProductService = require("./ProductService");
+const ImageService = require("./ImageService");
 
 /**
  * Creates a new order in the database.
@@ -11,23 +13,24 @@ const createOrder = async (orderData) => {
   const user = await UserService.getUserById(orderData.customer.toString());
   if (user && user.customerRegisterDate) {
     orderData.customerRegisterDate = user.customerRegisterDate;
-    console.log(
-      "Customer register date is available for this user",
-      orderData.customerRegisterDate
-    );
   } else {
     console.log("Customer register date is not available for this user.");
   }
 
   if (orderData.items && orderData.items.length > 0) {
-    orderData.items = orderData.items.map((item) => {
-      item.productId = item.productId.toString();
-      return item;
-    });
+    orderData.items = await Promise.all(
+      orderData.items.map(async (item) => {
+        item.productId = await item.productId.toString();
+        item.title = await ProductService.getProductTitleById(item.productId);
+        item.imageUrl = await item.imageUrl;
+        return item;
+      })
+    );
   }
   //if orderData.items is a single object
   else if (orderData.items) {
     orderData.items.productId = orderData.items.productId.toString();
+    orderData.items.title = await ProductService.getProductTitleById();
   } else {
     orderData.items = [];
   }

@@ -7,6 +7,11 @@ const orderItemSchema = new Schema({
     ref: "Product",
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
+
   quantity: {
     type: Number,
     required: true,
@@ -16,6 +21,10 @@ const orderItemSchema = new Schema({
     type: Number,
     required: true,
     min: 0,
+  },
+  imageUrl: {
+    type: String,
+    required: false,
   },
 });
 

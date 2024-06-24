@@ -10,11 +10,7 @@ require("./Configurations/firebase.config.js");
 
 app.use(cors());
 app.use(bodyParser.json());
-
-//create simple get request
-app.get("/api", (req, res) => {
-  res.send("Hello API");
-});
+app.use("/favicon.ico", (req, res) => res.status(204).send());
 
 const userController = require("./Controllers/UserController");
 const imageController = require("./Controllers/ImageController");

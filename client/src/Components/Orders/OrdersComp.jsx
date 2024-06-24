@@ -1,24 +1,76 @@
-import React from "react";
-import MaterialTable from "../MaterialTable/MaterialTable";
+import React, { useEffect, useMemo } from "react";
+import MaterialTableComp from "../Utils/MaterialTableComp";
+import useFetch from "../../Hooks/useFetch";
+import { LoadingComp } from "../Utils/indexUtil";
+import { transformOrdersToProducts } from "../../Services/OrderService";
+import Cookies from "universal-cookie";
+import { Avatar } from "@mui/material";
 
 const OrdersComp = () => {
-  const columns = [
-    { key: "id", title: "ID" },
-    { key: "name", title: "Name" },
-    { key: "price", title: "Price" },
-  ];
+  const cookies = useMemo(() => new Cookies(), []);
+  const tableData = [];
+  const { data, loading, error, fetchData } = useFetch();
 
-  const data = [
-    { id: 1, name: "Product A", price: "$19.99" },
-    { id: 2, name: "Product B", price: "$29.99" },
-    { id: 3, name: "Product C", price: "$39.99" },
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const options = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.get("token"),
+          },
+        };
+        await fetchData(
+          "http://localhost:5000/orders/getCustomerOrders",
+          options
+        );
+      } catch (error) {
+        console.error("Error fetching orders:", error.message);
+      }
+    };
+    fetchOrders();
+  }, [fetchData, cookies]);
+
+  if (loading) {
+    return <LoadingComp />;
+  } else if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const columns = [
+    { key: "title", title: "Title" },
+    { key: "image", title: "Image" },
+    { key: "quantity", title: "Quantity" },
+    { key: "total", title: "Total" },
+    { key: "date", title: "Date" },
   ];
 
   return (
-    <div>
-      <h1>Product List</h1>
-      <MaterialTable columns={columns} data={data} />
-    </div>
+    <>
+      {data && data.length > 0 ? (
+        transformOrdersToProducts(data).map((item, index) => {
+          tableData.push({
+            key: index,
+            title: item.title,
+            quantity: item.quantity,
+            total: item.total,
+            date: new Date(item.date).toLocaleString("en-GB"),
+            image: (
+              <Avatar
+                src={item.imageUrl || "https://via.placeholder.com/150"}
+                sx={{ width: 100, height: 100, borderRadius: 2 }}
+              />
+            ),
+          });
+          return null; // Add a return statement
+        })
+      ) : (
+        <div>No orders found</div>
+      )}
+
+      <MaterialTableComp columns={columns} data={tableData} />
+    </>
   );
 };
 

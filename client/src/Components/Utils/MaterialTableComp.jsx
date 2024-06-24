@@ -1,4 +1,4 @@
-// src/components/MaterialTable.js
+//src/components/Utils/MaterialTableComp.jsx
 
 import React from "react";
 import {
@@ -35,7 +35,7 @@ const StyledTableRow = styled(TableRow)(({ theme, odd }) => ({
   backgroundColor: odd ? theme.palette.action.hover : "inherit",
 }));
 
-const MaterialTable = ({ columns, data }) => {
+const MaterialTableComp = ({ columns, data }) => {
   return (
     <StyledTableContainer component={Paper}>
       <Table>
@@ -71,4 +71,4 @@ const MaterialTable = ({ columns, data }) => {
   );
 };
 
-export default MaterialTable;
+export default MaterialTableComp;

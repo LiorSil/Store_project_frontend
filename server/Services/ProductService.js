@@ -1,6 +1,5 @@
 const ProductRepository = require("../Repositories/ProductRepository");
 
-
 const getProduct = async (productId) => {
   return await ProductRepository.getProduct(productId);
 };
@@ -12,7 +11,6 @@ const getProduct = async (productId) => {
 const getProducts = async () => {
   return await ProductRepository.getProducts();
 };
-
 
 /**
  * Create a new product.
@@ -46,10 +44,25 @@ const createProducts = async (productsData) => {
   }
 };
 
+/**
+ * Get pdoct by id
+ * @param {String} productId - The id of the product
+ * @returns {Promise<Object>} - The product
+ */
+const getProductTitleById = async (productId) => {
+  try {
+    const product = await ProductRepository.getProductById(productId);
+    return await product.title;
+  } catch (error) {
+    throw new Error("Failed to get product by id.");
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
   createProducts,
+  getProductTitleById,
 };
 
 // Path: server/Services/ProductService.js

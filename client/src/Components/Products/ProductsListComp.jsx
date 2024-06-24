@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import ProductItem from "./ProductItemComp";
 import useFetch from "../../Hooks/useFetch";
@@ -7,7 +7,7 @@ import classes from "./ProductsListComp.module.css";
 import Cookies from "universal-cookie";
 
 const ProductsListComp = ({ filters }) => {
-  const cookies = new Cookies();
+  const cookies = useMemo(() => new Cookies(), []);
   const { data: products, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const ProductsListComp = ({ filters }) => {
     };
 
     fetchProducts();
-  }, [filters.category, filters.price, filters.text, fetchData]);
+  }, [filters.category, filters.price, filters.text, fetchData, cookies]);
 
   if (loading) {
     return <LoadingComp />;

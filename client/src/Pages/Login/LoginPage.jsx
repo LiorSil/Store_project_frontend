@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Fixed import statement
 import Cookies from "universal-cookie";
 import {
   TextField,
@@ -19,7 +19,7 @@ import classes from "./LoginPage.module.css";
 import LoadingComp from "../../Components/Utils/LoadingComp";
 
 function LoginPage() {
-  const cookies = new Cookies();
+  const cookies = useMemo(() => new Cookies(), []);
   const {
     register,
     control,
@@ -29,30 +29,33 @@ function LoginPage() {
   const navigate = useNavigate();
   const { data, loading, error, fetchData } = useFetch();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     fetchData("http://localhost:5000/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(formData),
     });
   };
-  if (loading) return <LoadingComp />;
-  if (error) return <Typography color="error">{error.message}</Typography>;
 
-  if (data) {
-    const { token } = data;
-    const decodedToken = jwtDecode(token);
-    cookies.set("token", token, {
-      expires: new Date(decodedToken.exp * 1000),
-    });
-    navigate("/home");
-  }
+  useEffect(() => {
+    if (data) {
+      const { token } = data;
+      const decodedToken = jwtDecode(token);
+      cookies.set("token", token, {
+        expires: new Date(decodedToken.exp * 1000),
+      });
+      navigate("/home");
+    }
+  }, [data, cookies, navigate]);
 
   const handleSignUpRedirect = () => {
     navigate("/SignUp");
   };
+
+  if (loading) return <LoadingComp />;
+  if (error) return <Typography color="error">{error.message}</Typography>;
 
   return (
     <>

@@ -24,6 +24,7 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
           productId: item._id,
           quantity: item.quantity,
           price: item.price,
+          imageUrl: item.imageUrl,
         })),
         totalAmount: totalPrice, // Include totalAmount in orderData
         orderDate: new Date().toISOString(), // Use ISO string for date
