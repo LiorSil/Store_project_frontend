@@ -19,11 +19,21 @@ const getUserById = async (userId) => {
   const user = await User.findById(userId);
   return user;
 };
+const updateUser = async (userId, userData) => {
+  try {
+    const user = await User.findByIdAndUpdate(userId, userData);
+    return user;
+  } catch (error) {
+    console.error("Error updating user:", error.message);
+    throw error;
+  }
+};
 
 module.exports = {
   createUser,
   getUserByUsername,
   getUserById,
+  updateUser,
 };
 
 // Path: server/Repositories/UserRepository.js

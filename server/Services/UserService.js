@@ -27,11 +27,30 @@ const authenticateUser = async (userData) => {
 };
 
 const getUserById = async (userId) => {
-  return await UserRepository.getUserById(userId);
+  let user = await UserRepository.getUserById(userId);
+  // Remove _id from user object
+  user = user.toObject();
+
+  return user;
+};
+
+const updateUser = async (userId, userData) => {
+  const oldUser = await UserRepository.getUserById(userId);
+  if (!oldUser) {
+    throw new Error("User not found.");
+  }
+  userData = { ...oldUser, ...userData };
+
+  try {
+    return await UserRepository.updateUser(userId, userData);
+  } catch (error) {
+    throw new Error("Failed to update user in the database.");
+  }
 };
 
 module.exports = {
   createUser,
   authenticateUser,
   getUserById,
+  updateUser,
 };
