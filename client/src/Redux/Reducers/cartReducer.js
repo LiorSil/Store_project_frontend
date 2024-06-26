@@ -47,7 +47,7 @@ const cartSlice = createSlice({
 });
 
 const totalPriceReducer = (state) => {
-  return state.cart.reduce(
+  return state.cart.cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );

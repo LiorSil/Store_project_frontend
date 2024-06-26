@@ -52,9 +52,9 @@ const OrdersComp = () => {
         transformOrdersToProducts(data).map((item, index) => {
           tableData.push({
             key: index,
-            title: item.title,
-            quantity: item.quantity,
-            total: item.total,
+            title: item?.title || "Unknown",
+            quantity: item?.quantity || 0,
+            total: item?.total || 0,
             date: new Date(item.date).toLocaleString("en-GB"),
             image: (
               <Avatar

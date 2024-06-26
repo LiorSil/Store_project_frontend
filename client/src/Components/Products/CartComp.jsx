@@ -9,11 +9,11 @@ import useFetch from "../../Hooks/useFetch";
 import Cookies from "universal-cookie";
 
 const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
-  const cart = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart.cart);
   const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
-  const { fetchData, loading, error } = useFetch(); // Destructure fetchData, loading, and error from useFetch
+  const { fetchData, loading, error } = useFetch();
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);

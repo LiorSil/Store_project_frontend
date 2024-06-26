@@ -44,7 +44,7 @@ router.get("/getUser", async (req, res) => {
       lastName: user.lastName,
       username: user.username,
       password: user.password,
-      allowOthersToSeePurchasedProducts: user.allowOthersToSeePurchasedProducts,
+      allowOrders: user.allowOthersToSeePurchasedProducts,
     };
 
     res.status(200).json(clientUser);
