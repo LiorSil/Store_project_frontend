@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import LoadingComp from "../Utils/LoadingComp";
 import { NoticeMessageComp, ConfirmComp } from "../Utils/indexUtil";
 
@@ -87,11 +93,16 @@ const AccountComp = () => {
     fetchData();
   }, [cookies, dispatch, setValue]);
 
-  const handleOpenDialog = () => setOpenDialog(true);
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-  const handleConfirmOrder = async () => {
+  const handleOpenDialog = useCallback(() => setOpenDialog(true), []);
+  const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
+  const handleNoticeClose = useCallback(() => {
+    try {
+      setNoticeMessage((prevMessage) => ({ ...prevMessage, open: false }));
+    } catch (error) {
+      console.error("Error closing notice:", error);
+    }
+  }, []);
+  const handleConfirmOrder = useCallback(async () => {
     try {
       const options = {
         method: "PUT",
@@ -127,7 +138,7 @@ const AccountComp = () => {
         color: "red",
       });
     }
-  };
+  }, [cookies, dispatch, formData]);
 
   const handleOnSubmit = async (updatedAccountDetails) => {
     dispatch(updateAccount(updatedAccountDetails));
@@ -149,22 +160,13 @@ const AccountComp = () => {
       message={noticeMessage.message}
       IconComp={noticeMessage.icon}
       color={noticeMessage.color}
-      onClose={() =>
-        setNoticeMessage({
-          open: false,
-          message: "",
-          icon: "",
-          color: "",
-        })
-      }
+      onClose={handleNoticeClose}
     />
   );
 
   return (
-    <>
-      {loading ? (
-        <LoadingComp />
-      ) : (
+    <Suspense fallback={<LoadingComp />}>
+      {!loading && (
         <>
           {confirmDialog}
           {noticeDialog}
@@ -241,7 +243,7 @@ const AccountComp = () => {
           </Stack>
         </>
       )}
-    </>
+    </Suspense>
   );
 };
 
