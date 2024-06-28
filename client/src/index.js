@@ -1,4 +1,4 @@
-import React from "react";
+import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 
 // React Router
@@ -24,9 +24,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <App />
-      </ThemeProvider>
+      <StrictMode>
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
+      </StrictMode>
     </BrowserRouter>
   </Provider>
 );
