@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Drawer, Box, IconButton, Button } from "@mui/material";
+import {
+  Drawer,
+  Box,
+  IconButton,
+  Button,
+  Alert,
+  AlertTitle,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector, useDispatch } from "react-redux";
 import { totalPriceReducer, clearCart } from "../../Redux/Reducers/cartReducer";
@@ -9,13 +16,23 @@ import useFetch from "../../Hooks/useFetch";
 import Cookies from "universal-cookie";
 
 const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
+  const [showAlert, setShowAlert] = useState(false);
   const cart = useSelector((state) => state.cart.cart);
   const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
   const { fetchData, loading, error } = useFetch();
   const [openDialog, setOpenDialog] = useState(false);
 
-  const handleOpenDialog = () => setOpenDialog(true);
+  const handleOpenDialog = () => {
+    if (!!totalPrice === false) {
+      setShowAlert(true);
+      return;
+    } else {
+      setShowAlert(false);
+      setOpenDialog(true);
+    }
+  };
+
   const handleCloseDialog = () => setOpenDialog(false);
   const handleConfirmOrder = async () => {
     try {
@@ -89,7 +106,16 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
           {cart.length > 0 ? (
             cart.map((item) => <CartItemComp key={item._id} cartItem={item} />)
           ) : (
-            <Box>No items in cart</Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              Cart is empty
+            </Box>
           )}
         </Box>
         <Box
@@ -110,6 +136,12 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
         >
           Place Order
         </Button>
+        {showAlert && (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Please add items to cart before placing order
+          </Alert>
+        )}
         <ConfirmComp
           open={openDialog}
           onClose={handleCloseDialog}

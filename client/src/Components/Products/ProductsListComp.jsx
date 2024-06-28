@@ -34,7 +34,7 @@ const ProductsListComp = ({ filters }) => {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <span>Error: {error.message}</span>;
   }
 
   return (
@@ -64,7 +64,7 @@ const ProductsListComp = ({ filters }) => {
           })
           .map((product) => <ProductItem key={product._id} product={product} />)
       ) : (
-        <Typography variant="h6">No products found</Typography>
+        <Typography component="h6">No products found</Typography>
       )}
     </Box>
   );

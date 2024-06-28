@@ -16,6 +16,7 @@ import {
   decrementCartItemCount,
   removeCartItem,
 } from "../../Redux/Reducers/cartReducer";
+import { yellow } from "@mui/material/colors";
 
 const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
   const total = cartItem.price * cartItem.quantity;
@@ -65,19 +66,25 @@ const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
             <Typography
               sx={{ display: "inline" }}
               component="span"
-              variant="body2"
               color="text.primary"
             >
               Quantity: {cartItem.quantity}
             </Typography>
-            <Box mt={2} display="flex" alignItems="center">
+            <Box mt={2} display="flex" alignItems="center" component="span">
               <Button
-                variant="outlined"
-                onClick={() => handleDecrement(cartItem)}
+                variant={cartItem.quantity === 1 ? "contained" : "outlined"}
+                disabled={cartItem.quantity === 1}
+                onClick={() => {
+                  handleDecrement(cartItem);
+                }}
               >
                 -
               </Button>
-              <Typography variant="body2" style={{ margin: "0 8px" }}>
+              <Typography
+                component="span"
+                variant="body2"
+                style={{ margin: "0 8px" }}
+              >
                 {cartItem.quantity}
               </Typography>
               <Button

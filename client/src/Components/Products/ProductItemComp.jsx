@@ -34,7 +34,7 @@ const ProductItemComp = ({ product }) => {
         margin: 2,
       }}
     >
-      <Typography variant="h6" gutterBottom>
+      <Typography component={"h6"} gutterBottom>
         {product.title}
       </Typography>
       <Typography variant="body1" gutterBottom>
