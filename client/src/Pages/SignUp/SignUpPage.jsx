@@ -11,7 +11,12 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { DevTool } from "@hookform/devtools";
+import {
+  firstNameValidator,
+  lastNameValidator,
+  passwordValidator,
+  usernameValidator,
+} from "../../Components/Utils/Validators/indexValidator";
 
 import classes from "./SignUpPage.module.css";
 
@@ -64,20 +69,11 @@ const SignUpPage = () => {
                 noValidate
                 {...register("firstName", {
                   required: "First name is required",
-                  validate: {
-                    adminCheck: (value) =>
-                      value !== "admin" || "admin is not allowed",
-                    noSpecialCharacters: (value) =>
-                      !/[!@#$%^&*(),.?":{}|<>]/.test(value) ||
-                      "Special characters are not allowed",
-                    atLeastTwoLetters: (value) =>
-                      value.length >= 2 ||
-                      "First name must be at least 2 characters",
-                  },
+                  validate: firstNameValidator,
                 })}
                 error={errors.firstName ? true : false}
+                helperText={errors.firstName?.message}
               />
-              {errors.firstName && <p>{errors.firstName.message}</p>}
             </Grid>
 
             <br />
@@ -94,20 +90,11 @@ const SignUpPage = () => {
                 noValidate
                 {...register("lastName", {
                   required: "Last name is required",
-                  validate: {
-                    adminCheck: (value) =>
-                      value !== "admin" || "admin is not allowed",
-                    noSpecialCharacters: (value) =>
-                      !/[!@#$%^&*(),.?":{}|<>]/.test(value) ||
-                      "Special characters are not allowed",
-                    atLeastTwoLetters: (value) =>
-                      value.length >= 2 ||
-                      "Last name must be at least 2 characters",
-                  },
+                  validate: lastNameValidator,
                 })}
                 error={errors.lastName ? true : false}
+                helperText={errors.lastName?.message}
               />
-              {errors.lastName && <p>{errors.lastName.message}</p>}
             </Grid>
 
             {/* /** username  */}
@@ -120,20 +107,11 @@ const SignUpPage = () => {
                 noValidate
                 {...register("username", {
                   required: "Username is required",
-                  validate: {
-                    adminCheck: (value) =>
-                      !value.startsWith("admin") || "admin is not allowed",
-                    noSpecialCharacters: (value) =>
-                      !/[!@#$%^&*(),.?":{}|<>]/.test(value) ||
-                      "Special characters are not allowed",
-                    atLeastFourCharacters: (value) =>
-                      value.length >= 4 ||
-                      "Username must be at least 4 characters",
-                  },
+                  validate: usernameValidator,
                 })}
                 error={errors.username ? true : false}
+                helperText={errors.username?.message}
               />
-              {errors.username && <p>{errors.username.message}</p>}
             </Grid>
 
             {/** Password Field */}
@@ -148,28 +126,12 @@ const SignUpPage = () => {
                 {...register("password", {
                   required: "Password is required",
 
-                  validate: {
-                    minLength: (value) =>
-                      value.length >= 8 ||
-                      "Password must be at least 8 characters",
-                    atLeastOneUppercase: (value) =>
-                      /[A-Z]/.test(value) ||
-                      "Password must contain at least one uppercase letter",
-                    atLeastOneLowercase: (value) =>
-                      /[a-z]/.test(value) ||
-                      "Password must contain at least one lowercase letter",
-                    atLeastOneDigit: (value) =>
-                      /[0-9]/.test(value) ||
-                      "Password must contain at least one number",
-                    atLeastOneSpecialCharacter: (value) =>
-                      /[@$!%*?&]/.test(value) ||
-                      "Password must contain at least one special character",
-                  },
+                  validate: passwordValidator,
                 })}
                 noValidate
                 error={errors.password ? true : false}
+                helperText={errors.password?.message}
               />
-              {errors.password && <p>{errors.password.message}</p>}
             </Grid>
             <br />
 
@@ -216,8 +178,6 @@ const SignUpPage = () => {
           </Grid>
         </Box>
       </Stack>
-
-      <DevTool control={control} />
     </>
   );
 };

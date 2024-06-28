@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addToCart } from "../../Redux/Reducers/cartReducer";
 
 const ProductItemComp = ({ product }) => {

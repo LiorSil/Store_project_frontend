@@ -16,7 +16,6 @@ import {
   decrementCartItemCount,
   removeCartItem,
 } from "../../Redux/Reducers/cartReducer";
-import { yellow } from "@mui/material/colors";
 
 const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
   const total = cartItem.price * cartItem.quantity;

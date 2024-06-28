@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
-import MaterialTableComp from "../Utils/MaterialTableComp";
+
 import useFetch from "../../Hooks/useFetch";
-import { LoadingComp } from "../Utils/indexUtil";
+import { LoadingComp, MaterialTableComp } from "../Utils/indexUtil";
 import { transformOrdersToProducts } from "../../Services/OrderService";
 import Cookies from "universal-cookie";
 import { Avatar } from "@mui/material";

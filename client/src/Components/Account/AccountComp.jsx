@@ -14,21 +14,41 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
 import classes from "./AccountComp.module.css";
 import Cookies from "universal-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import { setAccount, updateAccount } from "../../Redux/Reducers/accountReducer";
+import {
+  firstNameValidator,
+  lastNameValidator,
+  passwordValidator,
+} from "../Utils/Validators/indexValidator";
 
 const AccountComp = () => {
   const cookies = useMemo(() => new Cookies(), []);
-
   //redux
   const dispatch = useDispatch();
   const { oldAccount, formData } = useSelector((state) => state.account);
 
+  //form management
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    setValue,
+  } = useForm({
+    defaultValues: oldAccount,
+  });
+
+  //dirty fields
+  const { isDirty } = useFormState({ control });
+
   //loading state
   const [loading, setLoading] = useState(true);
+
+  //dialog states
   const [openDialog, setOpenDialog] = useState(false);
   const [noticeMessage, setNoticeMessage] = useState({
     open: false,
@@ -36,6 +56,36 @@ const AccountComp = () => {
     icon: "",
     color: "",
   });
+
+  // Fetch user data and populate form fields
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("fetching data");
+      try {
+        const response = await fetch("http://localhost:5000/users/getUser", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.get("token"),
+          },
+        });
+        const data = await response.json();
+        setValue("firstName", data.firstName);
+        setValue("lastName", data.lastName);
+        setValue("username", data.username);
+        setValue("password", data.password);
+        setValue("allowOrders", data.allowOrders);
+        dispatch(setAccount(data));
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user data: ", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [cookies, dispatch, setValue]);
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => {
@@ -79,43 +129,6 @@ const AccountComp = () => {
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm();
-
-  // Fetch user data and populate form fields
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("fetching data");
-      try {
-        const response = await fetch("http://localhost:5000/users/getUser", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + cookies.get("token"),
-          },
-        });
-        const data = await response.json();
-        setValue("firstName", data.firstName);
-        setValue("lastName", data.lastName);
-        setValue("username", data.username);
-        setValue("password", data.password);
-        setValue("allowOrders", data.allowOrders);
-        dispatch(setAccount(data));
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user data: ", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [cookies, dispatch, setValue]);
-
   const handleOnSubmit = async (updatedAccountDetails) => {
     dispatch(updateAccount(updatedAccountDetails));
     handleOpenDialog();
@@ -127,7 +140,7 @@ const AccountComp = () => {
       onClose={handleCloseDialog}
       onConfirm={handleConfirmOrder}
       title="Confirm Order"
-      description="Are you sure you want to place this order?"
+      description="Are you sure you want to update your account details?"
     />
   );
   const noticeDialog = noticeMessage.open && (
@@ -170,6 +183,7 @@ const AccountComp = () => {
                   <TextField
                     {...register("firstName", {
                       required: "First name is required",
+                      validate: firstNameValidator,
                     })}
                     fullWidth
                     error={!!errors.firstName}
@@ -180,6 +194,7 @@ const AccountComp = () => {
                   <TextField
                     {...register("lastName", {
                       required: "Last name is required",
+                      validate: lastNameValidator,
                     })}
                     fullWidth
                     error={!!errors.lastName}
@@ -190,13 +205,12 @@ const AccountComp = () => {
                   <TextField
                     {...register("password", {
                       required: "Password is required",
-                      minLength: {
-                        value: 6,
-                        message: "Password must have at least 6 characters",
-                      },
+                      validate: passwordValidator,
                     })}
                     type="password"
                     fullWidth
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -219,6 +233,7 @@ const AccountComp = () => {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 3 }}
+                disabled={!isDirty}
               >
                 Save
               </Button>
