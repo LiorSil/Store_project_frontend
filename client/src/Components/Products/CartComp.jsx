@@ -12,8 +12,8 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
   const cart = useSelector((state) => state.cart.cart);
   const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
-  const [openDialog, setOpenDialog] = useState(false);
   const { fetchData, loading, error } = useFetch();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);

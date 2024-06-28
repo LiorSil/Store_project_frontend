@@ -21,8 +21,7 @@ const getUserById = async (userId) => {
 };
 const updateUser = async (userId, userData) => {
   try {
-    const user = await User.findByIdAndUpdate(userId, userData);
-    return user;
+    return await User.findByIdAndUpdate(userId, userData);
   } catch (error) {
     console.error("Error updating user:", error.message);
     throw error;

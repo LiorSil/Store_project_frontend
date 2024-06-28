@@ -39,10 +39,10 @@ const updateUser = async (userId, userData) => {
   if (!oldUser) {
     throw new Error("User not found.");
   }
-  userData = { ...oldUser, ...userData };
 
   try {
-    return await UserRepository.updateUser(userId, userData);
+    const updatedUser = await UserRepository.updateUser(userId, userData);
+    return updatedUser;
   } catch (error) {
     throw new Error("Failed to update user in the database.");
   }

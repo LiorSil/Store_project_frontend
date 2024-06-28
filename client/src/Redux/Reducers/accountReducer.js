@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const accountInitialState = {
   oldAccount: {},
-  newAccount: {},
+  formData: {},
 };
 
 const accountSlice = createSlice({
@@ -12,8 +12,11 @@ const accountSlice = createSlice({
     setAccount: (state, action) => {
       state.oldAccount = action.payload;
     },
+    updateAccount: (state, action) => {
+      state.formData = action.payload;
+    },
   },
 });
 
-export const { setAccount, getAccount } = accountSlice.actions;
+export const { setAccount, updateAccount } = accountSlice.actions;
 export default accountSlice.reducer;
