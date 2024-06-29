@@ -17,6 +17,7 @@ import {
 import useFetch from "../../Hooks/useFetch";
 import classes from "./LoginPage.module.css";
 import LoadingComp from "../../Components/Utils/LoadingComp";
+import API_BASE_URL from "../../Constants/serverUrl";
 
 function LoginPage() {
   const cookies = useMemo(() => new Cookies(), []);
@@ -30,7 +31,7 @@ function LoginPage() {
   const { data, loading, error, fetchData } = useFetch();
 
   const onSubmit = async (formData) => {
-    fetchData("http://localhost:5000/users/login", {
+    fetchData(`${API_BASE_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

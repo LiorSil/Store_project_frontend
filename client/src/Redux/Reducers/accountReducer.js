@@ -1,7 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const accountInitialState = {
-  oldAccount: {},
+  oldAccount: {
+    firstName: "",
+    lastName: "",
+    password: "",
+    username: "",
+    allowOrders: false,
+  },
   formData: {},
 };
 

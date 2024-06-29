@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import LoadingComp from "../Utils/LoadingComp";
 import { NoticeMessageComp, ConfirmComp } from "../Utils/indexUtil";
-
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import {
@@ -30,6 +29,7 @@ import {
   lastNameValidator,
   passwordValidator,
 } from "../Utils/Validators/indexValidator";
+import API_BASE_URL from "../../Constants/serverUrl";
 
 const AccountComp = () => {
   const cookies = useMemo(() => new Cookies(), []);
@@ -55,12 +55,9 @@ const AccountComp = () => {
   const [loading, setLoading] = useState(true);
 
   //dialog states
-  const [openDialog, setOpenDialog] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState(false);
   const [noticeMessage, setNoticeMessage] = useState({
     open: false,
-    message: "",
-    icon: "",
-    color: "",
   });
 
   // Fetch user data and populate form fields
@@ -68,7 +65,7 @@ const AccountComp = () => {
     const fetchData = async () => {
       console.log("fetching data");
       try {
-        const response = await fetch("http://localhost:5000/users/getUser", {
+        const response = await fetch(`${API_BASE_URL}/users/getUser`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -76,11 +73,11 @@ const AccountComp = () => {
           },
         });
         const data = await response.json();
-        setValue("firstName", data.firstName);
-        setValue("lastName", data.lastName);
-        setValue("username", data.username);
-        setValue("password", data.password);
-        setValue("allowOrders", data.allowOrders);
+        //populate form fields
+        for (const key in data) {
+          setValue(key, data[key]);
+        }
+
         dispatch(setAccount(data));
         setLoading(false);
       } catch (error) {
@@ -93,15 +90,6 @@ const AccountComp = () => {
     fetchData();
   }, [cookies, dispatch, setValue]);
 
-  const handleOpenDialog = useCallback(() => setOpenDialog(true), []);
-  const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
-  const handleNoticeClose = useCallback(() => {
-    try {
-      setNoticeMessage((prevMessage) => ({ ...prevMessage, open: false }));
-    } catch (error) {
-      console.error("Error closing notice:", error);
-    }
-  }, []);
   const handleConfirmOrder = useCallback(async () => {
     try {
       const options = {
@@ -113,14 +101,11 @@ const AccountComp = () => {
         body: JSON.stringify(formData),
       };
 
-      const response = await fetch(
-        "http://localhost:5000/users/updateUser",
-        options
-      );
+      const response = await fetch(`${API_BASE_URL}/users/updateUser`, options);
       if (response.ok) {
         const data = await response.json();
         dispatch(updateAccount(data));
-        setOpenDialog(false);
+        setConfirmMessage(false);
         setNoticeMessage({
           open: true,
           message: "Successfully updated user",
@@ -130,7 +115,7 @@ const AccountComp = () => {
       }
     } catch (error) {
       console.error("Error updating user: ", error.message);
-      setOpenDialog(false);
+      setConfirmMessage(false);
       setNoticeMessage({
         open: true,
         message: "Error updating user",
@@ -142,13 +127,14 @@ const AccountComp = () => {
 
   const handleOnSubmit = async (updatedAccountDetails) => {
     dispatch(updateAccount(updatedAccountDetails));
-    handleOpenDialog();
+
+    setConfirmMessage(true);
   };
 
   const confirmDialog = (
     <ConfirmComp
-      open={openDialog}
-      onClose={handleCloseDialog}
+      open={confirmMessage}
+      onClose={() => setConfirmMessage(false)}
       onConfirm={handleConfirmOrder}
       title="Confirm Order"
       description="Are you sure you want to update your account details?"
@@ -160,7 +146,12 @@ const AccountComp = () => {
       message={noticeMessage.message}
       IconComp={noticeMessage.icon}
       color={noticeMessage.color}
-      onClose={handleNoticeClose}
+      onClose={() =>
+        setNoticeMessage((prevMessage) => ({
+          ...prevMessage,
+          open: false,
+        }))
+      }
     />
   );
 

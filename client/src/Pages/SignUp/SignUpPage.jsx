@@ -19,6 +19,7 @@ import {
 } from "../../Components/Utils/Validators/indexValidator";
 
 import classes from "./SignUpPage.module.css";
+import API_BASE_URL from "../../Constants/serverUrl";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const SignUpPage = () => {
   const onSubmit = async (data) => {
     data = { customerRegisterDate: new Date().toISOString(), ...data };
     try {
-      const response = await fetch("http://localhost:5000/users/signUp", {
+      const response = await fetch(`${API_BASE_URL}/users/signUp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

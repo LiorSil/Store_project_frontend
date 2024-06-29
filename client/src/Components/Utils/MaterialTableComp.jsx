@@ -31,14 +31,29 @@ const StyledTableHeadCell = styled(TableCell)(({ theme }) => ({
   fontWeight: "bold",
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme, odd }) => ({
-  backgroundColor: odd ? theme.palette.action.hover : "inherit",
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  // Remove the `odd` prop from here. We'll handle it in the mapping logic.
+  "&:nth-of-type(odd)": {
+    // Apply styling to every other row
+    backgroundColor: theme.palette.action.hover,
+  },
 }));
 
 const MaterialTableComp = ({ columns, data }) => {
   return (
-    <StyledTableContainer component={Paper}>
-      <Table>
+    <StyledTableContainer
+      component={Paper}
+      sx={{
+        marginTop: 2,
+      }}
+    >
+      <Table
+        sx={{
+          minWidth: 650,
+          border: "1px solid",
+          borderColor: "grey.500",
+        }}
+      >
         <StyledTableHead>
           <TableRow>
             {columns.map((column) => (
@@ -50,7 +65,7 @@ const MaterialTableComp = ({ columns, data }) => {
         </StyledTableHead>
         <TableBody>
           {data.map((item, index) => (
-            <StyledTableRow key={index} odd={index % 2 !== 0}>
+            <StyledTableRow key={index}>
               {columns.map((column) => (
                 <TableCell key={`${column.key}-${index}`}>
                   {item[column.key]}

@@ -5,6 +5,7 @@ import useFetch from "../../Hooks/useFetch";
 import { LoadingComp } from "../Utils/indexUtil";
 import classes from "./ProductsListComp.module.css";
 import Cookies from "universal-cookie";
+import API_BASE_URL from "../../Constants/serverUrl";
 
 const ProductsListComp = ({ filters }) => {
   const cookies = useMemo(() => new Cookies(), []);
@@ -20,7 +21,7 @@ const ProductsListComp = ({ filters }) => {
             Authorization: "Bearer " + cookies.get("token"),
           },
         };
-        await fetchData("http://localhost:5000/products", options);
+        await fetchData(`${API_BASE_URL}/products`, options);
       } catch (error) {
         console.error("Error fetching products:", error.message);
       }

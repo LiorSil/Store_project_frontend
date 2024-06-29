@@ -14,6 +14,7 @@ import { ConfirmComp, LoadingComp } from "../Utils/indexUtil";
 import CartItemComp from "./CartItemComp";
 import useFetch from "../../Hooks/useFetch";
 import Cookies from "universal-cookie";
+import API_BASE_URL from "../../Constants/serverUrl";
 
 const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
   const [showAlert, setShowAlert] = useState(false);
@@ -58,7 +59,7 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
       };
 
       // Perform the POST request using fetchData from useFetch hook
-      const success = await fetchData("http://localhost:5000/orders", options);
+      const success = await fetchData(`${API_BASE_URL}/orders`, options);
 
       // Clear the cart after successful order creation
       dispatch(clearCart());
