@@ -72,7 +72,7 @@ router.get("/categories", async (req, res) => {
   }
 });
 
-router.put("/categories/updateCategory", async (req, res) => {
+router.put("/categories", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = validateToken(token, process.env.JWT_SECRET);
@@ -80,15 +80,15 @@ router.put("/categories/updateCategory", async (req, res) => {
       res.status(401).send("Unauthorized");
       return;
     }
-    await ProductService.updateCategory(
-      req.body.oldCategory,
-      req.body.newCategory
-    );
+    //TODO: Add logic and validate user is an admin
+
     res.status(200).send("Category updated successfully.");
   } catch (error) {
     res.status(400).send(error.message);
   }
 });
+
+router.put;
 
 module.exports = router;
 

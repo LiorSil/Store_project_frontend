@@ -34,6 +34,42 @@ export const fetchCategoriesData = createAsyncThunk(
   }
 );
 
+// Async Thunk for Updating Category Data
+export const fetchUpdateChanges = createAsyncThunk(
+  "categories/updateData",
+  async (categoryData, thunkAPI) => {
+    try {
+      const cookies = new Cookies();
+      const token = cookies.get("token");
+
+      if (!token) {
+        throw new Error("No valid token found");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/products/categories/${categoryData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(categoryData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update category data");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // Data Slice
 const categoriesReducer = createSlice({
   name: "categories",
@@ -58,6 +94,24 @@ const categoriesReducer = createSlice({
         state.data = action.payload;
       })
       .addCase(fetchCategoriesData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchUpdateChanges.pending, (state) => {
+        state.loading = true;
+        state.error = null; // Clear any previous errors
+      })
+      .addCase(fetchUpdateChanges.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedCategory = action.payload;
+        const index = state.data.findIndex(
+          (cat) => cat.id === updatedCategory.id
+        );
+        if (index !== -1) {
+          state.data[index] = updatedCategory;
+        }
+      })
+      .addCase(fetchUpdateChanges.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

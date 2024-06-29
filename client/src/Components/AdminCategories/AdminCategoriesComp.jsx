@@ -12,6 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCategoriesData,
@@ -19,6 +20,9 @@ import {
 } from "../../Redux/Reducers/categoriesReducer";
 import LoadingComp from "../Utils/LoadingComp";
 import ErrorPage from "../../Pages/Error/ErrorPage";
+import ConfirmComp from "../Utils/ConfirmComp";
+import NoticeMessageComp from "../Utils/NoticeMessageComp";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 
 const MaterialTableComp = lazy(() => import("../Utils/MaterialTableComp"));
 
@@ -39,16 +43,52 @@ const AdminCategoriesComp = memo(() => {
   const [editMode, setEditMode] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [newCategory, setNewCategory] = useState("");
-  console.table("categories", categories);
+  const [confirmMessage, setConfirmMessage] = useState(false);
+  const [noticeMessage, setNoticeMessage] = useState({ open: false });
 
   const handleEditClick = (name) => {
     setEditMode(name);
     setEditValue(name);
   };
 
-  const handleSaveClick = (name) => {};
-  const handleDeleteClick = (name) => {};
-  const handleAddClick = (name) => {};
+  const handleSaveClick = (name) => {
+    const updatedCategories = categories.map((category) =>
+      category === name ? editValue : category
+    );
+    dispatch(updateCategories(updatedCategories));
+    setEditMode(null);
+    setEditValue("");
+  };
+
+  const handleCancelClick = () => {
+    setEditMode(null);
+    setEditValue("");
+  };
+
+  const handleDeleteClick = (name) => {
+    // Logic to delete a category
+    const updatedCategories = categories.filter(
+      (category) => category !== name
+    );
+    dispatch(updateCategories(updatedCategories));
+  };
+
+  const handleAddClick = () => {
+    // Logic to add a new category
+    const updatedCategories = [...categories, newCategory];
+    dispatch(updateCategories(updatedCategories));
+    setNewCategory("");
+  };
+
+  const handleConfirmCategories = () => {
+    setConfirmMessage(false);
+    setNoticeMessage({
+      open: true,
+      message: "Categories have been updated.",
+      color: "success",
+      icon: CheckCircleIcon,
+    });
+  };
 
   const columns = [
     { key: "name", title: "Category Name" },
@@ -57,14 +97,22 @@ const AdminCategoriesComp = memo(() => {
 
   const data = categories.map((category, index) => ({
     key: index,
-    name: category,
+    name:
+      editMode === category ? (
+        <TextField
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+        />
+      ) : (
+        category
+      ),
     actions:
       editMode === category ? (
         <>
           <IconButton onClick={() => handleSaveClick(category)}>
             <SaveIcon />
           </IconButton>
-          <IconButton onClick={() => setEditMode(null)}>
+          <IconButton onClick={handleCancelClick}>
             <CancelIcon />
           </IconButton>
         </>
@@ -80,6 +128,30 @@ const AdminCategoriesComp = memo(() => {
       ),
   }));
 
+  const confirmDialog = (
+    <ConfirmComp
+      open={confirmMessage}
+      onClose={() => setConfirmMessage(false)}
+      onConfirm={handleConfirmCategories}
+      title="Confirm Categories"
+      description="Are you sure you want to save the changes?"
+    />
+  );
+  const noticeDialog = noticeMessage.open && (
+    <NoticeMessageComp
+      open={true}
+      message={noticeMessage.message}
+      IconComp={noticeMessage.icon}
+      color={noticeMessage.color}
+      onClose={() =>
+        setNoticeMessage((prevMessage) => ({
+          ...prevMessage,
+          open: false,
+        }))
+      }
+    />
+  );
+
   if (loading) {
     return <LoadingComp />;
   }
@@ -89,6 +161,8 @@ const AdminCategoriesComp = memo(() => {
 
   return (
     <Suspense fallback={<LoadingComp />}>
+      {confirmDialog}
+      {noticeDialog}
       <Container
         component="main"
         maxWidth="sm"
@@ -106,10 +180,10 @@ const AdminCategoriesComp = memo(() => {
         <Stack
           direction="row"
           spacing={1}
-          mt={2}
+          mt={1}
           sx={{
             justifyContent: "center",
-            ColumnGap: 2,
+            columnGap: 2,
           }}
         >
           <TextField
@@ -122,14 +196,33 @@ const AdminCategoriesComp = memo(() => {
             }}
           />
           <Button
+            sx={{
+              borderColor: "primary.main",
+              color: "primary.main",
+              backgroundColor: "white",
+            }}
             startIcon={<AddIcon />}
             onClick={handleAddClick}
             variant="contained"
+            backgroundColor="white"
             color="primary"
           >
             Add Category
           </Button>
         </Stack>
+        <Button
+          sx={{
+            marginTop: 2,
+            height: 50,
+            borderRadius: 1,
+          }}
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={() => setConfirmMessage(true)}
+        >
+          Save
+        </Button>
       </Container>
     </Suspense>
   );
