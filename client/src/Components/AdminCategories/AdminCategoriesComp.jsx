@@ -1,76 +1,67 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  Suspense,
+  lazy,
+  useMemo,
+  memo,
+} from "react";
 import { TextField, Button, IconButton, Stack, Container } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
-import MaterialTableComp from "../Utils/MaterialTableComp";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
+import {
+  fetchCategoriesData,
+  updateCategories,
+} from "../../Redux/Reducers/categoriesReducer";
+import LoadingComp from "../Utils/LoadingComp";
+import ErrorPage from "../../Pages/Error/ErrorPage";
 
-const AdminCategoriesComp = () => {
+const MaterialTableComp = lazy(() => import("../Utils/MaterialTableComp"));
+
+const AdminCategoriesComp = memo(() => {
   const dispatch = useDispatch();
   const {
     data: categories,
     loading,
     error,
-  } = useSelector((state) => state.categories);
+  } = useSelector(
+    useMemo(() => (state) => state.categories, []),
+    []
+  );
   useEffect(() => {
     dispatch(fetchCategoriesData());
   }, [dispatch]);
 
-  console.log("categories", categories);
-
-  const [categoriesDummies, setCategoriesDummies] = useState([
-    { id: 1, name: "Electronics" },
-    { id: 2, name: "Books" },
-    { id: 3, name: "Clothing" },
-  ]);
-
   const [editMode, setEditMode] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [newCategory, setNewCategory] = useState("");
+  console.table("categories", categories);
 
-  const handleEditClick = (id, name) => {
-    setEditMode(id);
+  const handleEditClick = (name) => {
+    setEditMode(name);
     setEditValue(name);
   };
 
-  const handleSaveClick = (id) => {
-    setCategoriesDummies(
-      categoriesDummies.map((cat) =>
-        cat.id === id ? { ...cat, name: editValue } : cat
-      )
-    );
-    setEditMode(null);
-  };
-
-  const handleDeleteClick = (id) => {
-    setCategoriesDummies(categories.filter((cat) => cat.id !== id));
-  };
-
-  const handleAddClick = () => {
-    if (newCategory.trim()) {
-      setCategoriesDummies([
-        ...categoriesDummies,
-        { id: categoriesDummies.length + 1, name: newCategory },
-      ]);
-      setNewCategory("");
-    }
-  };
+  const handleSaveClick = (name) => {};
+  const handleDeleteClick = (name) => {};
+  const handleAddClick = (name) => {};
 
   const columns = [
     { key: "name", title: "Category Name" },
     { key: "actions", title: "Actions" },
   ];
 
-  const data = categoriesDummies.map((category) => ({
-    ...category,
+  const data = categories.map((category, index) => ({
+    key: index,
+    name: category,
     actions:
-      editMode === category.id ? (
+      editMode === category ? (
         <>
-          <IconButton onClick={() => handleSaveClick(category.id)}>
+          <IconButton onClick={() => handleSaveClick(category)}>
             <SaveIcon />
           </IconButton>
           <IconButton onClick={() => setEditMode(null)}>
@@ -79,20 +70,25 @@ const AdminCategoriesComp = () => {
         </>
       ) : (
         <>
-          <IconButton
-            onClick={() => handleEditClick(category.id, category.name)}
-          >
+          <IconButton onClick={() => handleEditClick(category)}>
             <EditIcon />
           </IconButton>
-          <IconButton onClick={() => handleDeleteClick(category.id)}>
+          <IconButton onClick={() => handleDeleteClick(category)}>
             <DeleteIcon />
           </IconButton>
         </>
       ),
   }));
 
+  if (loading) {
+    return <LoadingComp />;
+  }
+  if (error) {
+    return <ErrorPage message={error} />;
+  }
+
   return (
-    <>
+    <Suspense fallback={<LoadingComp />}>
       <Container
         component="main"
         maxWidth="sm"
@@ -135,8 +131,8 @@ const AdminCategoriesComp = () => {
           </Button>
         </Stack>
       </Container>
-    </>
+    </Suspense>
   );
-};
+});
 
 export default AdminCategoriesComp;

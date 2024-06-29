@@ -1,5 +1,3 @@
-//src/components/Utils/MaterialTableComp.jsx
-
 import React from "react";
 import {
   Table,
@@ -32,27 +30,16 @@ const StyledTableHeadCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  // Remove the `odd` prop from here. We'll handle it in the mapping logic.
   "&:nth-of-type(odd)": {
-    // Apply styling to every other row
     backgroundColor: theme.palette.action.hover,
   },
 }));
 
-const MaterialTableComp = ({ columns, data }) => {
+const MaterialTableComp = ({ columns = [], data = [] }) => {
   return (
-    <StyledTableContainer
-      component={Paper}
-      sx={{
-        marginTop: 2,
-      }}
-    >
+    <StyledTableContainer component={Paper} sx={{ marginTop: 2 }}>
       <Table
-        sx={{
-          minWidth: 100,
-          border: "1px solid",
-          borderColor: "grey.500",
-        }}
+        sx={{ minWidth: 100, border: "1px solid", borderColor: "grey.500" }}
       >
         <StyledTableHead>
           <TableRow>
@@ -65,9 +52,9 @@ const MaterialTableComp = ({ columns, data }) => {
         </StyledTableHead>
         <TableBody>
           {data.map((item, index) => (
-            <StyledTableRow key={index}>
+            <StyledTableRow key={item.id}>
               {columns.map((column) => (
-                <TableCell key={`${column.key}-${index}`}>
+                <TableCell key={`${column.key}-${item.id}`}>
                   {item[column.key]}
                 </TableCell>
               ))}
@@ -86,4 +73,4 @@ const MaterialTableComp = ({ columns, data }) => {
   );
 };
 
-export default MaterialTableComp;
+export default React.memo(MaterialTableComp);

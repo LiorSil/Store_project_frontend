@@ -4,27 +4,32 @@ import API_BASE_URL from "../../Constants/serverUrl";
 
 // Async Thunk for Fetching Data
 export const fetchCategoriesData = createAsyncThunk(
-  "getCategories/fetchData",
+  "categories/fetchData",
   async (_, thunkAPI) => {
     try {
       const cookies = new Cookies();
+      const token = cookies.get("token");
+
+      if (!token) {
+        throw new Error("No valid token found");
+      }
+
       const response = await fetch(`${API_BASE_URL}/products/categories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies.get("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch categories data"); // Explicitly throw an error
+        throw new Error("Failed to fetch categories data");
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message); // Pass error message to reducer
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
@@ -37,11 +42,16 @@ const categoriesReducer = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {}, // No additional reducers needed
+  reducers: {
+    updateCategories: (state, action) => {
+      state.data = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCategoriesData.pending, (state) => {
         state.loading = true;
+        state.error = null; // Clear any previous errors
       })
       .addCase(fetchCategoriesData.fulfilled, (state, action) => {
         state.loading = false;
@@ -49,9 +59,12 @@ const categoriesReducer = createSlice({
       })
       .addCase(fetchCategoriesData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; // Set the error message
+        state.error = action.payload;
       });
   },
 });
+
+// Export Actions
+export const { updateCategories } = categoriesReducer.actions;
 
 export default categoriesReducer.reducer;
