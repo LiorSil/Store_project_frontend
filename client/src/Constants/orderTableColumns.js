@@ -1,5 +1,3 @@
-import { Avatar } from "@mui/material";
-
 export const orderTableColumns = [
   { key: "title", title: "Title", field: "title" },
   {

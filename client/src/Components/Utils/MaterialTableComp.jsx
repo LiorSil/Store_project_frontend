@@ -49,7 +49,7 @@ const MaterialTableComp = ({ columns, data }) => {
     >
       <Table
         sx={{
-          minWidth: 650,
+          minWidth: 100,
           border: "1px solid",
           borderColor: "grey.500",
         }}

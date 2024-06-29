@@ -58,11 +58,40 @@ const getProductTitleById = async (productId) => {
   }
 };
 
+/**
+ * Get all categories
+ * @returns {Promise<Array>} - The categories
+ * @throws {Error} - If there is an error getting the categories.
+ */
+const getCategories = async () => {
+  try {
+    return await ProductRepository.getCategories();
+  } catch (error) {
+    throw new Error("Failed to get categories.");
+  }
+};
+
+/**
+ * Update category of products
+ * @param {String} oldCategory - The old category name
+ * @param {String} newCategory - The new category name
+ * @returns {Promise<void>}
+ */
+const updateCategory = async (oldCategory, newCategory) => {
+  try {
+    await ProductRepository.updateCategory(oldCategory, newCategory);
+  } catch (error) {
+    throw new Error("Failed to update category.");
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
   createProducts,
   getProductTitleById,
+  getCategories,
+  updateCategory,
 };
 
 // Path: server/Services/ProductService.js

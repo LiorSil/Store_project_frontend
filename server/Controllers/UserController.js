@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
         expiresIn: "1h",
       }
     );
-    res.status(200).json({ token });
+    res.status(200).json({ token, isAdmin: user.isAdmin });
   } catch (error) {
     res.status(400).send(error.message);
   }

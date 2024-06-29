@@ -57,6 +57,39 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/categories", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+    const categories = await ProductService.getCategories();
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.put("/categories/updateCategory", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+    await ProductService.updateCategory(
+      req.body.oldCategory,
+      req.body.newCategory
+    );
+    res.status(200).send("Category updated successfully.");
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 module.exports = router;
 
 // Path: Server/Services/ProductService.js

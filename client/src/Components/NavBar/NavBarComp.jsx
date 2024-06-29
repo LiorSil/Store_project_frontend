@@ -19,17 +19,18 @@ const MemoizedButton = memo(({ page, selectedPage, onSelectedPage }) => (
 ));
 
 const NavBarComp = ({ pages, onSelectedPage, selectedPage }) => {
+  const isAdmin = localStorage.getItem("isAdmin");
   const buttonWidth = 100; // width of each button in pixels
   const totalWidth = pages.length * buttonWidth + (pages.length - 1) * 16; // total width including spacing
 
   return (
     <AppBar
       position="static"
-      color="primary"
       sx={{
         margin: "0 auto",
         maxWidth: `${totalWidth}px`,
         borderRadius: 4,
+        backgroundColor: isAdmin === true ? "primary.main" : "secondary.main",
       }}
     >
       <Toolbar>

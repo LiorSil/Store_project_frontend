@@ -48,11 +48,45 @@ const getProductById = async (productId) => {
   }
 };
 
+/**
+ * Get all categories
+ * @returns {Promise<Array>} - The categories
+ */
+const getCategories = async () => {
+  try {
+    return await ProductModel.distinct("category");
+  } catch (error) {
+    console.error("Error getting categories:", error.message);
+    throw error;
+  }
+};
+
+/**
+ * Update category of products
+ * @param {String} prevCategory - The previous category
+ * @param {String} newCategory - The new category
+ * @returns {Promise<Object>} - The updated products
+ */
+
+const updateCategory = async (prevCategory, newCategory) => {
+  try {
+    return await ProductModel.updateMany(
+      { category: prevCategory },
+      { category: newCategory }
+    );
+  } catch (error) {
+    console.error("Error updating category:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   getProduct,
   getProducts,
   createProduct,
   getProductById,
+  getCategories,
+  updateCategory,
 };
 
 // Path: server/Repositories/ProductRepository.js

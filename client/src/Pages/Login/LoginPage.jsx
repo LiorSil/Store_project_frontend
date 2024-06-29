@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { DevTool } from "@hookform/devtools";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -18,9 +17,12 @@ import useFetch from "../../Hooks/useFetch";
 import classes from "./LoginPage.module.css";
 import LoadingComp from "../../Components/Utils/LoadingComp";
 import API_BASE_URL from "../../Constants/serverUrl";
+import { useDispatch } from "react-redux";
+import { setIsAdmin } from "../../Redux/Reducers/userReducer";
 
 function LoginPage() {
   const cookies = useMemo(() => new Cookies(), []);
+  const dispatch = useDispatch();
   const {
     register,
     control,
@@ -42,11 +44,20 @@ function LoginPage() {
 
   useEffect(() => {
     if (data) {
-      const { token } = data;
+      const { token, isAdmin } = data;
       const decodedToken = jwtDecode(token);
+
+      if (cookies.get("token")) {
+        cookies.remove("token");
+      }
+
       cookies.set("token", token, {
         expires: new Date(decodedToken.exp * 1000),
       });
+
+      //redux
+      dispatch(setIsAdmin(isAdmin));
+
       navigate("/home");
     }
   }, [data, cookies, navigate]);
@@ -128,7 +139,6 @@ function LoginPage() {
           {error && <Typography color="error">{error.message}</Typography>}
         </Box>
       </Container>
-      <DevTool control={control} />
     </>
   );
 }
