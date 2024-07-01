@@ -22,7 +22,8 @@ import LoadingComp from "../Utils/LoadingComp";
 import ErrorPage from "../../Pages/Error/ErrorPage";
 import ConfirmComp from "../Utils/ConfirmComp";
 import NoticeMessageComp from "../Utils/NoticeMessageComp";
-import CheckCircle from "@mui/icons-material/CheckCircle";
+
+import { validateCategoryName } from "../Utils/Validators/categoriesFormValidator"; // Import validator
 
 const MaterialTableComp = lazy(() => import("../Utils/MaterialTableComp"));
 
@@ -36,6 +37,7 @@ const AdminCategoriesComp = memo(() => {
     useMemo(() => (state) => state.categories, []),
     []
   );
+
   useEffect(() => {
     dispatch(fetchCategoriesData());
   }, [dispatch]);
@@ -45,6 +47,7 @@ const AdminCategoriesComp = memo(() => {
   const [newCategory, setNewCategory] = useState("");
   const [confirmMessage, setConfirmMessage] = useState(false);
   const [noticeMessage, setNoticeMessage] = useState({ open: false });
+  const [validationError, setValidationError] = useState("");
 
   const handleEditClick = (name) => {
     setEditMode(name);
@@ -52,21 +55,28 @@ const AdminCategoriesComp = memo(() => {
   };
 
   const handleSaveClick = (name) => {
+    const error = validateCategoryName(editValue, categories);
+    if (error) {
+      setValidationError(error);
+      return;
+    }
+
     const updatedCategories = categories.map((category) =>
       category === name ? editValue : category
     );
     dispatch(updateCategories(updatedCategories));
+
     setEditMode(null);
     setEditValue("");
   };
 
   const handleCancelClick = () => {
+    setValidationError(false);
     setEditMode(null);
     setEditValue("");
   };
 
   const handleDeleteClick = (name) => {
-    // Logic to delete a category
     const updatedCategories = categories.filter(
       (category) => category !== name
     );
@@ -74,13 +84,21 @@ const AdminCategoriesComp = memo(() => {
   };
 
   const handleAddClick = () => {
-    // Logic to add a new category
+    const error = validateCategoryName(newCategory, categories);
+    if (error) {
+      setValidationError(error);
+      return;
+    } else {
+      setValidationError(false);
+    }
+
     const updatedCategories = [...categories, newCategory];
     dispatch(updateCategories(updatedCategories));
     setNewCategory("");
   };
 
   const handleConfirmCategories = () => {
+    console.log("Data to be saved: ", categories);
     setConfirmMessage(false);
     setNoticeMessage({
       open: true,
@@ -102,6 +120,8 @@ const AdminCategoriesComp = memo(() => {
         <TextField
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
+          error={!!validationError}
+          helperText={validationError}
         />
       ) : (
         category
@@ -190,6 +210,8 @@ const AdminCategoriesComp = memo(() => {
             label="New Category"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
+            error={!!validationError}
+            helperText={validationError}
             sx={{
               backgroundColor: "#eeeeee",
               borderRadius: 2,

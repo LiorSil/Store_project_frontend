@@ -5,8 +5,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   category: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category", // Reference to the Category model
     required: true,
   },
   description: {
@@ -37,13 +39,12 @@ const Product = mongoose.model("Product", productSchema, "products");
 module.exports = Product;
 
 /**
-  * Product Model:
-  * title: String
-  * category: String
-  * description: String
-  * price: Number
-  * quantity: Number
-  * image: String
-  * bought: Number
+ * Product Model:
+ * title: String
+ * category: String
+ * description: String
+ * price: Number
+ * quantity: Number
+ * image: String
+ * bought: Number
  */
-

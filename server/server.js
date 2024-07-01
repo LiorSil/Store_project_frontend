@@ -16,10 +16,12 @@ const userController = require("./Controllers/UserController");
 const imageController = require("./Controllers/ImageController");
 const productController = require("./Controllers/ProductController");
 const orderController = require("./Controllers/OrderController");
+const categoryController = require("./Controllers/CategoryController");
 app.use("/users", userController);
 app.use("/images", imageController);
 app.use("/products", productController);
 app.use("/orders", orderController);
+app.use("/categories", categoryController);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
