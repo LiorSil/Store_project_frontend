@@ -14,7 +14,7 @@ export const fetchCategoriesData = createAsyncThunk(
         throw new Error("No valid token found");
       }
 
-      const response = await fetch(`${API_BASE_URL}/products/categories`, {
+      const response = await fetch(`${API_BASE_URL}/categories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -27,6 +27,7 @@ export const fetchCategoriesData = createAsyncThunk(
       }
 
       const data = await response.json();
+
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -91,6 +92,7 @@ const categoriesReducer = createSlice({
       })
       .addCase(fetchCategoriesData.fulfilled, (state, action) => {
         state.loading = false;
+        //data is array of objects [{_id: 1, name: "category1"}, {_id: 2, name: "category2"}]
         state.data = action.payload;
       })
       .addCase(fetchCategoriesData.rejected, (state, action) => {

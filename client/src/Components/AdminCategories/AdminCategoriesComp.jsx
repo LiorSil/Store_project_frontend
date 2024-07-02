@@ -49,20 +49,20 @@ const AdminCategoriesComp = memo(() => {
   const [noticeMessage, setNoticeMessage] = useState({ open: false });
   const [validationError, setValidationError] = useState("");
 
-  const handleEditClick = (name) => {
-    setEditMode(name);
-    setEditValue(name);
+  const handleEditClick = (category) => {
+    setEditMode(category._id);
+    setEditValue(category.name);
   };
 
-  const handleSaveClick = (name) => {
+  const handleSaveClick = (category) => {
     const error = validateCategoryName(editValue, categories);
     if (error) {
       setValidationError(error);
       return;
     }
 
-    const updatedCategories = categories.map((category) =>
-      category === name ? editValue : category
+    const updatedCategories = categories.map((cat) =>
+      cat._id === category._id ? { ...cat, name: editValue } : cat
     );
     dispatch(updateCategories(updatedCategories));
 
@@ -71,14 +71,14 @@ const AdminCategoriesComp = memo(() => {
   };
 
   const handleCancelClick = () => {
-    setValidationError(false);
+    setValidationError("");
     setEditMode(null);
     setEditValue("");
   };
 
-  const handleDeleteClick = (name) => {
+  const handleDeleteClick = (category) => {
     const updatedCategories = categories.filter(
-      (category) => category !== name
+      (cat) => cat._id !== category._id
     );
     dispatch(updateCategories(updatedCategories));
   };
@@ -89,10 +89,11 @@ const AdminCategoriesComp = memo(() => {
       setValidationError(error);
       return;
     } else {
-      setValidationError(false);
+      setValidationError("");
     }
-
-    const updatedCategories = [...categories, newCategory];
+    //new is a boolean field that is used to db to identify new categories
+    const newCat = { _id: Date.now().toString(), name: newCategory, new: true };
+    const updatedCategories = [...categories, newCat];
     dispatch(updateCategories(updatedCategories));
     setNewCategory("");
   };
@@ -113,10 +114,10 @@ const AdminCategoriesComp = memo(() => {
     { key: "actions", title: "Actions" },
   ];
 
-  const data = categories.map((category, index) => ({
-    key: index,
+  const data = categories.map((category) => ({
+    key: category._id,
     name:
-      editMode === category ? (
+      editMode === category._id ? (
         <TextField
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
@@ -124,10 +125,10 @@ const AdminCategoriesComp = memo(() => {
           helperText={validationError}
         />
       ) : (
-        category
+        category.name
       ),
     actions:
-      editMode === category ? (
+      editMode === category._id ? (
         <>
           <IconButton onClick={() => handleSaveClick(category)}>
             <SaveIcon />

@@ -10,6 +10,7 @@ import API_BASE_URL from "../../Constants/serverUrl";
 const ProductsListComp = ({ filters }) => {
   const cookies = useMemo(() => new Cookies(), []);
   const { data: products, loading, error, fetchData } = useFetch();
+  console.log("ProductsListComp -> products", products); // Debugging log
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -38,6 +39,25 @@ const ProductsListComp = ({ filters }) => {
     return <span>Error: {error.message}</span>;
   }
 
+  // Handle case where products is still null after fetching
+  if (!products) {
+    return <Typography component="h6">No products found</Typography>;
+  }
+
+  const filteredProducts = products.filter((product) => {
+    const categoryMatch =
+      filters.category._id === "All" ||
+      product.category === filters.category._id;
+
+    const priceMatch = product.price <= filters.price;
+
+    const textMatch =
+      filters.text === "" ||
+      product.title.toLowerCase().includes(filters.text.toLowerCase());
+
+    return categoryMatch && priceMatch && textMatch;
+  });
+
   return (
     <Box
       className={classes["products-container"]}
@@ -48,22 +68,10 @@ const ProductsListComp = ({ filters }) => {
         gap: 2,
       }}
     >
-      {products && products.length > 0 ? (
-        products
-          .filter((product) => {
-            const categoryMatch =
-              ["all"].includes(filters.category.toLowerCase()) ||
-              product.category === filters.category.toLowerCase();
-
-            const priceMatch = product.price <= filters.price;
-
-            const textMatch =
-              filters.text === "" ||
-              product.title.toLowerCase().includes(filters.text.toLowerCase());
-
-            return categoryMatch && priceMatch && textMatch;
-          })
-          .map((product) => <ProductItem key={product._id} product={product} />)
+      {filteredProducts.length > 0 ? (
+        filteredProducts.map((product) => (
+          <ProductItem key={product._id} product={product} />
+        ))
       ) : (
         <Typography component="h6">No products found</Typography>
       )}

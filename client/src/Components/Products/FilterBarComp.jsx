@@ -12,42 +12,56 @@ import {
 } from "@mui/material";
 
 const FilterBarComp = ({ categories, onFilterChange }) => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const All = { _id: "All", name: "All" };
+  const objectedCategories = [All, ...categories];
+
+  const [selectedCategory, setSelectedCategory] = useState(All);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [searchText, setSearchText] = useState("");
 
   const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
+    const selectedCategoryId = event.target.value;
+    const selectedCategoryObject = objectedCategories.find(
+      (category) => category._id === selectedCategoryId
+    );
+
+    setSelectedCategory(selectedCategoryObject);
+
     onFilterChange({
-      category: event.target.value,
+      category: selectedCategoryObject,
       price: maxPrice,
       text: searchText,
     });
   };
 
-  const handleMaxPriceChange = (event, newValue) => {
-    setMaxPrice(newValue);
+  const handleMaxPriceChange = (event, newMaxPrice) => {
+    setMaxPrice(newMaxPrice);
     onFilterChange({
       category: selectedCategory,
-      price: newValue,
+      price: newMaxPrice,
       text: searchText,
     });
   };
 
   const handleSearchTextChange = (event) => {
-    setSearchText(event.target.value);
+    const newText = event.target.value;
+    setSearchText(newText);
     onFilterChange({
       category: selectedCategory,
       price: maxPrice,
-      text: event.target.value,
+      text: newText,
     });
   };
 
   const handleClearFilters = () => {
-    setSelectedCategory("All");
+    setSelectedCategory(All);
     setMaxPrice(1000);
     setSearchText("");
-    onFilterChange({ category: "All", price: 1000, text: "" });
+    onFilterChange({
+      category: All,
+      price: 1000,
+      text: "",
+    });
   };
 
   return (
@@ -68,19 +82,18 @@ const FilterBarComp = ({ categories, onFilterChange }) => {
         margin: 2,
       }}
     >
-      <FormControl sx={{ minWidth: 180, margin: "0 100px" }}>
+      <FormControl sx={{ minWidth: 180 }}>
         <InputLabel id="category-select-label">Category</InputLabel>
         <Select
           labelId="category-select-label"
-          value={selectedCategory}
+          value={selectedCategory._id}
           onChange={handleCategoryChange}
           displayEmpty
           label="Category"
         >
-          <MenuItem value=""></MenuItem>
-          {categories.map((category) => (
-            <MenuItem key={category} value={category}>
-              {category}
+          {objectedCategories.map((category) => (
+            <MenuItem key={category._id} value={category._id}>
+              {category.name}
             </MenuItem>
           ))}
         </Select>
@@ -100,7 +113,7 @@ const FilterBarComp = ({ categories, onFilterChange }) => {
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          sx={{ width: "200%" }}
+          sx={{ width: "100%" }}
           valueLabelFormat={(value) => `$${value}`}
         />
       </Box>
@@ -108,7 +121,7 @@ const FilterBarComp = ({ categories, onFilterChange }) => {
         label="Search"
         value={searchText}
         onChange={handleSearchTextChange}
-        sx={{ minWidth: 200, margin: "0 100px" }}
+        sx={{ minWidth: 200 }}
       />
       <Button variant="outlined" onClick={handleClearFilters}>
         Clear

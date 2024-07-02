@@ -15,7 +15,7 @@ export const validateCategoryName = (name, existingCategories) => {
   }
   if (
     existingCategories
-      .map((cat) => cat.toLowerCase())
+      .map((cat) => cat.name.toLowerCase())
       .includes(trimmedName.toLowerCase())
   ) {
     return "Category name already exists.";

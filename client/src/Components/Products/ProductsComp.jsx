@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Box, IconButton } from "@mui/material";
 import CartComp from "./CartComp";
 import ProductsListComp from "./ProductsListComp";
@@ -7,16 +7,29 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import { NoticeMessageComp } from "../Utils/indexUtil";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
 
 const ProductsComp = () => {
-  const categories = ["All", "Clothing", "Jewelry", "Sports", "Electronics"];
-  const [orderConfirmed, setOrderConfirmed] = useState(""); // Add state for order confirmation [1
+  const dispatch = useDispatch();
+  const {
+    data: categories,
+    loading,
+    error,
+  } = useSelector(useMemo(() => (state) => state.categories, []));
+
+  const [orderConfirmed, setOrderConfirmed] = useState("");
   const [isCartOpen, setCartOpen] = useState(false);
   const [filters, setFilters] = useState({
-    category: "all",
+    category: { _id: "All", name: "All" },
+
     price: 1000,
     text: "",
   });
+
+  useEffect(() => {
+    dispatch(fetchCategoriesData());
+  }, [dispatch]);
 
   const handleOrderConfirmed = (message) => {
     setOrderConfirmed(message);
@@ -28,7 +41,6 @@ const ProductsComp = () => {
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    // Handle filter logic here
   };
 
   return (
