@@ -36,9 +36,9 @@ export const fetchCategoriesData = createAsyncThunk(
 );
 
 // Async Thunk for Updating Category Data
-export const fetchUpdateChanges = createAsyncThunk(
-  "categories/updateData",
-  async (categoryData, thunkAPI) => {
+export const fetchConfirmChanges = createAsyncThunk(
+  "categories/confirmChange",
+  async (categories, thunkAPI) => {
     try {
       const cookies = new Cookies();
       const token = cookies.get("token");
@@ -47,23 +47,21 @@ export const fetchUpdateChanges = createAsyncThunk(
         throw new Error("No valid token found");
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/products/categories/${categoryData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(categoryData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/categories`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(categories),
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to update category data");
+        throw new Error("Failed to update categories data");
       }
 
       const data = await response.json();
+
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -99,21 +97,15 @@ const categoriesReducer = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(fetchUpdateChanges.pending, (state) => {
+      .addCase(fetchConfirmChanges.pending, (state) => {
         state.loading = true;
         state.error = null; // Clear any previous errors
       })
-      .addCase(fetchUpdateChanges.fulfilled, (state, action) => {
+      .addCase(fetchConfirmChanges.fulfilled, (state, action) => {
         state.loading = false;
-        const updatedCategory = action.payload;
-        const index = state.data.findIndex(
-          (cat) => cat.id === updatedCategory.id
-        );
-        if (index !== -1) {
-          state.data[index] = updatedCategory;
-        }
+        state.data = action.payload;
       })
-      .addCase(fetchUpdateChanges.rejected, (state, action) => {
+      .addCase(fetchConfirmChanges.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

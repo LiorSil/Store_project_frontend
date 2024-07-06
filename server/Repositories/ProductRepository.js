@@ -51,6 +51,7 @@ const getProductById = async (productId) => {
 /**
  * Get all categories
  * @returns {Promise<Array>} - The categories
+ * @throws {Error} - If there is an error getting the categories.
  */
 const getCategories = async () => {
   try {
@@ -66,6 +67,7 @@ const getCategories = async () => {
  * @param {String} prevCategory - The previous category
  * @param {String} newCategory - The new category
  * @returns {Promise<Object>} - The updated products
+ * @throws {Error} - If there is an error updating the category.
  */
 
 const updateCategory = async (prevCategory, newCategory) => {
@@ -80,6 +82,26 @@ const updateCategory = async (prevCategory, newCategory) => {
   }
 };
 
+/**
+ * update category name by category
+ * @param {*} categoryId
+ * @param {*} newCategoryName
+ * @returns
+ * @throws {Error} - If there is an error updating the category.
+ */
+
+const updateCategoryNameByCategoryId = async (categoryId, newCategoryName) => {
+  try {
+    return await ProductModel.updateMany(
+      { category: categoryId },
+      { categoryName: newCategoryName }
+    );
+  } catch (error) {
+    console.error("Error updating category:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   getProduct,
   getProducts,
@@ -87,6 +109,7 @@ module.exports = {
   getProductById,
   getCategories,
   updateCategory,
+  updateCategoryNameByCategoryId,
 };
 
 // Path: server/Repositories/ProductRepository.js

@@ -7,10 +7,11 @@ import classes from "./ProductsListComp.module.css";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
-const ProductsListComp = ({ filters }) => {
+const ProductsListComp = ({ filters, categories }) => {
   const cookies = useMemo(() => new Cookies(), []);
   const { data: products, loading, error, fetchData } = useFetch();
-  console.log("ProductsListComp -> products", products); // Debugging log
+
+  console.table(products);
 
   useEffect(() => {
     const fetchProducts = async () => {

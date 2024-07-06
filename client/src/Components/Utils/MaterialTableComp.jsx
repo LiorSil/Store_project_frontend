@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import {
   Table,
   TableBody,
@@ -36,6 +36,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const MaterialTableComp = ({ columns = [], data = [] }) => {
+  const rowIdBase = useId();
+  const cellIdBase = useId();
+
   return (
     <StyledTableContainer component={Paper} sx={{ marginTop: 2 }}>
       <Table
@@ -51,15 +54,17 @@ const MaterialTableComp = ({ columns = [], data = [] }) => {
           </TableRow>
         </StyledTableHead>
         <TableBody>
-          {data.map((item, index) => (
-            <StyledTableRow key={item.id}>
-              {columns.map((column) => (
-                <TableCell key={`${column.key}-${item.id}`}>
-                  {item[column.key]}
-                </TableCell>
-              ))}
-            </StyledTableRow>
-          ))}
+          {data.map((item, rowIndex) => {
+            const rowId = `${rowIdBase}-${rowIndex}`; // Unique row ID
+            return (
+              <StyledTableRow key={rowId}>
+                {columns.map((column, colIndex) => {
+                  const cellId = `${cellIdBase}-${rowIndex}-${colIndex}`; // Unique cell ID
+                  return <TableCell key={cellId}>{item[column.key]}</TableCell>;
+                })}
+              </StyledTableRow>
+            );
+          })}
         </TableBody>
         <StyledTableFooter>
           <TableRow>

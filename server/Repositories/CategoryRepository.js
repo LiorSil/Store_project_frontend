@@ -27,7 +27,40 @@ const createCategory = async (categoryName) => {
   }
 };
 
+/**
+ * Updates a category in the database.
+ * @param {Object} category - The data of the category to be updated.
+ * @returns {Promise<Object>} - The updated category.
+ * @throws {Error} - If there is an error updating the category.
+ */
+
+const updateCategory = async (category) => {
+  try {
+    return await CategoryModel.findByIdAndUpdate(category._id, category);
+  } catch (error) {
+    console.error("Error updating category:", error.message);
+    throw error;
+  }
+};
+
+/**
+ * Deletes a category from the database.
+ * @param {Object} category - The data of the category to be deleted.
+ * @returns {Promise<Object>} - The deleted category.
+ * @throws {Error} - If there is an error deleting the category.
+ */
+
+const deleteCategory = async (category) => {
+  try {
+    return await CategoryModel.findByIdAndDelete(category._id);
+  } catch (error) {
+    console.error("Error deleting category:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   getCategories,
   createCategory,
+  updateCategory,
 };

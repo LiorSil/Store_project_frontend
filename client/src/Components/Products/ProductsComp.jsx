@@ -77,7 +77,7 @@ const ProductsComp = () => {
             onFilterChange={handleFilterChange}
           />
         </Box>
-        <ProductsListComp filters={filters} />
+        <ProductsListComp filters={filters} categories={categories} />
       </Box>
       {orderConfirmed === "success" && (
         <NoticeMessageComp

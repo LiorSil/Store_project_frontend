@@ -41,4 +41,20 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.patch("/", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+    const categories = req.body;
+    const updatedCategory = await categoryService.updateCategories(categories);
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 module.exports = router;

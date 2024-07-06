@@ -16,6 +16,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCategoriesData,
+  fetchConfirmChanges,
   updateCategories,
 } from "../../Redux/Reducers/categoriesReducer";
 import LoadingComp from "../Utils/LoadingComp";
@@ -38,6 +39,8 @@ const AdminCategoriesComp = memo(() => {
     []
   );
 
+  console.table(categories);
+
   useEffect(() => {
     dispatch(fetchCategoriesData());
   }, [dispatch]);
@@ -54,15 +57,17 @@ const AdminCategoriesComp = memo(() => {
     setEditValue(category.name);
   };
 
-  const handleSaveClick = (name) => {
+  const handleSaveClick = (category) => {
     const error = validateCategoryName(editValue, categories);
     if (error) {
       setValidationError(error);
       return;
     }
 
-    const updatedCategories = categories.map((category) =>
-      category === name ? editValue : category
+    const updatedCategories = categories.map((cat) =>
+      cat._id === category._id
+        ? { ...cat, name: editValue, isDirty: true }
+        : cat
     );
     dispatch(updateCategories(updatedCategories));
 
@@ -71,15 +76,16 @@ const AdminCategoriesComp = memo(() => {
   };
 
   const handleCancelClick = () => {
-    setValidationError(false);
+    setValidationError("");
     setEditMode(null);
     setEditValue("");
   };
 
-  const handleDeleteClick = (name) => {
-    const updatedCategories = categories.filter(
-      (category) => category !== name
+  const handleDeleteClick = (category) => {
+    const updatedCategories = categories.map((cat) =>
+      cat._id === category._id ? { ...cat, isDeleted: true } : cat
     );
+
     dispatch(updateCategories(updatedCategories));
   };
 
@@ -89,16 +95,22 @@ const AdminCategoriesComp = memo(() => {
       setValidationError(error);
       return;
     } else {
-      setValidationError(false);
+      setValidationError("");
     }
-
-    const updatedCategories = [...categories, newCategory];
+    //isNew is a boolean field that is used to db to identify new categories
+    const newCat = {
+      _id: Date.now().toString(),
+      name: newCategory,
+      isNew: true,
+    };
+    const updatedCategories = [...categories, newCat];
     dispatch(updateCategories(updatedCategories));
     setNewCategory("");
   };
 
   const handleConfirmCategories = () => {
-    console.log("Data to be saved: ", categories);
+    dispatch(fetchConfirmChanges(categories));
+
     setConfirmMessage(false);
     setNoticeMessage({
       open: true,
@@ -113,10 +125,10 @@ const AdminCategoriesComp = memo(() => {
     { key: "actions", title: "Actions" },
   ];
 
-  const data = categories.map((category, index) => ({
-    key: index,
+  const data = categories.map((category) => ({
+    key: category._id,
     name:
-      editMode === category ? (
+      editMode === category._id ? (
         <TextField
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
@@ -124,10 +136,24 @@ const AdminCategoriesComp = memo(() => {
           helperText={validationError}
         />
       ) : (
-        category
+        <span
+          style={{
+            color: category.isDeleted
+              ? "red"
+              : category.isDirty
+              ? "orange"
+              : category.isNew
+              ? "green"
+              : "black",
+            textDecoration: category.isDeleted ? "line-through" : "none",
+            fontSize: "1.2rem",
+          }}
+        >
+          {category.name}
+        </span>
       ),
     actions:
-      editMode === category ? (
+      editMode === category._id ? (
         <>
           <IconButton onClick={() => handleSaveClick(category)}>
             <SaveIcon />
@@ -191,7 +217,6 @@ const AdminCategoriesComp = memo(() => {
           borderRadius: 4,
           border: "2px solid",
           borderColor: "primary.main",
-          backgroundColor: "#b3e5fc",
           padding: 2,
         }}
       >
@@ -226,7 +251,6 @@ const AdminCategoriesComp = memo(() => {
             startIcon={<AddIcon />}
             onClick={handleAddClick}
             variant="contained"
-            backgroundColor="white"
             color="primary"
           >
             Add Category
