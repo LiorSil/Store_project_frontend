@@ -1,32 +1,20 @@
-import React, { useEffect, Suspense } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import LoadingComp from "../Utils/LoadingComp.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProductsData } from "../../Redux/Reducers/productsReducer.js";
 import { fetchOrdersData } from "../../Redux/Reducers/ordersReducer.js";
 import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import getAllItems from "./getAllItems.js";
 
-const AdminProductItem = React.lazy(() => import("./AdminProductItem.jsx"));
+const AdminProductItem = lazy(() => import("./AdminProductItem.jsx"));
 
-const AdminProductsListComp = ({ filters }) => {
+const AdminProductsListComp = () => {
   const dispatch = useDispatch();
 
-  const {
-    productData: products = [],
-    loading: productsLoading,
-    error: productsError,
-  } = useSelector((state) => state.products);
-  const {
-    ordersData: orders = [],
-    loading: ordersLoading,
-    error: ordersError,
-  } = useSelector((state) => state.orders);
-  const {
-    data: categories = [],
-    loading: categoriesLoading,
-    error: categoriesError,
-  } = useSelector((state) => state.categories);
+  const { productData: products = [] } = useSelector((state) => state.products);
+  const { ordersData: orders = [] } = useSelector((state) => state.orders);
+  const { data: categories = [] } = useSelector((state) => state.categories);
 
   useEffect(() => {
     dispatch(fetchProductsData());
@@ -35,17 +23,6 @@ const AdminProductsListComp = ({ filters }) => {
   }, [dispatch]);
 
   const ordersData = getAllItems(orders);
-  if (productsLoading || ordersLoading || categoriesLoading) {
-    return <LoadingComp />;
-  }
-
-  if (productsError || ordersError || categoriesError) {
-    return (
-      <Typography color="error">
-        Error: {productsError || ordersError || categoriesError}
-      </Typography>
-    );
-  }
 
   return (
     <Box>

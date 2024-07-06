@@ -32,19 +32,20 @@ const AdminProductItem = ({ product, orders, categories }) => {
   console.log("Orders:", orders);
   console.log("Categories:", categories);
 
-  const handleSaveClick = () => {
-    const titleError = validateProductTitle(title, ["title1", "title2"]);
-    const priceError = validateProductPrice(price);
-    const descriptionError = validateProductDescription(description);
-
+  const handleSaveClick = async () => {
+    const titleError = await validateProductTitle(title, ["title1", "title2"]);
+    const priceError = await validateProductPrice(price);
+    const descriptionError = await validateProductDescription(description);
     if (titleError || priceError || descriptionError) {
-      setValidationError(titleError || priceError || descriptionError);
+      setValidationError(
+        `${titleError ? titleError + " " : ""}${
+          priceError ? priceError + " " : ""
+        }${descriptionError ? descriptionError + " " : ""}`
+      );
       return;
     }
-
-    // Assuming there's a saveProduct function to save product details
-    // saveProduct({ title, price, category, imageUrl, description });
-
+    // Assuming there's an async saveProduct function to save product details
+    // await saveProduct({ title, price, category, imageUrl, description });
     setEditMode(false);
     setValidationError("");
   };
