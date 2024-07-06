@@ -1,13 +1,14 @@
 const getAllItems = (orders) => {
-  const itemsArray = [];
+  const ordersData = [];
 
   if (orders && Array.isArray(orders)) {
     orders.forEach((order) => {
-      const { customer, orderDate } = order;
+      const { customer, orderDate, customerName } = order;
       order.items.forEach((item) => {
         const { productId, title, quantity } = item;
-        itemsArray.push({
+        ordersData.push({
           customer,
+          customerName,
           orderDate,
           productId,
           title,
@@ -17,7 +18,7 @@ const getAllItems = (orders) => {
     });
   }
 
-  return itemsArray;
+  return ordersData;
 };
 
 export default getAllItems;

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
+
 // Async Thunk for Fetching Data
 export const fetchProductsData = createAsyncThunk(
   "products/fetchData",
@@ -40,10 +41,15 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     productData: [],
+
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setProducts: (state, action) => {
+      state.productData = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProductsData.pending, (state) => {
@@ -63,3 +69,4 @@ const productsSlice = createSlice({
 
 // Export the reducer
 export default productsSlice.reducer;
+export const { setProducts } = productsSlice.actions;

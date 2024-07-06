@@ -11,28 +11,40 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 
-const StyledTableContainer = styled(TableContainer)({
+const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   maxWidth: "100%",
-});
+  margin: "20px 0",
+  borderRadius: "10px",
+  border: "1px solid",
+  boxShadow: "0px 3px 6px #00000029",
+}));
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
+  backgroundColor: theme.palette.grey[300], // Slightly darker than row colors
+  color: theme.palette.common.black,
 }));
 
 const StyledTableFooter = styled(TableFooter)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
+  backgroundColor: theme.palette.grey[300], // Slightly darker than row colors
+  color: theme.palette.common.black,
 }));
 
 const StyledTableHeadCell = styled(TableCell)(({ theme }) => ({
   fontWeight: "bold",
+  color: theme.palette.common.black,
+  borderBottom: "2px solid",
+  borderColor: theme.palette.grey[400],
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.grey[100],
   },
+}));
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  borderBottom: "1px solid",
+  borderColor: theme.palette.grey[300],
 }));
 
 const MaterialTableComp = ({ columns = [], data = [] }) => {
@@ -40,7 +52,7 @@ const MaterialTableComp = ({ columns = [], data = [] }) => {
   const cellIdBase = useId();
 
   return (
-    <StyledTableContainer component={Paper} sx={{ marginTop: 2 }}>
+    <StyledTableContainer component={Paper}>
       <Table
         sx={{ minWidth: 100, border: "1px solid", borderColor: "grey.500" }}
       >
@@ -60,7 +72,11 @@ const MaterialTableComp = ({ columns = [], data = [] }) => {
               <StyledTableRow key={rowId}>
                 {columns.map((column, colIndex) => {
                   const cellId = `${cellIdBase}-${rowIndex}-${colIndex}`; // Unique cell ID
-                  return <TableCell key={cellId}>{item[column.key]}</TableCell>;
+                  return (
+                    <StyledTableCell key={cellId}>
+                      {item[column.key]}
+                    </StyledTableCell>
+                  );
                 })}
               </StyledTableRow>
             );
