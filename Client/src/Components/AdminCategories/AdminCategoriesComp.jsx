@@ -38,9 +38,6 @@ const AdminCategoriesComp = memo(() => {
     useMemo(() => (state) => state.categories, []),
     []
   );
-
-  console.table(categories);
-
   useEffect(() => {
     dispatch(fetchCategoriesData());
   }, [dispatch]);

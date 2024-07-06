@@ -90,7 +90,6 @@ const categoriesReducer = createSlice({
       })
       .addCase(fetchCategoriesData.fulfilled, (state, action) => {
         state.loading = false;
-        //data is array of objects [{_id: 1, name: "category1"}, {_id: 2, name: "category2"}]
         state.data = action.payload;
       })
       .addCase(fetchCategoriesData.rejected, (state, action) => {

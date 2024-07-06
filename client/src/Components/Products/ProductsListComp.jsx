@@ -7,7 +7,7 @@ import classes from "./ProductsListComp.module.css";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
-const ProductsListComp = ({ filters, categories }) => {
+const ProductsListComp = ({ filters }) => {
   const cookies = useMemo(() => new Cookies(), []);
   const { data: products, loading, error, fetchData } = useFetch();
 

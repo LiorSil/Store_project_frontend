@@ -7,7 +7,6 @@ const Order = require("../Models/OrderModel");
  */
 
 const createOrder = async (orderData) => {
-  
   try {
     const order = new Order(orderData);
     return await order.save();
@@ -32,7 +31,23 @@ const getOrdersByUserId = async (userId) => {
   }
 };
 
+/**
+ * Get all orders
+ * @returns {Promise<Array>} - The orders
+ * @throws {Error} - The error
+ */
+
+const getOrders = async () => {
+  try {
+    return await Order.find();
+  } catch (error) {
+    console.error("Error getting orders:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   createOrder,
   getOrdersByUserId,
+  getOrders,
 };
