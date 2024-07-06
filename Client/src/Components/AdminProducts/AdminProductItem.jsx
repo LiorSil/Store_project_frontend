@@ -10,7 +10,7 @@ import {
   Typography,
   Box,
   Grid,
-  CircularProgress,
+
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
@@ -19,13 +19,7 @@ import validateProductTitle from "../Utils/Validators/adminProductValidators/pro
 import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
 import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
 
-const AdminProductItem = ({
-  product,
-  orders,
-  categories,
-  categoriesLoading,
-  categoriesError,
-}) => {
+const AdminProductItem = ({ product, orders, categories }) => {
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState(product.title);
   const [price, setPrice] = useState(product.price);
@@ -70,118 +64,101 @@ const AdminProductItem = ({
   return (
     <Card sx={{ margin: 2, boxShadow: 3 }}>
       <CardContent>
-        {categoriesLoading ? (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : categoriesError ? (
-          <Typography color="error">
-            Error loading categories: {categoriesError}
-          </Typography>
-        ) : (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+              }}
+            >
               <Box
+                component="img"
+                src={imageUrl}
+                alt={title}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "cover",
+                  borderRadius: 1,
                 }}
-              >
-                <Box
-                  component="img"
-                  src={imageUrl}
-                  alt={title}
-                  sx={{
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "cover",
-                    borderRadius: 1,
-                  }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={8}>
+            {editMode ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <TextField
+                  label="Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  fullWidth
+                  variant="outlined"
+                  error={!!validationError}
+                  helperText={validationError}
+                />
+                <TextField
+                  label="Price"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  fullWidth
+                  variant="outlined"
+                  error={!!validationError}
+                  helperText={validationError}
+                />
+                <Select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  fullWidth
+                  variant="outlined"
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Select Category
+                  </MenuItem>
+                  {categories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <TextField
+                  label="Picture URL"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  fullWidth
+                  variant="outlined"
+                />
+                <TextField
+                  label="Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  fullWidth
+                  multiline
+                  rows={4}
+                  variant="outlined"
                 />
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={8}>
-              {editMode ? (
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <TextField
-                    label="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                    error={!!validationError}
-                    helperText={validationError}
-                  />
-                  <TextField
-                    label="Price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                    error={!!validationError}
-                    helperText={validationError}
-                  />
-                  <Select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                    displayEmpty
-                  >
-                    <MenuItem value="" disabled>
-                      Select Category
-                    </MenuItem>
-                    {categories.map((cat) => (
-                      <MenuItem key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <TextField
-                    label="Picture URL"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                  />
-                  <TextField
-                    label="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    fullWidth
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                  />
-                </Box>
-              ) : (
-                <>
-                  <Typography variant="h5" component="div">
-                    {title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Price: {price}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Category: {category}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Description: {description}
-                  </Typography>
-                </>
-              )}
-            </Grid>
+            ) : (
+              <>
+                <Typography variant="h5" component="div">
+                  {title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Price: {price}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Category: {category}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Description: {description}
+                </Typography>
+              </>
+            )}
           </Grid>
-        )}
+        </Grid>
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-end" }}>
         {editMode ? (
