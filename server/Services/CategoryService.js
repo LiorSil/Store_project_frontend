@@ -76,12 +76,9 @@ const updateCategories = async (categories) => {
 
   await Promise.all(
     updatedCategories.map((cat) =>
-      updateCategory(cat).then(() => {
-        return productRepository.updateCategoryNameByCategoryId(
-          cat._id,
-          cat.name
-        );
-      })
+      updateCategory({ _id: cat._id, name: cat.name }).catch((err) =>
+        console.error(err)
+      )
     )
   );
 

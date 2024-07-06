@@ -11,6 +11,12 @@ const productSchema = new mongoose.Schema({
     ref: "Category", // Reference to the Category model
     required: true,
   },
+
+  categoryName: {
+    type: String,
+    ref: "Category", // Reference to the Category model
+    required: true,
+  },
   description: {
     type: String,
     required: true,
@@ -42,6 +48,7 @@ module.exports = Product;
  * Product Model:
  * title: String
  * category: String
+ * categoryName: String
  * description: String
  * price: Number
  * quantity: Number

@@ -1,4 +1,5 @@
 const CategoryModel = require("../Models/CategoryModel");
+const ProductModel = require("../Models/ProductModel");
 /**
  * Retrieves all categories from the database.
  * @returns {Promise<Array<Object>>} - The array of categories.
@@ -31,12 +32,19 @@ const createCategory = async (categoryName) => {
  * Updates a category in the database.
  * @param {Object} category - The data of the category to be updated.
  * @returns {Promise<Object>} - The updated category.
+ 
  * @throws {Error} - If there is an error updating the category.
  */
 
 const updateCategory = async (category) => {
   try {
-    return await CategoryModel.findByIdAndUpdate(category._id, category);
+    await CategoryModel.findByIdAndUpdate(category._id, category);
+    const products = await ProductModel.find({ category: category._id });
+    products.forEach(async (product) => {
+      product.categoryName = category.name;
+      await ProductModel.findByIdAndUpdate(product._id, product);
+    });
+    return category;
   } catch (error) {
     console.error("Error updating category:", error.message);
     throw error;

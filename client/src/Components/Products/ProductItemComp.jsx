@@ -41,7 +41,7 @@ const ProductItemComp = ({ product }) => {
         Description: {product.description}
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Category: {product.category.name}
+        Category: {product.categoryName}
       </Typography>
       <Typography variant="body2" gutterBottom>
         Price: ${product.price}

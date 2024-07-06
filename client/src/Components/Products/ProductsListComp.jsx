@@ -11,8 +11,6 @@ const ProductsListComp = ({ filters, categories }) => {
   const cookies = useMemo(() => new Cookies(), []);
   const { data: products, loading, error, fetchData } = useFetch();
 
-  console.table(products);
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
