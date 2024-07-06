@@ -2,8 +2,9 @@ import * as yup from "yup";
 
 const productPriceSchema = yup
   .number()
-  .min(0, "Price must be a positive number")
-  .max(10000, "Price must be less than 10,000")
+
+  .min(10, "Price must be at least 10 ILS")
+  .max(10000, "Price must be less than 10,000 ILS")
 
   .required("Price is required");
 

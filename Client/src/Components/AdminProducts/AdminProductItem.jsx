@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, useMemo, useCallback } from "react";
 import {
   TextField,
   Select,
@@ -10,57 +10,97 @@ import {
   Typography,
   Box,
   Grid,
-
+  CircularProgress,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
-import MaterialTableComp from "../Utils/MaterialTableComp";
 import validateProductTitle from "../Utils/Validators/adminProductValidators/productTitleValidator";
 import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
 import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
 
+const MaterialTableComp = React.lazy(() =>
+  import("../Utils/MaterialTableComp")
+);
+
 const AdminProductItem = ({ product, orders, categories }) => {
   const [editMode, setEditMode] = useState(false);
-  const [title, setTitle] = useState(product.title);
-  const [price, setPrice] = useState(product.price);
-  const [category, setCategory] = useState(product.categoryName);
-  const [imageUrl, setImageUrl] = useState(product.imageUrl);
-  const [description, setDescription] = useState(product.description);
-  const [validationError, setValidationError] = useState("");
+  const [formData, setFormData] = useState({
+    title: product.title,
+    price: product.price,
+    category: product.categoryName,
+    imageUrl: product.imageUrl,
+    description: product.description,
+  });
+  const [errors, setErrors] = useState({
+    title: "",
+    price: "",
+    description: "",
+  });
 
-  console.log("Product:", product);
-  console.log("Orders:", orders);
-  console.log("Categories:", categories);
+  const handleInputChange = useCallback((e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: "",
+    })); // Clear the error when user starts typing
+  }, []);
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = useCallback(async () => {
+    const { title, price, description } = formData;
     const titleError = await validateProductTitle(title, ["title1", "title2"]);
     const priceError = await validateProductPrice(price);
     const descriptionError = await validateProductDescription(description);
     if (titleError || priceError || descriptionError) {
-      setValidationError(
-        `${titleError ? titleError + " " : ""}${
-          priceError ? priceError + " " : ""
-        }${descriptionError ? descriptionError + " " : ""}`
-      );
+      setErrors({
+        title: titleError || "",
+        price: priceError || "",
+        description: descriptionError || "",
+      });
       return;
     }
-    // Assuming there's an async saveProduct function to save product details
-    // await saveProduct({ title, price, category, imageUrl, description });
     setEditMode(false);
-    setValidationError("");
-  };
+    setErrors({ title: "", price: "", description: "" });
+  }, [formData]);
 
-  const columns = [
-    { key: "customer", title: "Customer" },
-    { key: "quantity", title: "Quantity" },
-    { key: "date", title: "Date" },
-  ];
+  const renderTextField = useCallback(
+    (label, name, multiline = false, rows = 1) => (
+      <TextField
+        label={label}
+        name={name}
+        value={formData[name]}
+        onChange={handleInputChange}
+        fullWidth
+        variant="outlined"
+        error={!!errors[name]}
+        helperText={errors[name]}
+        multiline={multiline}
+        rows={rows}
+      />
+    ),
+    [formData, errors, handleInputChange]
+  );
 
-  const data = orders.map((order) => ({
-    customer: order.customerName,
-    quantity: order.quantity,
-    date: new Date(order.orderDate).toLocaleDateString(),
-  }));
+  const columns = useMemo(
+    () => [
+      { key: "customer", title: "Customer" },
+      { key: "quantity", title: "Quantity" },
+      { key: "date", title: "Date" },
+    ],
+    []
+  );
+
+  const data = useMemo(
+    () =>
+      orders.map((order) => ({
+        customer: order.customerName,
+        quantity: order.quantity,
+        date: new Date(order.orderDate).toLocaleDateString(),
+      })),
+    [orders]
+  );
 
   return (
     <Card sx={{ margin: 2, boxShadow: 3 }}>
@@ -77,8 +117,8 @@ const AdminProductItem = ({ product, orders, categories }) => {
             >
               <Box
                 component="img"
-                src={imageUrl}
-                alt={title}
+                src={formData.imageUrl}
+                alt={formData.title}
                 sx={{
                   width: "100%",
                   height: "auto",
@@ -91,27 +131,12 @@ const AdminProductItem = ({ product, orders, categories }) => {
           <Grid item xs={12} sm={8}>
             {editMode ? (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <TextField
-                  label="Title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                  error={!!validationError}
-                  helperText={validationError}
-                />
-                <TextField
-                  label="Price"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                  error={!!validationError}
-                  helperText={validationError}
-                />
+                {renderTextField("Title", "title")}
+                {renderTextField("Price", "price")}
                 <Select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
                   fullWidth
                   variant="outlined"
                   displayEmpty
@@ -125,36 +150,22 @@ const AdminProductItem = ({ product, orders, categories }) => {
                     </MenuItem>
                   ))}
                 </Select>
-                <TextField
-                  label="Picture URL"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-                <TextField
-                  label="Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  fullWidth
-                  multiline
-                  rows={4}
-                  variant="outlined"
-                />
+                {renderTextField("Picture URL", "imageUrl")}
+                {renderTextField("Description", "description", true, 4)}
               </Box>
             ) : (
               <>
                 <Typography variant="h5" component="div">
-                  {title}
+                  {formData.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Price: {price}
+                  Price: {formData.price}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Category: {category}
+                  Category: {formData.category}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Description: {description}
+                  Description: {formData.description}
                 </Typography>
               </>
             )}
@@ -162,28 +173,19 @@ const AdminProductItem = ({ product, orders, categories }) => {
         </Grid>
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-end" }}>
-        {editMode ? (
-          <Button
-            onClick={handleSaveClick}
-            variant="contained"
-            color="primary"
-            startIcon={<SaveIcon />}
-          >
-            Save
-          </Button>
-        ) : (
-          <Button
-            onClick={() => setEditMode(true)}
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
-          >
-            Edit
-          </Button>
-        )}
+        <Button
+          onClick={editMode ? handleSaveClick : () => setEditMode(true)}
+          variant="contained"
+          color="primary"
+          startIcon={editMode ? <SaveIcon /> : <EditIcon />}
+        >
+          {editMode ? "Save" : "Edit"}
+        </Button>
       </CardActions>
       <CardContent>
-        <MaterialTableComp columns={columns} data={data} />
+        <Suspense fallback={<CircularProgress />}>
+          <MaterialTableComp columns={columns} data={data} />
+        </Suspense>
       </CardContent>
     </Card>
   );
