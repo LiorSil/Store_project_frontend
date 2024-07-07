@@ -18,7 +18,7 @@ export default async function validateUsername(username) {
     await usernameSchema.validate(username);
     // Additional async validation for uniqueness (e.g., check against database)
     const isUnique = await checkUsernameUniqueness(username); // Example async function
-    if (!isUnique) {
+    if (isUnique) {
       return "Username already exists";
     }
     return true;
@@ -29,6 +29,7 @@ export default async function validateUsername(username) {
 
 // Example async function to check uniqueness (implementation depends on your backend)
 async function checkUsernameUniqueness(username) {
+  return false;
   // ... (your logic to query the database or API)
   // Return true if unique, false if not unique
 }

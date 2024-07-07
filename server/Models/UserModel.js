@@ -35,17 +35,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  purchasedProducts: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        default: null,
-        quantity: { type: Number, required: true },
-        date: { type: Date, default: Date.now, required: true },
-      },
-    },
-  ],
+
   allowOthersToSeePurchasedProducts: {
     type: Boolean,
     default: false,

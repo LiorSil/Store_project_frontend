@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AdminProductsListComp from "./AdminProductListComp";
 import AddNewProductForm from "./AddNewProductForm";
-import { Button, TextField, Container } from "@mui/material";
+import { Button, TextField, Container, Box } from "@mui/material";
 import ConfirmComp from "../Utils/ConfirmComp";
 
 const AdminProductsComp = () => {
@@ -19,6 +19,11 @@ const AdminProductsComp = () => {
 
   return (
     <Container>
+      <Box
+        sx={{ display: "flex", justifyContent: "left", mt: 2, marginLeft: 2 }}
+      >
+        <AddNewProductForm />
+      </Box>
       <AdminProductsListComp filters={filters} />
     </Container>
   );

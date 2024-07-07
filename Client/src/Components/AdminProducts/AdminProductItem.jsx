@@ -36,13 +36,17 @@ const MaterialTableComp = React.lazy(() =>
 const AdminProductItem = ({ product, orders, categories }) => {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
+  const [dialogState, setDialogState] = useState({
+    confirm: false,
+    notice: { open: false, message: "", icon: null, color: "" },
+  });
 
   const {
     handleSubmit,
     register,
     setError,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
       title: product.title,
@@ -53,19 +57,11 @@ const AdminProductItem = ({ product, orders, categories }) => {
     },
   });
 
-  const [loading, setLoading] = useState(false);
-
-  // dialog states
-  const [confirmMessage, setConfirmMessage] = useState(false);
-  const [noticeMessage, setNoticeMessage] = useState({
-    open: false,
-  });
-
   const handleOnSubmit = async (data) => {
-    const { title, price, description } = data;
-    const titleError = await validateProductTitle(title);
-    const priceError = await validateProductPrice(price);
-    const descriptionError = await validateProductDescription(description);
+    const titleError = await validateProductTitle(data.title);
+    const priceError = await validateProductPrice(data.price);
+    const descriptionError = await validateProductDescription(data.description);
+
     if (titleError || priceError || descriptionError) {
       setError("title", { message: titleError });
       setError("price", { message: priceError });
@@ -74,60 +70,26 @@ const AdminProductItem = ({ product, orders, categories }) => {
     }
     setEditMode(false);
     clearErrors();
-    setConfirmMessage(true);
+    setDialogState((prev) => ({ ...prev, confirm: true }));
   };
 
   const handleConfirmUpdate = (data) => {
-    //match name to _id
     const category = categories.find((cat) => cat.name === data.categoryName);
     const updatedProduct = {
       ...product,
-      title: data.title,
-      price: data.price,
-      imageUrl: data.imageUrl,
-      description: data.description,
+      ...data,
       category: category._id,
-      categoryName: data.categoryName,
     };
-    console.log("updatedProduct:", updatedProduct);
     dispatch(updateProductData(updatedProduct));
-    setConfirmMessage(false);
-    setNoticeMessage({
-      open: true,
-      message: "Product updated successfully",
-      icon: CheckCircleIcon,
-      color: "success",
+    setDialogState({
+      confirm: false,
+      notice: {
+        open: true,
+        message: "Product updated successfully",
+        icon: CheckCircleIcon,
+        color: "success",
+      },
     });
-  };
-
-  const confirmDialog = (
-    <ConfirmComp
-      open={confirmMessage}
-      onClose={() => setConfirmMessage(false)}
-      onConfirm={handleSubmit(handleConfirmUpdate)} // Pass the data here
-      title="Update Product"
-      description="Are you sure you want to update this product?"
-    />
-  );
-
-  const noticeDialog = noticeMessage.open && (
-    <NoticeMessageComp
-      open={true}
-      message={noticeMessage.message}
-      IconComp={noticeMessage.icon}
-      color={noticeMessage.color}
-      onClose={() =>
-        setNoticeMessage((prevMessage) => ({
-          ...prevMessage,
-          open: false,
-        }))
-      }
-    />
-  );
-
-  const handleCancelEdit = () => {
-    setEditMode(false);
-    clearErrors();
   };
 
   const columns = useMemo(
@@ -151,8 +113,31 @@ const AdminProductItem = ({ product, orders, categories }) => {
 
   return (
     <>
-      {confirmDialog}
-      {noticeDialog}
+      {dialogState.confirm && (
+        <ConfirmComp
+          open={true}
+          onClose={() =>
+            setDialogState((prev) => ({ ...prev, confirm: false }))
+          }
+          onConfirm={handleSubmit(handleConfirmUpdate)}
+          title="Update Product"
+          description="Are you sure you want to update this product?"
+        />
+      )}
+      {dialogState.notice.open && (
+        <NoticeMessageComp
+          open={true}
+          message={dialogState.notice.message}
+          IconComp={dialogState.notice.icon}
+          color={dialogState.notice.color}
+          onClose={() =>
+            setDialogState((prev) => ({
+              ...prev,
+              notice: { ...prev.notice, open: false },
+            }))
+          }
+        />
+      )}
       <Card sx={{ margin: 2, boxShadow: 3 }}>
         <form onSubmit={handleSubmit(handleOnSubmit)}>
           <CardContent>
@@ -212,6 +197,7 @@ const AdminProductItem = ({ product, orders, categories }) => {
                         required: "Category is required",
                       })}
                       select
+                      defaultValue={product.categoryName}
                       label="Category"
                       fullWidth
                       variant="outlined"
@@ -270,6 +256,7 @@ const AdminProductItem = ({ product, orders, categories }) => {
           <CardActions sx={{ justifyContent: "flex-end", gap: 1 }}>
             {editMode && (
               <Button
+                disabled={!isDirty}
                 type="submit"
                 variant="contained"
                 color="primary"
@@ -279,7 +266,9 @@ const AdminProductItem = ({ product, orders, categories }) => {
               </Button>
             )}
             <Button
-              onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
+              onClick={
+                editMode ? () => setEditMode(false) : () => setEditMode(true)
+              }
               variant="contained"
               color="secondary"
               startIcon={editMode ? <CancelIcon /> : <EditIcon />}
