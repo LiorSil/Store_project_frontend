@@ -2,7 +2,7 @@ import * as Yup from "yup";
 
 const productDescriptionSchema = Yup.string()
   .trim()
-  .min(10, "Description must be at least 10 characters long")
+  .min(4, "Description must be at least 10 characters long")
   .max(500, "Description must be at most 500 characters long")
   .required("Description is required");
 

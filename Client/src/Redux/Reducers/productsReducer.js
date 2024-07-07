@@ -36,6 +36,40 @@ export const fetchProductsData = createAsyncThunk(
   }
 );
 
+// Async Thunk for Updating Data
+export const updateProductData = createAsyncThunk(
+  "products/updateData",
+  async (product, thunkAPI) => {
+    try {
+      const cookies = new Cookies();
+      const token = cookies.get("token");
+
+      if (!token) {
+        throw new Error("No valid token found");
+      }
+
+      const response = await fetch(`${API_BASE_URL}/products/${product._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(product),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update product data");
+      }
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // Slice for Products Data
 const productsSlice = createSlice({
   name: "products",
@@ -61,6 +95,20 @@ const productsSlice = createSlice({
         state.productData = action.payload;
       })
       .addCase(fetchProductsData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateProductData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProductData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productData = state.productData.map((product) =>
+          product._id === action.payload._id ? action.payload : product
+        );
+      })
+      .addCase(updateProductData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

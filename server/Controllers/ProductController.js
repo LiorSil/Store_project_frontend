@@ -88,8 +88,20 @@ router.put("/categories", async (req, res) => {
   }
 });
 
-router.put;
-
+router.put("/:id", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+    const product = req.body;
+    console.log("product:", JSON.stringify(product));
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
 module.exports = router;
 
 // Path: Server/Services/ProductService.js
