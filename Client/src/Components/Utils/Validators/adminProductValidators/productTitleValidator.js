@@ -8,12 +8,10 @@ const productTitleSchema = yup
   .matches(/^[a-zA-Z\s]+$/, "Title must contain only letters and spaces")
   .required("Title is required");
 
-export default function validateProductTitle(title, existingTitles) {
+export default function validateProductTitle(title) {
   try {
     productTitleSchema.validateSync(title);
-    if (existingTitles.includes(title)) {
-      return "Title already exists";
-    } else return null;
+    return null;
   } catch (error) {
     return error.message;
   }

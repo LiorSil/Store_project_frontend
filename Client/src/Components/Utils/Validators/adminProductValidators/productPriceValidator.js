@@ -11,7 +11,7 @@ const productPriceSchema = yup
 export default async function validateProductPrice(price) {
   try {
     await productPriceSchema.validate(price);
-    return "";
+    return null;
   } catch (error) {
     return error.message;
   }

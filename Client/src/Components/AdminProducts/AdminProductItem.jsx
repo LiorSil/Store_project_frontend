@@ -22,7 +22,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import validateProductTitle from "../Utils/Validators/adminProductValidators/productTitleValidator";
 import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
 import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
@@ -39,7 +39,7 @@ const AdminProductItem = ({ product, orders, categories }) => {
 
   const {
     handleSubmit,
-    control,
+    register,
     setError,
     clearErrors,
     formState: { errors },
@@ -63,7 +63,7 @@ const AdminProductItem = ({ product, orders, categories }) => {
 
   const handleOnSubmit = async (data) => {
     const { title, price, description } = data;
-    const titleError = await validateProductTitle(title, ["title1", "title2"]);
+    const titleError = await validateProductTitle(title);
     const priceError = await validateProductPrice(price);
     const descriptionError = await validateProductDescription(description);
     if (titleError || priceError || descriptionError) {
@@ -77,10 +77,57 @@ const AdminProductItem = ({ product, orders, categories }) => {
     setConfirmMessage(true);
   };
 
-  const handleConfirmUpdate = () => {
-    const updatedProduct = { ...product, ...data };
+  const handleConfirmUpdate = (data) => {
+    //match name to _id
+    const category = categories.find((cat) => cat.name === data.categoryName);
+    const updatedProduct = {
+      ...product,
+      title: data.title,
+      price: data.price,
+      imageUrl: data.imageUrl,
+      description: data.description,
+      category: category._id,
+      categoryName: data.categoryName,
+    };
     console.log("updatedProduct:", updatedProduct);
-    //dispatch(updateProductData(updatedProduct));
+    dispatch(updateProductData(updatedProduct));
+    setConfirmMessage(false);
+    setNoticeMessage({
+      open: true,
+      message: "Product updated successfully",
+      icon: CheckCircleIcon,
+      color: "success",
+    });
+  };
+
+  const confirmDialog = (
+    <ConfirmComp
+      open={confirmMessage}
+      onClose={() => setConfirmMessage(false)}
+      onConfirm={handleSubmit(handleConfirmUpdate)} // Pass the data here
+      title="Update Product"
+      description="Are you sure you want to update this product?"
+    />
+  );
+
+  const noticeDialog = noticeMessage.open && (
+    <NoticeMessageComp
+      open={true}
+      message={noticeMessage.message}
+      IconComp={noticeMessage.icon}
+      color={noticeMessage.color}
+      onClose={() =>
+        setNoticeMessage((prevMessage) => ({
+          ...prevMessage,
+          open: false,
+        }))
+      }
+    />
+  );
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    clearErrors();
   };
 
   const columns = useMemo(
@@ -101,35 +148,6 @@ const AdminProductItem = ({ product, orders, categories }) => {
       })),
     [orders]
   );
-
-  const confirmDialog = (
-    <ConfirmComp
-      open={confirmMessage}
-      onClose={() => setConfirmMessage(false)}
-      onConfirm={handleConfirmUpdate}
-      title="Update Product"
-      description="Are you sure you want to update this product?"
-    />
-  );
-  const noticeDialog = noticeMessage.open && (
-    <NoticeMessageComp
-      open={true}
-      message={noticeMessage.message}
-      IconComp={noticeMessage.icon}
-      color={noticeMessage.color}
-      onClose={() =>
-        setNoticeMessage((prevMessage) => ({
-          ...prevMessage,
-          open: false,
-        }))
-      }
-    />
-  );
-
-  const handleCancelEdit = () => {
-    setEditMode(false);
-    clearErrors();
-  };
 
   return (
     <>
@@ -166,82 +184,68 @@ const AdminProductItem = ({ product, orders, categories }) => {
                   <Box
                     sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                   >
-                    <Controller
-                      name="title"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Title"
-                          fullWidth
-                          variant="outlined"
-                          error={!!errors.title}
-                          helperText={errors.title?.message}
-                        />
-                      )}
+                    <TextField
+                      {...register("title", {
+                        required: "Title is required",
+                        validate: validateProductTitle,
+                      })}
+                      label="Title"
+                      fullWidth
+                      variant="outlined"
+                      error={!!errors.title}
+                      helperText={errors.title?.message}
                     />
-                    <Controller
-                      name="price"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Price"
-                          fullWidth
-                          variant="outlined"
-                          error={!!errors.price}
-                          helperText={errors.price?.message}
-                        />
-                      )}
+                    <TextField
+                      {...register("price", {
+                        required: "Price is required",
+                        validate: validateProductPrice,
+                      })}
+                      type="number"
+                      label="Price"
+                      fullWidth
+                      variant="outlined"
+                      error={!!errors.price}
+                      helperText={errors.price?.message}
                     />
-                    <Controller
-                      name="categoryName"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          fullWidth
-                          variant="outlined"
-                          displayEmpty
-                        >
-                          <MenuItem value="" disabled>
-                            Select Category
-                          </MenuItem>
-                          {categories.map((cat) => (
-                            <MenuItem key={cat._id} value={cat.name}>
-                              {cat.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      )}
+                    <TextField
+                      {...register("categoryName", {
+                        required: "Category is required",
+                      })}
+                      select
+                      label="Category"
+                      fullWidth
+                      variant="outlined"
+                      error={!!errors.categoryName}
+                      helperText={errors.categoryName?.message}
+                    >
+                      <MenuItem value="" disabled>
+                        Select Category
+                      </MenuItem>
+                      {categories.map((cat) => (
+                        <MenuItem key={cat._id} value={cat.name} _id={cat._id}>
+                          {cat.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <TextField
+                      {...register("imageUrl")}
+                      label="Picture URL"
+                      fullWidth
+                      variant="outlined"
+                      disabled
                     />
-                    <Controller
-                      name="imageUrl"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Picture URL"
-                          fullWidth
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="description"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Description"
-                          fullWidth
-                          variant="outlined"
-                          error={!!errors.description}
-                          helperText={errors.description?.message}
-                          multiline
-                          rows={4}
-                        />
-                      )}
+                    <TextField
+                      {...register("description", {
+                        required: "Description is required",
+                        validate: validateProductDescription,
+                      })}
+                      label="Description"
+                      fullWidth
+                      variant="outlined"
+                      error={!!errors.description}
+                      helperText={errors.description?.message}
+                      multiline
+                      rows={4}
                     />
                   </Box>
                 ) : (

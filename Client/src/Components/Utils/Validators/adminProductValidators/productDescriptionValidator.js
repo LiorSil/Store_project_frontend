@@ -9,7 +9,7 @@ const productDescriptionSchema = Yup.string()
 export default async function validateProductDescription(description) {
   try {
     await productDescriptionSchema.validate(description);
-    return "";
+    return null;
   } catch (error) {
     return error.message;
   }

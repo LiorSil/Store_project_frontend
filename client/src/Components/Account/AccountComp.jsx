@@ -127,7 +127,6 @@ const AccountComp = () => {
 
   const handleOnSubmit = async (updatedAccountDetails) => {
     dispatch(updateAccount(updatedAccountDetails));
-
     setConfirmMessage(true);
   };
 

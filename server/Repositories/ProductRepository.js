@@ -102,6 +102,23 @@ const updateCategoryNameByCategoryId = async (categoryId, newCategoryName) => {
   }
 };
 
+/**
+ * Update product
+ * @param {String} productId - The id of the product
+ * @param {Object} productData - The data of the product
+ * @returns {Promise<Object>} - The updated product
+ * @throws {Error} - If there is an error updating the product.
+ */
+
+const updateProduct = async (productId, productData) => {
+  try {
+    return await ProductModel.findByIdAndUpdate(productId, productData);
+  } catch (error) {
+    console.error("Error updating product:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   getProduct,
   getProducts,
@@ -110,6 +127,7 @@ module.exports = {
   getCategories,
   updateCategory,
   updateCategoryNameByCategoryId,
+  updateProduct,
 };
 
 // Path: server/Repositories/ProductRepository.js

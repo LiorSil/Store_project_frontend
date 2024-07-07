@@ -40,6 +40,7 @@ export const fetchProductsData = createAsyncThunk(
 export const updateProductData = createAsyncThunk(
   "products/updateData",
   async (product, thunkAPI) => {
+    console.log("product", product);
     try {
       const cookies = new Cookies();
       const token = cookies.get("token");

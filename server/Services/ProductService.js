@@ -45,7 +45,7 @@ const createProducts = async (productsData) => {
 };
 
 /**
- * Get pdoct by id
+ * Get product by id
  * @param {String} productId - The id of the product
  * @returns {Promise<Object>} - The product
  */
@@ -85,6 +85,28 @@ const updateCategory = async (oldCategory, newCategory) => {
   }
 };
 
+const updateProduct = async (productId, productData) => {
+  try {
+    const { title, category, categoryName, description, price } = productData;
+
+    // Check if required fields are missing
+    if (!category || !title || !price || !description) {
+      throw new Error("Missing required fields.");
+    }
+    //update only the fields that are present in the request
+    const updatedProduct = ProductRepository.getProductById(productId);
+    updatedProduct.title = title || updatedProduct.title;
+    updatedProduct.category = category || updatedProduct.category;
+    updatedProduct.categoryName = categoryName || updatedProduct.categoryName;
+    updatedProduct.description = description || updatedProduct.description;
+    updatedProduct.price = price || updatedProduct.price;
+
+    ProductRepository.updateProduct(productId, updatedProduct);
+  } catch (error) {
+    throw new Error("Failed to update product.");
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
@@ -92,6 +114,7 @@ module.exports = {
   getProductTitleById,
   getCategories,
   updateCategory,
+  updateProduct,
 };
 
 // Path: server/Services/ProductService.js

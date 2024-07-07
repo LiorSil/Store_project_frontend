@@ -97,7 +97,13 @@ router.put("/:id", async (req, res) => {
       return;
     }
     const product = req.body;
-    console.log("product:", JSON.stringify(product));
+    const productId = req.params.id;
+    console.log("product", product);
+    const updatedProduct = await ProductService.updateProduct(
+      productId,
+      product
+    );
+    res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(400).send(error.message);
   }
