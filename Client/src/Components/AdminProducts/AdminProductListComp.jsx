@@ -35,7 +35,6 @@ const AdminProductsListComp = () => {
                 orders={ordersData.filter(
                   (order) => order.productId === product._id
                 )}
-                categories={categories}
               />
             </Suspense>
           </Grid>

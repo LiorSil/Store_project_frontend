@@ -26,20 +26,22 @@ import { useForm } from "react-hook-form";
 import validateProductTitle from "../Utils/Validators/adminProductValidators/productTitleValidator";
 import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
 import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateProductData } from "../../Redux/Reducers/productsReducer";
 
 const MaterialTableComp = React.lazy(() =>
   import("../Utils/MaterialTableComp")
 );
 
-const AdminProductItem = ({ product, orders, categories }) => {
+const AdminProductItem = ({ product, orders }) => {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [dialogState, setDialogState] = useState({
     confirm: false,
     notice: { open: false, message: "", icon: null, color: "" },
   });
+
+  const { data: categories = [] } = useSelector((state) => state.categories);
 
   const {
     handleSubmit,
@@ -213,6 +215,7 @@ const AdminProductItem = ({ product, orders, categories }) => {
                         </MenuItem>
                       ))}
                     </TextField>
+
                     <TextField
                       {...register("imageUrl")}
                       label="Picture URL"

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useForm, useFormState } from "react-hook-form";
 import {
   TextField,
   Select,
@@ -7,30 +8,32 @@ import {
   Modal,
   Box,
   Typography,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
+import {
+  NoticeMessageComp,
+  ConfirmComp,
+  LoadingComp,
+} from "../Utils/indexUtil";
 
-const AddNewProductForm = ({ onConfirm }) => {
-  const categories = [
-    { id: "category1", name: "Category 1" },
-    { id: "category2", name: "Category 2" },
-    { id: "category3", name: "Category 3" },
-    { id: "category4", name: "Category 4" },
-    { id: "category5", name: "Category 5" },
-  ];
-
+const AddNewProductForm = ({ onConfirm, categories }) => {
+  const { register, handleSubmit, control, reset } = useForm();
+  const { isDirty, isValid } = useFormState({ control });
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [picUrl, setPicUrl] = useState("");
-  const [description, setDescription] = useState("");
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    reset();
+  };
 
-  const handleSubmit = () => {
-    // Implement add product logic
-    onConfirm({ title, price, category, picUrl, description });
+  const onSubmit = (data) => {
+    onConfirm({
+      ...data,
+      price: parseFloat(data.price),
+      quantity: parseInt(data.quantity, 10),
+    });
     handleClose();
   };
 
@@ -61,56 +64,76 @@ const AddNewProductForm = ({ onConfirm }) => {
           <Typography id="add-new-product-form" variant="h6" component="h2">
             Add New Product
           </Typography>
-          <TextField
-            label="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <Select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            fullWidth
-            margin="normal"
-          >
-            {categories.map((cat) => (
-              <MenuItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField
-            label="Picture URL"
-            value={picUrl}
-            onChange={(e) => setPicUrl(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-          />
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <Button onClick={handleSubmit} variant="contained" color="primary">
-              Add Product
-            </Button>
-            <Button onClick={handleClose} variant="contained" color="secondary">
-              Cancel
-            </Button>
-          </Box>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <TextField
+              label="Title"
+              {...register("title", { required: true })}
+              fullWidth
+              margin="normal"
+            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Category</InputLabel>
+              <Select
+                {...register("category", { required: true })}
+                label="Category"
+                defaultValue=""
+              >
+                {categories.map((cat) => (
+                  <MenuItem key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              label="Description"
+              {...register("description", { required: true })}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={4}
+            />
+            <TextField
+              label="Price"
+              type="number"
+              {...register("price", { required: true })}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Quantity"
+              type="number"
+              {...register("quantity", { required: true })}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Image Reference"
+              placeholder="file_name.png"
+              {...register("imageReference", { required: true })}
+              fullWidth
+              margin="normal"
+            />
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={!isDirty || !isValid}
+              >
+                Add Product
+              </Button>
+              <Button
+                onClick={handleClose}
+                variant="contained"
+                color="secondary"
+              >
+                Cancel
+              </Button>
+            </Box>
+          </form>
         </Box>
       </Modal>
     </div>
