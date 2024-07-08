@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm, useFormState } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   TextField,
   Select,
@@ -11,40 +11,81 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import {
-  NoticeMessageComp,
-  ConfirmComp,
-  LoadingComp,
-} from "../Utils/indexUtil";
+import { LoadingComp } from "../Utils/indexUtil";
+// import validators
+import validateProductTitle from "../Utils/Validators/adminProductValidators/productTitleValidator";
+import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
+import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
+import validateProductImageReference from "../Utils/Validators/adminProductValidators/productImageReferenceValidator";
+import validateProductQuantity from "../Utils/Validators/adminProductValidators/productQuantityValidator";
 
 const AddNewProductForm = ({ onConfirm, categories }) => {
-  const { register, handleSubmit, control, reset } = useForm();
-  const { isDirty, isValid } = useFormState({ control });
-  const [open, setOpen] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm({
+    defaultValues: {
+      title: "",
+      category: "",
+      description: "",
+      price: "",
+      quantity: "",
+      imageReference: "",
+    },
+  });
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
+  const [openNewProductForm, setOpenNewProductForm] = useState(false);
+  const openNewProductFormHandler = () => setOpenNewProductForm(true);
+  const handleCloseForm = () => {
+    setOpenNewProductForm(false);
     reset();
   };
 
-  const onSubmit = (data) => {
-    onConfirm({
-      ...data,
-      price: parseFloat(data.price),
-      quantity: parseInt(data.quantity, 10),
-    });
-    handleClose();
+  const onSubmitHandler = async (data) => {
+    const titleError = await validateProductTitle(data.title);
+    const priceError = await validateProductPrice(data.price);
+    const descriptionError = await validateProductDescription(data.description);
+    const imageReferenceError = await validateProductImageReference(
+      data.imageReference
+    );
+    const quantityError = await validateProductQuantity(data.quantity);
+    if (
+      titleError ||
+      priceError ||
+      descriptionError ||
+      imageReferenceError ||
+      quantityError
+    ) {
+      setError("title", { message: titleError });
+      setError("price", { message: priceError });
+      setError("description", { message: descriptionError });
+      setError("imageReference", { message: imageReferenceError });
+      setError("quantity", { message: quantityError });
+      return;
+    }
+    clearErrors();
+
+    /**
+     * TODO: add new product to the database
+     */
   };
 
   return (
-    <div>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
+    <>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={openNewProductFormHandler}
+      >
         Add New Product
       </Button>
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={openNewProductForm}
+        onClose={handleCloseForm}
         aria-labelledby="add-new-product-form"
         aria-describedby="form-to-add-new-product"
       >
@@ -64,12 +105,17 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
           <Typography id="add-new-product-form" variant="h6" component="h2">
             Add New Product
           </Typography>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmitHandler)}>
             <TextField
+              {...register("title", {
+                required: true,
+                validate: validateProductTitle,
+              })}
               label="Title"
-              {...register("title", { required: true })}
               fullWidth
               margin="normal"
+              error={!!errors.title}
+              helperText={errors.title?.message}
             />
             <FormControl fullWidth margin="normal">
               <InputLabel>Category</InputLabel>
@@ -77,6 +123,8 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
                 {...register("category", { required: true })}
                 label="Category"
                 defaultValue=""
+                error={!!errors.category}
+                helperText={errors.category?.message}
               >
                 {categories.map((cat) => (
                   <MenuItem key={cat._id} value={cat._id}>
@@ -87,32 +135,52 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
             </FormControl>
             <TextField
               label="Description"
-              {...register("description", { required: true })}
+              {...register("description", {
+                required: true,
+                validate: validateProductDescription,
+              })}
               fullWidth
               margin="normal"
               multiline
               rows={4}
+              error={!!errors.description}
+              helperText={errors.description?.message}
             />
             <TextField
               label="Price"
               type="number"
-              {...register("price", { required: true })}
+              {...register("price", {
+                required: true,
+                validate: validateProductPrice,
+              })}
               fullWidth
               margin="normal"
+              error={!!errors.price}
+              helperText={errors.price?.message}
             />
             <TextField
               label="Quantity"
               type="number"
-              {...register("quantity", { required: true })}
+              {...register("quantity", {
+                required: true,
+                validate: validateProductQuantity,
+              })}
               fullWidth
               margin="normal"
+              error={!!errors.quantity}
+              helperText={errors.quantity?.message}
             />
             <TextField
               label="Image Reference"
               placeholder="file_name.png"
-              {...register("imageReference", { required: true })}
+              {...register("imageReference", {
+                required: true,
+                validate: validateProductImageReference,
+              })}
               fullWidth
               margin="normal"
+              error={!!errors.imageReference}
+              helperText={errors.imageReference?.message}
             />
             <Box
               sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
@@ -121,12 +189,12 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={!isDirty || !isValid}
+                disabled={!isDirty}
               >
                 Add Product
               </Button>
               <Button
-                onClick={handleClose}
+                onClick={handleCloseForm}
                 variant="contained"
                 color="secondary"
               >
@@ -136,7 +204,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
           </form>
         </Box>
       </Modal>
-    </div>
+    </>
   );
 };
 

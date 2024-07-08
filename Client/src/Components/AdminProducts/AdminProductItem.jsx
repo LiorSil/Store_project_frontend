@@ -41,7 +41,7 @@ const AdminProductItem = ({ product, orders }) => {
     notice: { open: false, message: "", icon: null, color: "" },
   });
 
-  const { data: categories = [] } = useSelector((state) => state.categories);
+  const { data: categories } = useSelector((state) => state.categories);
 
   const {
     handleSubmit,
@@ -59,7 +59,7 @@ const AdminProductItem = ({ product, orders }) => {
     },
   });
 
-  const handleOnSubmit = async (data) => {
+  const onSubmitHandler = async (data) => {
     const titleError = await validateProductTitle(data.title);
     const priceError = await validateProductPrice(data.price);
     const descriptionError = await validateProductDescription(data.description);
@@ -75,7 +75,7 @@ const AdminProductItem = ({ product, orders }) => {
     setDialogState((prev) => ({ ...prev, confirm: true }));
   };
 
-  const handleConfirmUpdate = (data) => {
+  const onConfirmUpdateHandler = (data) => {
     const category = categories.find((cat) => cat.name === data.categoryName);
     const updatedProduct = {
       ...product,
@@ -121,7 +121,7 @@ const AdminProductItem = ({ product, orders }) => {
           onClose={() =>
             setDialogState((prev) => ({ ...prev, confirm: false }))
           }
-          onConfirm={handleSubmit(handleConfirmUpdate)}
+          onConfirm={handleSubmit(onConfirmUpdateHandler)}
           title="Update Product"
           description="Are you sure you want to update this product?"
         />
@@ -141,7 +141,7 @@ const AdminProductItem = ({ product, orders }) => {
         />
       )}
       <Card sx={{ margin: 2, boxShadow: 3 }}>
-        <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
