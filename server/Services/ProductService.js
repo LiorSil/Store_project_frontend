@@ -1,4 +1,5 @@
 const ProductRepository = require("../Repositories/ProductRepository");
+const CategoryRepository = require("../Repositories/CategoryRepository");
 
 const getProduct = async (productId) => {
   return await ProductRepository.getProduct(productId);
@@ -19,6 +20,18 @@ const getProducts = async () => {
  */
 
 const createProduct = async (productData) => {
+  //get category id from category name
+  const categories = await CategoryRepository.getCategories();
+  const category = categories.find(
+    (cat) => cat.name === productData.categoryName
+  );
+
+  if (!category) {
+    throw new Error("Category not found.");
+  }
+  productData.category = category._id;
+  productData.categoryName = category.name;
+
   try {
     return await ProductRepository.createProduct(productData);
   } catch (error) {

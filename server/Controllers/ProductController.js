@@ -4,9 +4,9 @@ const ProductService = require("../Services/ProductService");
 const ImageService = require("../Services/ImageService");
 const validateToken = require("../Services/Util");
 
-router.post("/createProducts", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const products = await ProductService.createProducts(req.body);
+    const products = await ProductService.createProduct(req.body);
     res.status(201).json(products);
   } catch (error) {
     res.status(400).send(error.message);

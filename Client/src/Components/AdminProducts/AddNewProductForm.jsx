@@ -18,6 +18,9 @@ import validateProductPrice from "../Utils/Validators/adminProductValidators/pro
 import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
 import validateProductImageReference from "../Utils/Validators/adminProductValidators/productImageReferenceValidator";
 import validateProductQuantity from "../Utils/Validators/adminProductValidators/productQuantityValidator";
+// import redux
+import { useDispatch } from "react-redux";
+import { addProductData } from "../../Redux/Reducers/addProductReducer";
 
 const AddNewProductForm = ({ onConfirm, categories }) => {
   const {
@@ -30,14 +33,14 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
   } = useForm({
     defaultValues: {
       title: "",
-      category: "",
+      categoryName: "",
       description: "",
       price: "",
       quantity: "",
       imageReference: "",
     },
   });
-
+  const dispatch = useDispatch();
   const [openNewProductForm, setOpenNewProductForm] = useState(false);
   const openNewProductFormHandler = () => setOpenNewProductForm(true);
   const handleCloseForm = () => {
@@ -66,12 +69,15 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
       setError("imageReference", { message: imageReferenceError });
       setError("quantity", { message: quantityError });
       return;
+    } else {
+      // dispatch addProductData
+      dispatch(addProductData(data));
+      setOpenNewProductForm(false);
+      reset();
+      clearErrors();
     }
-    clearErrors();
 
-    /**
-     * TODO: add new product to the database
-     */
+   
   };
 
   return (
@@ -120,15 +126,14 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
             <FormControl fullWidth margin="normal">
               <InputLabel>Category</InputLabel>
               <Select
-                {...register("category", { required: true })}
+                {...register("categoryName", { required: true })}
                 label="Category"
                 defaultValue=""
                 error={!!errors.category}
-                helperText={errors.category?.message}
               >
                 {categories.map((cat) => (
-                  <MenuItem key={cat._id} value={cat._id}>
-                    {cat.name}
+                  <MenuItem key={cat._id} value={cat.name} id={cat._id}>
+                                        {cat.name}
                   </MenuItem>
                 ))}
               </Select>
