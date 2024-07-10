@@ -1,14 +1,9 @@
-import React, { useState, Suspense, useMemo, useCallback } from "react";
-import {
-  NoticeMessageComp,
-  ConfirmComp,
-  LoadingComp,
-} from "../Utils/indexUtil";
+import React, { useState, useMemo, useCallback, Suspense } from "react";
+import { NoticeMessageComp, ConfirmComp } from "../Utils/indexUtil";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import {
   TextField,
-  Select,
   MenuItem,
   Button,
   Card,
@@ -40,8 +35,9 @@ const AdminProductItem = ({ product, orders }) => {
     confirm: false,
     notice: { open: false, message: "", icon: null, color: "" },
   });
+  const [localProduct, setLocalProduct] = useState(product);
 
-  const { data: categories } = useSelector((state) => state.categories);
+  const categories = useSelector((state) => state.categories.data);
 
   const {
     handleSubmit,
@@ -51,11 +47,11 @@ const AdminProductItem = ({ product, orders }) => {
     formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
-      title: product.title,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      description: product.description,
-      categoryName: product.categoryName,
+      title: localProduct.title,
+      price: localProduct.price,
+      imageUrl: localProduct.imageUrl,
+      description: localProduct.description,
+      categoryName: localProduct.categoryName,
     },
   });
 
@@ -75,24 +71,63 @@ const AdminProductItem = ({ product, orders }) => {
     setDialogState((prev) => ({ ...prev, confirm: true }));
   };
 
-  const onConfirmUpdateHandler = (data) => {
-    const category = categories.find((cat) => cat.name === data.categoryName);
-    const updatedProduct = {
-      ...product,
-      ...data,
-      category: category._id,
-    };
-    dispatch(updateProductData(updatedProduct));
-    setDialogState({
-      confirm: false,
-      notice: {
-        open: true,
-        message: "Product updated successfully",
-        icon: CheckCircleIcon,
-        color: "success",
-      },
-    });
-  };
+  const onConfirmUpdateHandler = useCallback(
+    (data) => {
+      const category = categories.find((cat) => cat.name === data.categoryName);
+      const updatedProduct = {
+        ...localProduct,
+        ...data,
+        category: category._id,
+      };
+      dispatch(updateProductData(updatedProduct))
+        .then((resolve) => {
+          if (resolve.type === "products/updateData/fulfilled") {
+            setLocalProduct(updatedProduct);
+            setDialogState({
+              confirm: false,
+              notice: {
+                open: true,
+                message: "Product updated successfully",
+                icon: CheckCircleIcon,
+                color: "success",
+              },
+            });
+          } else if (resolve.type === "products/updateData/rejected") {
+            setDialogState({
+              confirm: false,
+              notice: {
+                open: true,
+                message: resolve.error.message,
+                icon: ErrorIcon,
+                color: "error",
+              },
+            });
+          } else {
+            setDialogState({
+              confirm: false,
+              notice: {
+                open: true,
+                message: "Something went wrong",
+                icon: ErrorIcon,
+                color: "error",
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          setDialogState({
+            confirm: false,
+            notice: {
+              open: true,
+              message: error.message,
+              icon: ErrorIcon,
+              color: "error",
+            },
+          });
+        });
+    },
+    [categories, localProduct, dispatch]
+  );
 
   const columns = useMemo(
     () => [
@@ -155,8 +190,8 @@ const AdminProductItem = ({ product, orders }) => {
                 >
                   <Box
                     component="img"
-                    src={product.imageUrl}
-                    alt={product.title}
+                    src={localProduct.imageUrl}
+                    alt={localProduct.title}
                     sx={{
                       width: "100%",
                       height: "auto",
@@ -199,7 +234,7 @@ const AdminProductItem = ({ product, orders }) => {
                         required: "Category is required",
                       })}
                       select
-                      defaultValue={product.categoryName}
+                      defaultValue={localProduct.categoryName}
                       label="Category"
                       fullWidth
                       variant="outlined"
@@ -240,16 +275,16 @@ const AdminProductItem = ({ product, orders }) => {
                 ) : (
                   <>
                     <Typography variant="h5" component="div">
-                      {product.title}
+                      {localProduct.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Price: {product.price}
+                      Price: {localProduct.price}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Category: {product.categoryName}
+                      Category: {localProduct.categoryName}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Description: {product.description}
+                      Description: {localProduct.description}
                     </Typography>
                   </>
                 )}
@@ -290,4 +325,4 @@ const AdminProductItem = ({ product, orders }) => {
   );
 };
 
-export default AdminProductItem;
+export default React.memo(AdminProductItem);

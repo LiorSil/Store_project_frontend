@@ -57,14 +57,19 @@ export const updateProductData = createAsyncThunk(
         },
         body: JSON.stringify(product),
       });
+       
 
       if (!response.ok) {
         throw new Error("Failed to update product data");
+      } else {
+        return product;
       }
+      
+    
 
-      const data = await response.json();
 
-      return data;
+
+      
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
