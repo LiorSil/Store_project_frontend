@@ -34,7 +34,7 @@ const adminComponents = {
 };
 
 const HomePage = () => {
-  const { isAdmin } = useSelector((state) => state.user);
+  const { isAdmin } = useSelector((state) => state.users);
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedPage, setSelectedPage] = useState(null);

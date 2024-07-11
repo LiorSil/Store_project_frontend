@@ -12,7 +12,7 @@ import addProductReducer from "./Reducers/addProductReducer";
 const rootReducer = combineReducers({
   cart: cartReducer,
   account: accountReducer,
-  user: userReducer,
+  users: userReducer,
   categories: categoriesReducer,
   products: productsReducer,
   orders: ordersReducer,

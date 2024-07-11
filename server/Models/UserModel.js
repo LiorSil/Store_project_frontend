@@ -48,6 +48,24 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: new Date().toLocaleString("he-Il", { timeZone: "Asia/Jerusalem" }),
   },
+  productsBought: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+      orderDate: {
+        type: Date,
+        default: new Date().toLocaleString("he-Il", {
+          timeZone: "Asia/Jerusalem",
+        }),
+      },
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema, "users");
