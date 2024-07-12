@@ -34,11 +34,7 @@ const orderSchema = new Schema({
     ref: "User",
     required: true,
   },
-  customerName: {
-    type: String,
-    //required: is false because the data not sync with the other data
-    required: false,
-  },
+
   customerRegisterDate: {
     type: Date,
     required: true,

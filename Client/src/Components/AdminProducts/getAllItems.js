@@ -3,12 +3,11 @@ const getAllItems = (orders) => {
 
   if (orders && Array.isArray(orders)) {
     orders.forEach((order) => {
-      const { customer, orderDate, customerName } = order;
+      const { customer, orderDate } = order;
       order.items.forEach((item) => {
         const { productId, title, quantity } = item;
         ordersData.push({
           customer,
-          customerName,
           orderDate,
           productId,
           title,

@@ -35,8 +35,6 @@ const createOrder = async (orderData) => {
     orderData.items = [];
   }
 
-  //add userName to the order
-  orderData.customerName = user.username;
   return await OrderRepository.createOrder(orderData);
 };
 

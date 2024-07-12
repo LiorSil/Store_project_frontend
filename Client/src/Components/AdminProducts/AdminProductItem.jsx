@@ -28,16 +28,24 @@ const MaterialTableComp = React.lazy(() =>
   import("../Utils/MaterialTableComp")
 );
 
-const AdminProductItem = ({ product, orders }) => {
+/**
+ * AdminProductItem component for displaying and editing a product's details.
+ * @param {Object} props - The component props.
+ * @param {Object} props.product - The product details.
+ * @param {Array} props.orders - The list of orders for the product.
+ * @param {Array} props.customers - The list of customers.
+ * @returns {JSX.Element} - The rendered component.
+ */
+const AdminProductItem = ({ product, orders, customers }) => {
   const dispatch = useDispatch();
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false); // State to toggle edit mode
   const [dialogState, setDialogState] = useState({
     confirm: false,
     notice: { open: false, message: "", icon: null, color: "" },
   });
-  const [localProduct, setLocalProduct] = useState(product);
+  const [localProduct, setLocalProduct] = useState(product); // Local state for product details
 
-  const categories = useSelector((state) => state.categories.data);
+  const categories = useSelector((state) => state.categories.data); // Fetch categories from Redux store
 
   const {
     handleSubmit,
@@ -55,6 +63,10 @@ const AdminProductItem = ({ product, orders }) => {
     },
   });
 
+  /**
+   * Handles form submission for updating product details.
+   * @param {Object} data - The form data.
+   */
   const onSubmitHandler = async (data) => {
     const titleError = await validateProductTitle(data.title);
     const priceError = await validateProductPrice(data.price);
@@ -71,6 +83,10 @@ const AdminProductItem = ({ product, orders }) => {
     setDialogState((prev) => ({ ...prev, confirm: true }));
   };
 
+  /**
+   * Handles confirmation of product update.
+   * @param {Object} data - The updated product data.
+   */
   const onConfirmUpdateHandler = useCallback(
     (data) => {
       const category = categories.find((cat) => cat.name === data.categoryName);
@@ -92,22 +108,12 @@ const AdminProductItem = ({ product, orders }) => {
                 color: "success",
               },
             });
-          } else if (resolve.type === "products/updateData/rejected") {
-            setDialogState({
-              confirm: false,
-              notice: {
-                open: true,
-                message: resolve.error.message,
-                icon: ErrorIcon,
-                color: "error",
-              },
-            });
           } else {
             setDialogState({
               confirm: false,
               notice: {
                 open: true,
-                message: "Something went wrong",
+                message: resolve.error.message || "Something went wrong",
                 icon: ErrorIcon,
                 color: "error",
               },
@@ -129,6 +135,7 @@ const AdminProductItem = ({ product, orders }) => {
     [categories, localProduct, dispatch]
   );
 
+  // Define columns for the MaterialTableComp
   const columns = useMemo(
     () => [
       { key: "customer", title: "Customer" },
@@ -138,14 +145,21 @@ const AdminProductItem = ({ product, orders }) => {
     []
   );
 
+  // Generate data for the MaterialTableComp
   const data = useMemo(
     () =>
-      orders.map((order) => ({
-        customer: order.customerName,
-        quantity: order.quantity,
-        date: new Date(order.orderDate).toLocaleDateString(),
-      })),
-    [orders]
+      orders.map((order) => {
+        const username =
+          customers.find(
+            (cust) => cust._id.toString() === order.customer.toString()
+          )?.username || "Unknown Customer";
+        return {
+          customer: username,
+          quantity: order.quantity,
+          date: new Date(order.orderDate).toLocaleDateString(),
+        };
+      }),
+    [orders, customers]
   );
 
   return (

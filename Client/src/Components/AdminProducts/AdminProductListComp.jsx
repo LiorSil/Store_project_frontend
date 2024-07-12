@@ -11,6 +11,7 @@ import { fetchProductsData } from "../../Redux/Reducers/productsReducer.js";
 import { fetchOrdersData } from "../../Redux/Reducers/ordersReducer.js";
 import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
 import { Grid, Box, CircularProgress } from "@mui/material";
+import { fetchUsersData } from "../../Redux/Reducers/userReducer.js";
 import LoadingPlaceholder from "./LoadingPlaceholder";
 import getAllItems from "./getAllItems.js";
 
@@ -22,14 +23,16 @@ const AdminProductsListComp = () => {
   const [dataFetched, setDataFetched] = useState(false);
 
   const products = useSelector((state) => state.products.productData) || [];
-  const orders = useSelector((state) => state.orders.ordersData);
-  const [dataChange, setDataChange] = useState(false)
+  const { customers } = useSelector((state) => state.users) || [];
+
+  const { ordersData } = useSelector((state) => state.orders);
 
   const fetchData = useCallback(async () => {
     await Promise.all([
       dispatch(fetchProductsData()),
       dispatch(fetchOrdersData()),
       dispatch(fetchCategoriesData()),
+      dispatch(fetchUsersData()),
     ]);
     setDataFetched(true);
   }, [dispatch]);
@@ -48,7 +51,7 @@ const AdminProductsListComp = () => {
     }
   }, [dataFetched, renderCount, products.length]);
 
-  const ordersData = useMemo(() => getAllItems(orders), [orders]);
+  const orders = useMemo(() => getAllItems(ordersData), [ordersData]);
 
   const renderProductItem = useCallback(
     (product, index) => (
@@ -57,10 +60,8 @@ const AdminProductsListComp = () => {
           <Suspense fallback={<CircularProgress />}>
             <AdminProductItem
               product={product}
-              orders={ordersData.filter(
-                (order) => order.productId === product._id
-              )}
-              
+              orders={orders.filter((order) => order.productId === product._id)}
+              customers={customers}
             />
           </Suspense>
         ) : (
