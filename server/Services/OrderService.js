@@ -9,7 +9,9 @@ const ImageService = require("./ImageService");
  * @returns {Promise<Object>} - The created order.
  */
 
+/*
 const createOrder = async (orderData) => {
+  console.log();
   const user = await UserService.getUserById(orderData.customer.toString());
   if (user && user.customerRegisterDate) {
     orderData.customerRegisterDate = user.customerRegisterDate;
@@ -31,6 +33,43 @@ const createOrder = async (orderData) => {
   else if (orderData.items) {
     orderData.items.productId = orderData.items.productId.toString();
     orderData.items.title = await ProductService.getProductTitleById();
+  } else {
+    orderData.items = [];
+  }
+
+  const userProductsBought = orderData.items.map((item) => ({
+    productId: item.productId,
+    quantity: item.quantity,
+    orderDate: orderData.orderDate,
+  }));
+  await UserService.pushProductsToUser(orderData.customer, userProductsBought);
+
+  return await OrderRepository.createOrder(orderData);
+};
+*/
+
+const createOrder = async (orderData) => {
+  console.log("Creating order:", orderData);
+  const user = await UserService.getUserById(orderData.customer.toString());
+  if (user && user.customerRegisterDate) {
+    orderData.customerRegisterDate = user.customerRegisterDate;
+  } else {
+    console.log("Customer register date is not available for this user.");
+  }
+
+  if (
+    orderData.items &&
+    Array.isArray(orderData.items) &&
+    orderData.items.length > 0
+  ) {
+    orderData.items = await Promise.all(
+      orderData.items.map(async (item) => {
+        item.productId = item.productId.toString();
+        item.title = await ProductService.getProductTitleById(item.productId);
+        item.imageUrl = item.imageUrl; // This line is redundant, but leaving it for consistency
+        return item;
+      })
+    );
   } else {
     orderData.items = [];
   }

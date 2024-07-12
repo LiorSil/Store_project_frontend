@@ -5,9 +5,10 @@ import API_BASE_URL from "../../Constants/serverUrl";
 const userInitialState = {
   isAdmin: true,
   customers: [],
+  products: [],
 };
 
-export const fetchUsersData = createAsyncThunk(
+export const fetchUsersAndProductsData = createAsyncThunk(
   "users/fetchData",
   async (_, thunkAPI) => {
     try {
@@ -18,20 +19,24 @@ export const fetchUsersData = createAsyncThunk(
         throw new Error("No valid token found");
       }
 
-      const response = await fetch(`${API_BASE_URL}/users/customers`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/users/customersAndProducts`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch users data");
       }
       const data = await response.json();
+      const { users, products } = data;
 
-      return data;
+      return { users, products };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -48,15 +53,16 @@ const usersReducer = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUsersData.pending, (state) => {
+      .addCase(fetchUsersAndProductsData.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUsersData.fulfilled, (state, action) => {
+      .addCase(fetchUsersAndProductsData.fulfilled, (state, action) => {
         state.loading = false;
-        state.customers = action.payload;
+        state.customers = action.payload.users;
+        state.products = action.payload.products;
       })
-      .addCase(fetchUsersData.rejected, (state, action) => {
+      .addCase(fetchUsersAndProductsData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

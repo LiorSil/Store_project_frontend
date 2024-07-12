@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsersData } from "../../Redux/Reducers/userReducer";
+import { fetchUsersAndProductsData } from "../../Redux/Reducers/userReducer";
 import MaterialTableComp from "../Utils/MaterialTableComp";
 
 /**
@@ -11,10 +11,10 @@ import MaterialTableComp from "../Utils/MaterialTableComp";
  */
 const AdminCustomersComp = () => {
   const dispatch = useDispatch();
-  const { customers } = useSelector((state) => state.users);
+  const { customers, products } = useSelector((state) => state.users);
 
   useEffect(() => {
-    dispatch(fetchUsersData());
+    dispatch(fetchUsersAndProductsData());
   }, [dispatch]);
 
   // Define the columns for the main table and the nested table
@@ -43,7 +43,9 @@ const AdminCustomersComp = () => {
       fullName: `${customer.firstName} ${customer.lastName}`,
       joinedAt: new Date(customer.customerRegisterDate).toLocaleDateString(),
       productsBought: customer.productsBought.map((item) => ({
-        product: item.productId,
+        product: products.find((product) => product._id === item.productId)
+          .title,
+        //product: item.productId,
         quantity: item.quantity,
         orderDate: new Date(item.orderDate).toLocaleDateString(),
       })),

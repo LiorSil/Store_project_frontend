@@ -95,14 +95,12 @@ const updateUser = async (userId, userData) => {
  */
 
 const pushProductsToUser = async (userId, productData) => {
-  console.log("pushProductsToUser -> productData", productData);
   try {
     return await UserRepository.pushProductToUser(userId, productData);
   } catch (error) {
     throw new Error("Failed to update user in the database.");
   }
 };
-
 module.exports = {
   getCustomers,
   createUser,

@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const UserService = require("../Services/UserService");
+const ProductService = require("../Services/ProductService");
 const jwt = require("jsonwebtoken");
+
 require("dotenv").config();
 
 /**
@@ -146,7 +148,7 @@ router.put("/pushProducts", async (req, res) => {
  * @produces application/json
  */
 
-router.get("/customers", async (req, res) => {
+router.get("/customersAndProducts", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -154,7 +156,11 @@ router.get("/customers", async (req, res) => {
       throw new Error("Not authenticated.");
     }
     const users = await UserService.getCustomers();
-    res.status(200).json(users);
+    const produces = await ProductService.getProducts();
+    res.status(200).json({
+      users: users,
+      products: produces,
+    });
   } catch (error) {
     res.status(400).send(error.message);
   }

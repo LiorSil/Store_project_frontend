@@ -1,4 +1,20 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
+const productBoughtSchema = new Schema({
+  productId: {
+    type: Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  orderDate: {
+    type: Date,
+    required: true,
+  },
+});
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -48,24 +64,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: new Date().toLocaleString("he-Il", { timeZone: "Asia/Jerusalem" }),
   },
-  productsBought: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      orderDate: {
-        type: Date,
-        default: new Date().toLocaleString("he-Il", {
-          timeZone: "Asia/Jerusalem",
-        }),
-      },
-    },
-  ],
+  productsBought: [productBoughtSchema],
 });
 
 const User = mongoose.model("User", userSchema, "users");

@@ -75,19 +75,19 @@ const updateUser = async (userId, userData) => {
 /**
  * Pushes a product to a user's productsBought array or a single product
  * @param {*} userId
- * @param {*} productData
+ * @param {*} products
  * @returns
  */
-const pushProductToUser = async (userId, productData) => {
-  try {
-    const update = Array.isArray(productData)
-      ? { $push: { productsBought: { $each: productData } } }
-      : { $push: { productsBought: productData } };
 
-    return await User.findByIdAndUpdate(userId, update);
+const pushProductToUser = async (userId, products) => {
+  try {
+    return await User.findByIdAndUpdate(
+      userId,
+      { $push: { productsBought: { $each: products } } },
+      { new: true, useFindAndModify: false }
+    );
   } catch (error) {
-    console.error("Error updating user:", error.message);
-    throw error;
+    throw new Error("Failed to update user in the database.");
   }
 };
 
