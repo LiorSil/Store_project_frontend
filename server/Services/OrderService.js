@@ -35,6 +35,13 @@ const createOrder = async (orderData) => {
     orderData.items = [];
   }
 
+  const userProductsBought = orderData.items.map((item) => ({
+    productId: item.productId,
+    quantity: item.quantity,
+    orderDate: orderData.orderDate,
+  }));
+  await UserService.pushProductsToUser(orderData.customer, userProductsBought);
+
   return await OrderRepository.createOrder(orderData);
 };
 

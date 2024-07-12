@@ -42,6 +42,9 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
           productId: item._id,
           quantity: item.quantity,
           price: item.price,
+          orderDate: new Date().toLocaleString("he-Il", {
+            timeZone: "Asia/Jerusalem",
+          }),
           imageUrl: item.imageUrl,
         })),
         totalAmount: totalPrice, // Include totalAmount in orderData

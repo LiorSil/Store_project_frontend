@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
   },
   productsBought: [
     {
-      product: {
+      productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
       },

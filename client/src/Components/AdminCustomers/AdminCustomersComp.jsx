@@ -41,11 +41,11 @@ const AdminCustomersComp = () => {
   const formatCustomerData = (customers) => {
     return customers.map((customer) => ({
       fullName: `${customer.firstName} ${customer.lastName}`,
-      joinedAt: customer.customerRegisterDate,
-      productsBought: customer.productsBought.map((product) => ({
-        product: product.product,
-        quantity: product.quantity,
-        orderDate: product.orderDate,
+      joinedAt: new Date(customer.customerRegisterDate).toLocaleDateString(),
+      productsBought: customer.productsBought.map((item) => ({
+        product: item.productId,
+        quantity: item.quantity,
+        orderDate: new Date(item.orderDate).toLocaleDateString(),
       })),
     }));
   };
