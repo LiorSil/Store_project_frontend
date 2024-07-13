@@ -58,11 +58,9 @@ export const fetchConfirmChanges = createAsyncThunk(
 
       if (!response.ok) {
         throw new Error("Failed to update categories data");
+      } else {
+        return categories;
       }
-
-      const data = await response.json();
-
-      return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }

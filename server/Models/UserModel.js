@@ -14,6 +14,10 @@ const productBoughtSchema = new Schema({
     type: Date,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
 });
 
 const userSchema = new mongoose.Schema({

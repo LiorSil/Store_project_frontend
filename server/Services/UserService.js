@@ -95,6 +95,7 @@ const updateUser = async (userId, userData) => {
  */
 
 const pushProductsToUser = async (userId, productData) => {
+  console.log("productData", productData);
   try {
     return await UserRepository.pushProductToUser(userId, productData);
   } catch (error) {

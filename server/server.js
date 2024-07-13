@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 require("./Configurations/db.js");
 
 const port = 5000;
@@ -10,6 +11,7 @@ require("./Configurations/firebase.config.js");
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use("/favicon.ico", (req, res) => res.status(204).send());
 
 const userController = require("./Controllers/UserController");

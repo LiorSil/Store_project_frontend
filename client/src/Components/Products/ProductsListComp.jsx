@@ -7,6 +7,7 @@ import classes from "./ProductsListComp.module.css";
 import LoadingItemPlaceholderComp from "./LoadingItemPlaceholderComp";
 
 const ProductsListComp = ({ filters, error, loading, products }) => {
+  console.log("products", products);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const ProductsListComp = ({ filters, error, loading, products }) => {
           gap: 2,
         }}
       >
-        {[...Array(8)].map((_, index) => (
+        {[...Array(10)].map((_, index) => (
           <LoadingItemPlaceholderComp key={index} />
         ))}
       </Box>

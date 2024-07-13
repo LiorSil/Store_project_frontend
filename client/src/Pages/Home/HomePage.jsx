@@ -34,7 +34,8 @@ const adminComponents = {
 };
 
 const HomePage = () => {
-  const { isAdmin } = useSelector((state) => state.users);
+  const cookies = useMemo(() => new Cookies(), []);
+  const isAdmin = cookies.get("isAdmin");
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedPage, setSelectedPage] = useState(null);

@@ -23,6 +23,7 @@ import LoadingComp from "../Utils/LoadingComp";
 import ErrorPage from "../../Pages/Error/ErrorPage";
 import ConfirmComp from "../Utils/ConfirmComp";
 import NoticeMessageComp from "../Utils/NoticeMessageComp";
+import ErrorIcon from "@mui/icons-material/Error";
 
 import { validateCategoryName } from "../Utils/Validators/categoriesFormValidator"; // Import validator
 
@@ -106,7 +107,25 @@ const AdminCategoriesComp = memo(() => {
   };
 
   const handleConfirmCategories = () => {
-    dispatch(fetchConfirmChanges(categories));
+    dispatch(fetchConfirmChanges(categories)).then((resolve) => {
+      console.log("resolve", resolve);
+      if (resolve.type === "categories/confirmChange/fulfilled") {
+        setNoticeMessage({
+          open: true,
+          message: "Categories have been updated.",
+          color: "success",
+          icon: CheckCircleIcon,
+        });
+        window.location.reload();
+      } else {
+        setNoticeMessage({
+          open: true,
+          message: "Error updating categories.",
+          color: "error",
+          icon: ErrorIcon,
+        });
+      }
+    });
 
     setConfirmMessage(false);
     setNoticeMessage({

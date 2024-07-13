@@ -47,16 +47,14 @@ function LoginPage() {
       const { token, isAdmin } = data;
       const decodedToken = jwtDecode(token);
 
-      if (cookies.get("token")) {
-        cookies.remove("token");
-      }
+      //clear all cookies
+      cookies.remove("token");
+      cookies.remove("isAdmin");
 
       cookies.set("token", token, {
         expires: new Date(decodedToken.exp * 1000),
       });
-
-      //redux
-      dispatch(setIsAdmin(isAdmin));
+      cookies.set("isAdmin", isAdmin);
 
       navigate("/home");
     }

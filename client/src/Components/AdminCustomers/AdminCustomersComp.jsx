@@ -43,8 +43,9 @@ const AdminCustomersComp = () => {
       fullName: `${customer.firstName} ${customer.lastName}`,
       joinedAt: new Date(customer.customerRegisterDate).toLocaleDateString(),
       productsBought: customer.productsBought.map((item) => ({
-        product: products.find((product) => product._id === item.productId)
-          .title,
+        product:
+          products.find((product) => product._id === item.productId)?.title ||
+          "Product not found",
         //product: item.productId,
         quantity: item.quantity,
         orderDate: new Date(item.orderDate).toLocaleDateString(),

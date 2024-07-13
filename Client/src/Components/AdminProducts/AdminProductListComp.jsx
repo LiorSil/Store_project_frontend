@@ -22,10 +22,10 @@ const AdminProductsListComp = () => {
   const [renderCount, setRenderCount] = useState(0);
   const [dataFetched, setDataFetched] = useState(false);
 
-  const products = useSelector((state) => state.products.productData) || [];
-  const { customers } = useSelector((state) => state.users) || [];
-
-  const { ordersData } = useSelector((state) => state.orders);
+  const productsData = useSelector((state) => state.products.productsData, []);
+  console.log("productsData", productsData);
+  const customers = useSelector((state) => state.users.customers, []);
+  const ordersData = useSelector((state) => state.orders.ordersData, []);
 
   const fetchData = useCallback(async () => {
     await Promise.all([
@@ -41,15 +41,16 @@ const AdminProductsListComp = () => {
     fetchData();
   }, [fetchData]);
 
-  //add artificial delay to simulate loading
   useEffect(() => {
-    if (dataFetched && renderCount < products.length) {
+    if (dataFetched && renderCount < productsData.length) {
       const interval = setInterval(() => {
-        setRenderCount((prev) => (prev < products.length ? prev + 1 : prev));
+        setRenderCount((prev) =>
+          prev < productsData.length ? prev + 1 : prev
+        );
       }, 200);
       return () => clearInterval(interval);
     }
-  }, [dataFetched, renderCount, products.length]);
+  }, [dataFetched, renderCount, productsData.length]);
 
   const orders = useMemo(() => getAllItems(ordersData), [ordersData]);
 
@@ -69,13 +70,13 @@ const AdminProductsListComp = () => {
         )}
       </Grid>
     ),
-    [renderCount, ordersData]
+    [renderCount, orders, customers]
   );
 
   return (
     <Box>
       <Grid container spacing={2}>
-        {products.map(renderProductItem)}
+        {productsData.map(renderProductItem)}
       </Grid>
     </Box>
   );

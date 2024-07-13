@@ -78,7 +78,7 @@ const productsSlice = createSlice({
   },
   reducers: {
     setProducts: (state, action) => {
-      state.productData = action.payload;
+      state.productsData = action.payload;
     },
   },
   extraReducers: (builder) => {

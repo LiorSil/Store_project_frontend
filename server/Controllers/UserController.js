@@ -3,8 +3,15 @@ const router = express.Router();
 const UserService = require("../Services/UserService");
 const ProductService = require("../Services/ProductService");
 const jwt = require("jsonwebtoken");
+const verifyAdminToken = require("../Middlewares/verifyAdminToken");
 
 require("dotenv").config();
+
+const createAdminToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+};
 
 /**
  * Create a new user.
@@ -43,6 +50,7 @@ router.post("/login", async (req, res) => {
         expiresIn: "1h",
       }
     );
+
     res.status(200).json({ token, isAdmin: user.isAdmin });
   } catch (error) {
     res.status(400).send(error.message);
@@ -155,6 +163,7 @@ router.get("/customersAndProducts", async (req, res) => {
     if (!decodedToken) {
       throw new Error("Not authenticated.");
     }
+
     const users = await UserService.getCustomers();
     const produces = await ProductService.getProducts();
     res.status(200).json({

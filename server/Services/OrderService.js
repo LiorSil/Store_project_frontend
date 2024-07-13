@@ -10,8 +10,8 @@ const ImageService = require("./ImageService");
  */
 
 const createOrder = async (orderData) => {
-  let quantityIsValid = true;
   const user = await UserService.getUserById(orderData.customer.toString());
+
   if (user && user.customerRegisterDate) {
     orderData.customerRegisterDate = user.customerRegisterDate;
   } else {
@@ -25,9 +25,7 @@ const createOrder = async (orderData) => {
   ) {
     orderData.items = await Promise.all(
       orderData.items.map(async (item) => {
-        item.productId = item.productId.toString();
         item.title = await ProductService.getProductTitleById(item.productId);
-
         return item;
       })
     );
@@ -35,17 +33,21 @@ const createOrder = async (orderData) => {
     orderData.items = [];
   }
 
-  const userProductsBought = orderData.items.map(async (item) => {
-    await ProductService.updateProductQuantity(item.productId, item.quantity);
-    await ProductService.updateProductBought(item.productId, item.quantity);
-    return {
-      productId: item.productId,
-      quantity: item.quantity,
-      orderDate: orderData.orderDate,
-    };
-  });
+  const userProductsBought = await Promise.all(
+    orderData.items.map(async (item) => {
+      await ProductService.updateProductQuantity(item.productId, item.quantity);
+      await ProductService.updateProductBought(item.productId, item.quantity);
 
-  await UserService.pushProductsToUser(orderData.customer, userProductsBought);
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        orderDate: orderData.orderDate,
+        title: item.title,
+      };
+    })
+  );
+
+  await UserService.pushProductsToUser(user, userProductsBought);
 
   return await OrderRepository.createOrder(orderData);
 };

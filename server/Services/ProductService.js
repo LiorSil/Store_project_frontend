@@ -131,9 +131,9 @@ const updateProduct = async (productId, productData) => {
 const updateProductBought = async (productId, quantity) => {
   try {
     const product = await ProductRepository.getProductById(productId);
-    console.log("before", product);
+
     product.bought += quantity;
-    console.log("after:", product);
+
     await ProductRepository.updateProduct(productId, product);
   } catch (error) {
     throw new Error("Failed to update product bought.");
