@@ -9,16 +9,22 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector, useDispatch } from "react-redux";
-import { totalPriceReducer, clearCart } from "../../Redux/Reducers/cartReducer";
+import {
+  totalPriceReducer,
+  clearCart,
+  updateCartItemCount,
+} from "../../Redux/Reducers/cartReducer";
 import { ConfirmComp, LoadingComp } from "../Utils/indexUtil";
 import CartItemComp from "./CartItemComp";
 import useFetch from "../../Hooks/useFetch";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
-const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
+const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
   const [showAlert, setShowAlert] = useState(false);
-  const cart = useSelector((state) => state.cart.cart);
+  const [showQuantityAlert, setShowQuantityAlert] = useState(false);
+  const { cart } = useSelector((state) => state.cart);
+
   const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
   const { fetchData, loading, error } = useFetch();
@@ -30,12 +36,33 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
       return;
     } else {
       setShowAlert(false);
+
+      //validate that the each cart item quantity is less than the product max quantity and if not, show an alert message
+      for (let i = 0; i < cart.length; i++) {
+        const product = products.find((prod) => prod._id === cart[i]._id);
+        if (cart[i].quantity > product.quantity) {
+          setShowQuantityAlert(true);
+          dispatch(
+            updateCartItemCount({
+              _id: product._id,
+              quantity: product.quantity,
+            })
+          );
+          return;
+        }
+      }
       setOpenDialog(true);
     }
   };
 
   const handleCloseDialog = () => setOpenDialog(false);
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    setShowQuantityAlert(false);
+  };
   const handleConfirmOrder = async () => {
+    //validate that the each cart item quantity is less than the product max quantity and if not, show an alert message
+
     try {
       const orderData = {
         items: cart.map((item) => ({
@@ -108,7 +135,15 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
             <CloseIcon />
           </IconButton>
           {cart.length > 0 ? (
-            cart.map((item) => <CartItemComp key={item._id} cartItem={item} />)
+            cart.map((item) => (
+              <CartItemComp
+                key={item._id}
+                cartItem={item}
+                catalogProduct={products.find(
+                  (product) => product._id === item._id
+                )}
+              />
+            ))
           ) : (
             <Box
               sx={{
@@ -144,6 +179,21 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage }) => {
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
             Please add items to cart before placing order
+          </Alert>
+        )}
+        {showQuantityAlert && (
+          <Alert severity="info">
+            <AlertTitle>info</AlertTitle>
+            Quantity exceeds available stock - Quantity has been adjusted to the
+            maximum available stock
+            <Button
+              onClick={handleCloseAlert}
+              color="inherit"
+              size="small"
+              style={{ marginLeft: "auto" }}
+            >
+              Close
+            </Button>
           </Alert>
         )}
         <ConfirmComp

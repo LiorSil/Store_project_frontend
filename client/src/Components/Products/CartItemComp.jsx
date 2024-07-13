@@ -17,7 +17,7 @@ import {
   removeCartItem,
 } from "../../Redux/Reducers/cartReducer";
 
-const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
+const CartItemComp = ({ cartItem, catalogProduct }) => {
   const total = cartItem.price * cartItem.quantity;
   const dispatch = useDispatch();
 
@@ -88,6 +88,7 @@ const CartItemComp = ({ cartItem, onIncrement, onDecrement }) => {
               </Typography>
               <Button
                 variant="outlined"
+                disabled={cartItem.quantity >= catalogProduct.quantity}
                 onClick={() => handleIncrement(cartItem)}
               >
                 +

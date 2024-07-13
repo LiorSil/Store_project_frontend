@@ -12,11 +12,15 @@ import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
 
 const ProductsComp = () => {
   const dispatch = useDispatch();
+  const { data: categories } = useSelector(
+    useMemo(() => (state) => state.categories, [])
+  );
+
   const {
-    data: categories,
-    loading,
-    error,
-  } = useSelector(useMemo(() => (state) => state.categories, []));
+    productsData: products,
+    loading: productsLoading,
+    error: productsError,
+  } = useSelector((state) => state.products);
 
   const [orderConfirmed, setOrderConfirmed] = useState("");
   const [isCartOpen, setCartOpen] = useState(false);
@@ -54,6 +58,7 @@ const ProductsComp = () => {
       <CartComp
         isOpen={isCartOpen}
         toggleCart={toggleCart}
+        products={products}
         onGetSuccessMessage={handleOrderConfirmed}
       />
       <Box
@@ -77,14 +82,24 @@ const ProductsComp = () => {
             onFilterChange={handleFilterChange}
           />
         </Box>
-        <ProductsListComp filters={filters} categories={categories} />
+        <ProductsListComp
+          filters={filters}
+          categories={categories}
+          error={productsError}
+          loading={productsLoading}
+          products={products}
+        />
       </Box>
       {orderConfirmed === "success" && (
         <NoticeMessageComp
           message="Order placed successfully"
           color="green"
           IconComp={CheckCircleIcon}
-          onClose={() => setOrderConfirmed("")}
+          onClose={() => {
+            setOrderConfirmed("");
+            //enforce a refresh of the page to update the quantity of products
+            window.location.reload();
+          }}
         />
       )}
       {orderConfirmed === "error" && (

@@ -27,6 +27,7 @@ const productSchema = new mongoose.Schema({
   },
   quantity: {
     type: Number,
+    min: 0,
     required: true,
   },
 
@@ -44,15 +45,3 @@ const productSchema = new mongoose.Schema({
 const Product = mongoose.model("Product", productSchema, "products");
 
 module.exports = Product;
-
-/**
- * Product Model:
- * title: String
- * category: String
- * categoryName: String
- * description: String
- * price: Number
- * quantity: Number
- * image: String
- * bought: Number
- */

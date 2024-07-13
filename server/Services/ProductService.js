@@ -1,6 +1,11 @@
 const ProductRepository = require("../Repositories/ProductRepository");
 const CategoryRepository = require("../Repositories/CategoryRepository");
 
+/**
+ * Get a product by its ID.
+ * @param {string} productId - The ID of the product.
+ * @returns {Promise<object>} The product object.
+ */
 const getProduct = async (productId) => {
   return await ProductRepository.getProduct(productId);
 };
@@ -18,9 +23,7 @@ const getProducts = async () => {
  * @param {object} productData - Product data (fields like title, category, etc.).
  * @returns {Promise<object>} Created product object.
  */
-
 const createProduct = async (productData) => {
-  //get category id from category name
   const categories = await CategoryRepository.getCategories();
   const category = categories.find(
     (cat) => cat.name === productData.categoryName
@@ -29,8 +32,8 @@ const createProduct = async (productData) => {
   if (!category) {
     throw new Error("Category not found.");
   }
+
   productData.category = category._id;
-  productData.categoryName = category.name;
 
   try {
     return await ProductRepository.createProduct(productData);
@@ -42,14 +45,12 @@ const createProduct = async (productData) => {
 /**
  * Create multiple products.
  * @param {Array<object>} productsData - Array of product data objects.
- * @returns {Promise<void>}
+ * @returns {Promise<Array<object>>} Array of created product objects.
  */
 const createProducts = async (productsData) => {
   try {
     const products = await Promise.all(
-      productsData.map((productData) =>
-        ProductRepository.createProduct(productData)
-      )
+      productsData.map((productData) => createProduct(productData))
     );
     return products;
   } catch (error) {
@@ -58,36 +59,36 @@ const createProducts = async (productsData) => {
 };
 
 /**
- * Get product by id
- * @param {String} productId - The id of the product
- * @returns {Promise<Object>} - The product
+ * Get the title of a product by its ID.
+ * @param {string} productId - The ID of the product.
+ * @returns {Promise<string>} The product title.
  */
 const getProductTitleById = async (productId) => {
   try {
     const product = await ProductRepository.getProductById(productId);
-    return await product.title;
+    return product.title;
   } catch (error) {
     throw new Error("Failed to get product by id.");
   }
 };
 
 /**
- * Get all categories
- * @returns {Promise<Array>} - The categories
- * @throws {Error} - If there is an error getting the categories.
+ * Get all categories.
+ * @returns {Promise<Array<object>>} Array of category objects.
+ * @throws {Error} If there is an error getting the categories.
  */
 const getCategories = async () => {
   try {
-    return await ProductRepository.getCategories();
+    return await CategoryRepository.getCategories();
   } catch (error) {
     throw new Error("Failed to get categories.");
   }
 };
 
 /**
- * Update category of products
- * @param {String} oldCategory - The old category name
- * @param {String} newCategory - The new category name
+ * Update the category of products.
+ * @param {string} oldCategory - The old category name.
+ * @param {string} newCategory - The new category name.
  * @returns {Promise<void>}
  */
 const updateCategory = async (oldCategory, newCategory) => {
@@ -98,25 +99,66 @@ const updateCategory = async (oldCategory, newCategory) => {
   }
 };
 
+/**
+ * Update a product by its ID.
+ * @param {string} productId - The ID of the product.
+ * @param {object} productData - The product data to update.
+ * @returns {Promise<object>} The updated product object.
+ * @throws {Error} If there is an error updating the product.
+ */
 const updateProduct = async (productId, productData) => {
   try {
-    const { title, category, categoryName, description, price } = productData;
+    const existingProduct = await ProductRepository.getProductById(productId);
 
-    // Check if required fields are missing
-    if (!category || !title || !price || !description) {
-      throw new Error("Missing required fields.");
-    }
-    //update only the fields that are present in the request
-    const updatedProduct = ProductRepository.getProductById(productId);
-    updatedProduct.title = title || updatedProduct.title;
-    updatedProduct.category = category || updatedProduct.category;
-    updatedProduct.categoryName = categoryName || updatedProduct.categoryName;
-    updatedProduct.description = description || updatedProduct.description;
-    updatedProduct.price = price || updatedProduct.price;
+    const updatedProduct = {
+      ...existingProduct._doc,
+      ...productData,
+    };
 
-    ProductRepository.updateProduct(productId, updatedProduct);
+    return await ProductRepository.updateProduct(productId, updatedProduct);
   } catch (error) {
     throw new Error("Failed to update product.");
+  }
+};
+
+/**
+ * Update the bought quantity of a product.
+ * @param {string} productId - The ID of the product.
+ * @param {number} quantity - The quantity bought.
+ * @returns {Promise<void>}
+ * @throws {Error} If there is an error updating the product.
+ */
+const updateProductBought = async (productId, quantity) => {
+  try {
+    const product = await ProductRepository.getProductById(productId);
+    console.log("before", product);
+    product.bought += quantity;
+    console.log("after:", product);
+    await ProductRepository.updateProduct(productId, product);
+  } catch (error) {
+    throw new Error("Failed to update product bought.");
+  }
+};
+
+/**
+ * Update the quantity of a product.
+ * @param {string} productId - The ID of the product.
+ * @param {number} quantity - The quantity to update.
+ * @returns {Promise<void>}
+ * @throws {Error} If there is an error updating the product quantity.
+ */
+const updateProductQuantity = async (productId, quantity) => {
+  try {
+    const product = await ProductRepository.getProductById(productId);
+    product.quantity -= quantity;
+
+    if (product.quantity < 0) {
+      throw new Error("Quantity cannot be less than 0.");
+    }
+    await ProductRepository.updateProduct(productId, product);
+    return product;
+  } catch (error) {
+    throw new Error("Failed to update product quantity.");
   }
 };
 
@@ -128,6 +170,9 @@ module.exports = {
   getCategories,
   updateCategory,
   updateProduct,
+  getProduct,
+  updateProductBought,
+  updateProductQuantity,
 };
 
 // Path: server/Services/ProductService.js

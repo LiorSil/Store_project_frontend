@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
-
 // Async Thunk for Fetching Data
 export const fetchProductsData = createAsyncThunk(
   "products/fetchData",
@@ -40,7 +39,6 @@ export const fetchProductsData = createAsyncThunk(
 export const updateProductData = createAsyncThunk(
   "products/updateData",
   async (product, thunkAPI) => {
-    console.log("product", product);
     try {
       const cookies = new Cookies();
       const token = cookies.get("token");
@@ -57,19 +55,12 @@ export const updateProductData = createAsyncThunk(
         },
         body: JSON.stringify(product),
       });
-       
 
       if (!response.ok) {
         throw new Error("Failed to update product data");
       } else {
         return product;
       }
-      
-    
-
-
-
-      
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -80,7 +71,7 @@ export const updateProductData = createAsyncThunk(
 const productsSlice = createSlice({
   name: "products",
   initialState: {
-    productData: [],
+    productsData: [],
 
     loading: false,
     error: null,
@@ -98,7 +89,8 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProductsData.fulfilled, (state, action) => {
         state.loading = false;
-        state.productData = action.payload;
+        
+        state.productsData = action.payload;
       })
       .addCase(fetchProductsData.rejected, (state, action) => {
         state.loading = false;
@@ -110,7 +102,7 @@ const productsSlice = createSlice({
       })
       .addCase(updateProductData.fulfilled, (state, action) => {
         state.loading = false;
-        state.productData = state.productData.map((product) =>
+        state.productsData = state.productsData.map((product) =>
           product._id === action.payload._id ? action.payload : product
         );
       })

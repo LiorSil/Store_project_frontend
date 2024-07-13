@@ -9,47 +9,8 @@ const ImageService = require("./ImageService");
  * @returns {Promise<Object>} - The created order.
  */
 
-/*
 const createOrder = async (orderData) => {
-  console.log();
-  const user = await UserService.getUserById(orderData.customer.toString());
-  if (user && user.customerRegisterDate) {
-    orderData.customerRegisterDate = user.customerRegisterDate;
-  } else {
-    console.log("Customer register date is not available for this user.");
-  }
-
-  if (orderData.items && orderData.items.length > 0) {
-    orderData.items = await Promise.all(
-      orderData.items.map(async (item) => {
-        item.productId = await item.productId.toString();
-        item.title = await ProductService.getProductTitleById(item.productId);
-        item.imageUrl = await item.imageUrl;
-        return item;
-      })
-    );
-  }
-  //if orderData.items is a single object
-  else if (orderData.items) {
-    orderData.items.productId = orderData.items.productId.toString();
-    orderData.items.title = await ProductService.getProductTitleById();
-  } else {
-    orderData.items = [];
-  }
-
-  const userProductsBought = orderData.items.map((item) => ({
-    productId: item.productId,
-    quantity: item.quantity,
-    orderDate: orderData.orderDate,
-  }));
-  await UserService.pushProductsToUser(orderData.customer, userProductsBought);
-
-  return await OrderRepository.createOrder(orderData);
-};
-*/
-
-const createOrder = async (orderData) => {
-  console.log("Creating order:", orderData);
+  let quantityIsValid = true;
   const user = await UserService.getUserById(orderData.customer.toString());
   if (user && user.customerRegisterDate) {
     orderData.customerRegisterDate = user.customerRegisterDate;
@@ -66,7 +27,7 @@ const createOrder = async (orderData) => {
       orderData.items.map(async (item) => {
         item.productId = item.productId.toString();
         item.title = await ProductService.getProductTitleById(item.productId);
-        item.imageUrl = item.imageUrl; // This line is redundant, but leaving it for consistency
+
         return item;
       })
     );
@@ -74,11 +35,16 @@ const createOrder = async (orderData) => {
     orderData.items = [];
   }
 
-  const userProductsBought = orderData.items.map((item) => ({
-    productId: item.productId,
-    quantity: item.quantity,
-    orderDate: orderData.orderDate,
-  }));
+  const userProductsBought = orderData.items.map(async (item) => {
+    await ProductService.updateProductQuantity(item.productId, item.quantity);
+    await ProductService.updateProductBought(item.productId, item.quantity);
+    return {
+      productId: item.productId,
+      quantity: item.quantity,
+      orderDate: orderData.orderDate,
+    };
+  });
+
   await UserService.pushProductsToUser(orderData.customer, userProductsBought);
 
   return await OrderRepository.createOrder(orderData);

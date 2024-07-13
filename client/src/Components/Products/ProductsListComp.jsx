@@ -1,61 +1,63 @@
 import React, { useEffect, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import ProductItem from "./ProductItemComp";
-import useFetch from "../../Hooks/useFetch";
-import { LoadingComp } from "../Utils/indexUtil";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductsData } from "../../Redux/Reducers/productsReducer";
 import classes from "./ProductsListComp.module.css";
-import Cookies from "universal-cookie";
-import API_BASE_URL from "../../Constants/serverUrl";
+import LoadingItemPlaceholderComp from "./LoadingItemPlaceholderComp";
 
-const ProductsListComp = ({ filters }) => {
-  const cookies = useMemo(() => new Cookies(), []);
-  const { data: products, loading, error, fetchData } = useFetch();
+const ProductsListComp = ({ filters, error, loading, products }) => {
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const options = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + cookies.get("token"),
-          },
-        };
-        await fetchData(`${API_BASE_URL}/products`, options);
-      } catch (error) {
-        console.error("Error fetching products:", error.message);
-      }
-    };
+    dispatch(fetchProductsData());
+  }, [dispatch]);
 
-    fetchProducts();
-  }, [filters.category, filters.price, filters.text, fetchData, cookies]);
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+
+    return products.filter((product) => {
+      const categoryMatch =
+        filters.category._id === "All" ||
+        product.category === filters.category._id;
+
+      const priceMatch = product.price <= filters.price;
+
+      const textMatch =
+        filters.text === "" ||
+        product.title.toLowerCase().includes(filters.text.toLowerCase());
+
+      return categoryMatch && priceMatch && textMatch;
+    });
+  }, [products, filters]);
 
   if (loading) {
-    return <LoadingComp />;
+    return (
+      <Box
+        className={classes["products-container"]}
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-start",
+          gap: 2,
+        }}
+      >
+        {[...Array(8)].map((_, index) => (
+          <LoadingItemPlaceholderComp key={index} />
+        ))}
+      </Box>
+    );
   }
 
   if (error) {
-    return <span>Error: {error.message}</span>;
+    return (
+      <Typography component="h6">Error loading products: {error}</Typography>
+    );
   }
 
-  // Handle case where products is still null after fetching
-  if (!products) {
+  if (!filteredProducts.length) {
     return <Typography component="h6">No products found</Typography>;
   }
-
-  const filteredProducts = products.filter((product) => {
-    const categoryMatch =
-      filters.category._id === "All" ||
-      product.category === filters.category._id;
-
-    const priceMatch = product.price <= filters.price;
-
-    const textMatch =
-      filters.text === "" ||
-      product.title.toLowerCase().includes(filters.text.toLowerCase());
-
-    return categoryMatch && priceMatch && textMatch;
-  });
 
   return (
     <Box
@@ -67,13 +69,9 @@ const ProductsListComp = ({ filters }) => {
         gap: 2,
       }}
     >
-      {filteredProducts.length > 0 ? (
-        filteredProducts.map((product) => (
-          <ProductItem key={product._id} product={product} />
-        ))
-      ) : (
-        <Typography component="h6">No products found</Typography>
-      )}
+      {filteredProducts.map((product) => (
+        <ProductItem key={product._id} product={product} />
+      ))}
     </Box>
   );
 };

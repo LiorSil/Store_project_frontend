@@ -36,6 +36,15 @@ const cartSlice = createSlice({
           : item
       );
     },
+    updateCartItemCount: (state, action) => {
+      console.log("action.payload", action.payload);
+      state.cart = state.cart.map((item) =>
+        item._id === action.payload._id
+          ? { ...item, quantity: action.payload.quantity }
+          : item
+      );
+    },
+
     removeCartItem: (state, action) => {
       state.cart = state.cart.filter((item) => item._id !== action.payload);
     },
@@ -57,6 +66,7 @@ export const {
   addToCart,
   decrementCartItemCount,
   incrementCartItemCount,
+  updateCartItemCount,
   removeCartItem,
   clearCart,
 } = cartSlice.actions;

@@ -9,12 +9,14 @@ const ProductItemComp = ({ product }) => {
   const dispatch = useDispatch();
 
   const [quantity, setQuantity] = useState(1);
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleIncrement = () => {
     setQuantity(quantity + 1);
   };
 
   const handleDecrement = () => {
+    if (quantity === 1) return;
     setQuantity(quantity > 1 ? quantity - 1 : 1);
   };
 
@@ -71,12 +73,17 @@ const ProductItemComp = ({ product }) => {
             {quantity}
           </Typography>
         </Box>
-        <Button variant="outlined" onClick={handleIncrement}>
+        <Button
+          variant="outlined"
+          onClick={handleIncrement}
+          disabled={quantity >= product.quantity}
+        >
           +
         </Button>
 
         <Box alignContent="flex-end" ml="auto">
           <IconButton
+            disabled={quantity > product.quantity || product.quantity === 0}
             color="primary"
             size="large"
             aria-label="add to shopping cart"
