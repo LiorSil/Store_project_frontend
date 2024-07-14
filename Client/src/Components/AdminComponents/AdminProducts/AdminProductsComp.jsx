@@ -3,7 +3,7 @@ import AdminProductsListComp from "./AdminProductListComp";
 import AddNewProductForm from "./AddNewProductForm";
 import { Container, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
+import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer";
 
 const AdminProductsComp = () => {
   const dispatch = useDispatch();

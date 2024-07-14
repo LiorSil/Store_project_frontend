@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
+import isEqual from "lodash/isEqual"; // Add lodash for deep equality checks
 
 // Async Thunk for Fetching Data
 export const fetchProductsData = createAsyncThunk(
@@ -67,12 +68,47 @@ export const updateProductData = createAsyncThunk(
   }
 );
 
+export const fetchOnlyBoughtProducts = createAsyncThunk(
+  "products/onlyBoughtProducts",
+  async (_, thunkAPI) => {
+    try {
+      const cookies = new Cookies();
+      const token = cookies.get("token");
+
+      if (!token) {
+        throw new Error("No valid token found");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/products/onlyBoughtProducts`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch products data");
+      }
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // Slice for Products Data
 const productsSlice = createSlice({
   name: "products",
   initialState: {
     productsData: [],
-
+    boughtProducts: [],
     loading: false,
     error: null,
   },
@@ -89,7 +125,6 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProductsData.fulfilled, (state, action) => {
         state.loading = false;
-        
         state.productsData = action.payload;
       })
       .addCase(fetchProductsData.rejected, (state, action) => {
@@ -107,6 +142,20 @@ const productsSlice = createSlice({
         );
       })
       .addCase(updateProductData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchOnlyBoughtProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOnlyBoughtProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        if (!isEqual(state.boughtProducts, action.payload)) {
+          state.boughtProducts = action.payload;
+        }
+      })
+      .addCase(fetchOnlyBoughtProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

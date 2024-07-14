@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, Suspense } from "react";
-import { NoticeMessageComp, ConfirmComp } from "../Utils/indexUtil";
+import { NoticeMessageComp, ConfirmComp } from "../../Utils/indexUtil";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import {
@@ -18,14 +18,14 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useForm } from "react-hook-form";
-import validateProductTitle from "../Utils/Validators/adminProductValidators/productTitleValidator";
-import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
-import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
+import validateProductTitle from "../../Utils/Validators/adminProductValidators/productTitleValidator";
+import validateProductPrice from "../../Utils/Validators/adminProductValidators/productPriceValidator";
+import validateProductDescription from "../../Utils/Validators/adminProductValidators/productDescriptionValidator";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProductData } from "../../Redux/Reducers/productsReducer";
+import { updateProductData } from "../../../Redux/Reducers/productsReducer";
 
 const MaterialTableComp = React.lazy(() =>
-  import("../Utils/MaterialTableComp")
+  import("../../Utils/MaterialTableComp")
 );
 
 /**

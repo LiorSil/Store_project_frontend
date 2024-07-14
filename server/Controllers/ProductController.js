@@ -108,6 +108,24 @@ router.put("/:id", async (req, res) => {
     res.status(400).send(error.message);
   }
 });
+
+router.get("/onlyBoughtProducts", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = validateToken(token, process.env.JWT_SECRET);
+    if (!decodedToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+    const products = await ProductService.getProducts();
+    // Filter out products that have not been bought
+    const boughtProducts = products.filter((product) => product.bought > 0);
+    res.status(200).json(boughtProducts);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 module.exports = router;
 
 // Path: Server/Services/ProductService.js

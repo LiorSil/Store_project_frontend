@@ -2,7 +2,7 @@ import React from "react";
 import DoughnutChart from "./DoughnutChart";
 import { Typography } from "@mui/material";
 
-const AdminStatisticsComp = () => {
+const AdminStatisticsComp = React.memo(() => {
   return (
     <>
       <Typography variant="h4" align="center" gutterBottom>
@@ -11,6 +11,6 @@ const AdminStatisticsComp = () => {
       <DoughnutChart />
     </>
   );
-};
+});
 
 export default AdminStatisticsComp;

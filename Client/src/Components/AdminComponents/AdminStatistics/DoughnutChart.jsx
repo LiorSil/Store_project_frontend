@@ -1,44 +1,61 @@
 import React, { useRef, useEffect, useCallback } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { fetchProductsData } from "../../Redux/Reducers/productsReducer";
+import { fetchOnlyBoughtProducts } from "../../../Redux/Reducers/productsReducer";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
 Chart.register(ChartDataLabels);
 
-const getRandomColor = () => {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
+const trendingColors = [
+  "#FF5733",
+  "#33FF57",
+  "#3357FF",
+  "#F3FF33",
+  "#FF33A8",
+  "#33FFF3",
+  "#F333FF",
+  "#FF8C33",
+  "#33FF8C",
+  "#8C33FF",
+  "#FF3333",
+  "#33FF33",
+  "#3333FF",
+  "#FFB533",
+  "#33FFB5",
+  "#B533FF",
+  "#FF3333",
+  "#33FF33",
+  "#3333FF",
+  "#FFD633",
+];
 
 const DoughnutChart = React.memo(() => {
   const dispatch = useDispatch();
   const products = useSelector(
-    (state) => state.products.productsData,
+    (state) => state.products.boughtProducts,
     shallowEqual
   );
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
-    dispatch(fetchProductsData());
-  }, [dispatch]);
+    if (products.length === 0) {
+      dispatch(fetchOnlyBoughtProducts());
+    }
+  }, [dispatch, products.length]);
 
   const createChart = useCallback(() => {
     if (!products || products.length === 0) return;
 
-    const filteredProducts = products.filter((product) => product.bought > 0);
-    const totalBought = filteredProducts.reduce(
+    const totalBought = products.reduce(
       (sum, product) => sum + product.bought,
       0
     );
-    const labels = filteredProducts.map((product) => product.title);
-    const data = filteredProducts.map((product) => product.bought);
-    const backgroundColors = filteredProducts.map(() => getRandomColor());
+    const labels = products.map((product) => product.title);
+    const data = products.map((product) => product.bought);
+    const backgroundColors = products.map(
+      (_, index) => trendingColors[index % trendingColors.length]
+    );
     const borderColors = backgroundColors.map((color) => color);
 
     const ctx = canvasRef.current.getContext("2d");

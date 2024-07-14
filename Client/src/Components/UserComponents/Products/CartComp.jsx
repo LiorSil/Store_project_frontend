@@ -13,12 +13,12 @@ import {
   totalPriceReducer,
   clearCart,
   updateCartItemCount,
-} from "../../Redux/Reducers/cartReducer";
-import { ConfirmComp, LoadingComp } from "../Utils/indexUtil";
+} from "../../../Redux/Reducers/cartReducer";
+import { ConfirmComp, LoadingComp } from "../../Utils/indexUtil";
 import CartItemComp from "./CartItemComp";
-import useFetch from "../../Hooks/useFetch";
+import useFetch from "../../../Hooks/useFetch";
 import Cookies from "universal-cookie";
-import API_BASE_URL from "../../Constants/serverUrl";
+import API_BASE_URL from "../../../Constants/serverUrl";
 
 const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
   const [showAlert, setShowAlert] = useState(false);

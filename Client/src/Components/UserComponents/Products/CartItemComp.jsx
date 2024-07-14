@@ -15,7 +15,7 @@ import {
   incrementCartItemCount,
   decrementCartItemCount,
   removeCartItem,
-} from "../../Redux/Reducers/cartReducer";
+} from "../../../Redux/Reducers/cartReducer";
 
 const CartItemComp = ({ cartItem, catalogProduct }) => {
   const total = cartItem.price * cartItem.quantity;

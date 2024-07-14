@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../Redux/Reducers/cartReducer";
+import { addToCart } from "../../../Redux/Reducers/cartReducer";
 
 const ProductItemComp = ({ product }) => {
   //redux

@@ -10,7 +10,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import LoadingComp from "../Utils/LoadingComp";
+import LoadingComp from "../../Utils/LoadingComp";
 
 const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
   const All = { _id: "All", name: "All" };

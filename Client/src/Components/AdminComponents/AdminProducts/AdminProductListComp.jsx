@@ -7,11 +7,11 @@ import React, {
   useMemo,
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProductsData } from "../../Redux/Reducers/productsReducer.js";
-import { fetchOrdersData } from "../../Redux/Reducers/ordersReducer.js";
-import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
+import { fetchProductsData } from "../../../Redux/Reducers/productsReducer.js";
+import { fetchOrdersData } from "../../../Redux/Reducers/ordersReducer.js";
+import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer.js";
 import { Grid, Box, CircularProgress } from "@mui/material";
-import { fetchUsersAndProductsData } from "../../Redux/Reducers/userReducer.js";
+import { fetchUsersAndProductsData } from "../../../Redux/Reducers/userReducer.js";
 import LoadingPlaceholder from "./LoadingPlaceholder";
 import getAllItems from "./getAllItems.js";
 

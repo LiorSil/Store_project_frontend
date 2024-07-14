@@ -18,16 +18,16 @@ import {
   fetchCategoriesData,
   fetchConfirmChanges,
   updateCategories,
-} from "../../Redux/Reducers/categoriesReducer";
-import LoadingComp from "../Utils/LoadingComp";
-import ErrorPage from "../../Pages/Error/ErrorPage";
-import ConfirmComp from "../Utils/ConfirmComp";
-import NoticeMessageComp from "../Utils/NoticeMessageComp";
+} from "../../../Redux/Reducers/categoriesReducer";
+import LoadingComp from "../../Utils/LoadingComp";
+import ErrorPage from "../../../Pages/Error/ErrorPage";
+import ConfirmComp from "../../Utils/ConfirmComp";
+import NoticeMessageComp from "../../Utils/NoticeMessageComp";
 import ErrorIcon from "@mui/icons-material/Error";
 
-import { validateCategoryName } from "../Utils/Validators/categoriesFormValidator"; // Import validator
+import { validateCategoryName } from "../../Utils/Validators/categoriesFormValidator"; // Import validator
 
-const MaterialTableComp = lazy(() => import("../Utils/MaterialTableComp"));
+const MaterialTableComp = lazy(() => import("../../Utils/MaterialTableComp"));
 
 const AdminCategoriesComp = memo(() => {
   const dispatch = useDispatch();

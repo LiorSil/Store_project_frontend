@@ -5,8 +5,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import LoadingComp from "../Utils/LoadingComp";
-import { NoticeMessageComp, ConfirmComp } from "../Utils/indexUtil";
+import LoadingComp from "../../Utils/LoadingComp";
+import { NoticeMessageComp, ConfirmComp } from "../../Utils/indexUtil";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import {
@@ -23,13 +23,16 @@ import { useForm, useFormState } from "react-hook-form";
 import classes from "./AccountComp.module.css";
 import Cookies from "universal-cookie";
 import { useSelector, useDispatch } from "react-redux";
-import { setAccount, updateAccount } from "../../Redux/Reducers/accountReducer";
+import {
+  setAccount,
+  updateAccount,
+} from "../../../Redux/Reducers/accountReducer";
 import {
   firstNameValidator,
   lastNameValidator,
   passwordValidator,
-} from "../Utils/Validators/indexValidator";
-import API_BASE_URL from "../../Constants/serverUrl";
+} from "../../Utils/Validators/indexValidator";
+import API_BASE_URL from "../../../Constants/serverUrl";
 
 const AccountComp = () => {
   const cookies = useMemo(() => new Cookies(), []);
@@ -63,7 +66,6 @@ const AccountComp = () => {
   // Fetch user data and populate form fields
   useEffect(() => {
     const fetchData = async () => {
-      console.log("fetching data");
       try {
         const response = await fetch(`${API_BASE_URL}/users/getUser`, {
           method: "GET",

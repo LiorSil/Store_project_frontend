@@ -11,16 +11,16 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { LoadingComp } from "../Utils/indexUtil";
+import { LoadingComp } from "../../Utils/indexUtil";
 // import validators
-import validateProductTitle from "../Utils/Validators/adminProductValidators/productTitleValidator";
-import validateProductPrice from "../Utils/Validators/adminProductValidators/productPriceValidator";
-import validateProductDescription from "../Utils/Validators/adminProductValidators/productDescriptionValidator";
-import validateProductImageReference from "../Utils/Validators/adminProductValidators/productImageReferenceValidator";
-import validateProductQuantity from "../Utils/Validators/adminProductValidators/productQuantityValidator";
+import validateProductTitle from "../../Utils/Validators/adminProductValidators/productTitleValidator";
+import validateProductPrice from "../../Utils/Validators/adminProductValidators/productPriceValidator";
+import validateProductDescription from "../../Utils/Validators/adminProductValidators/productDescriptionValidator";
+import validateProductImageReference from "../../Utils/Validators/adminProductValidators/productImageReferenceValidator";
+import validateProductQuantity from "../../Utils/Validators/adminProductValidators/productQuantityValidator";
 // import redux
 import { useDispatch } from "react-redux";
-import { addProductData } from "../../Redux/Reducers/addProductReducer";
+import { addProductData } from "../../../Redux/Reducers/addProductReducer";
 
 const AddNewProductForm = ({ onConfirm, categories }) => {
   const {
@@ -76,8 +76,6 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
       reset();
       clearErrors();
     }
-
-   
   };
 
   return (
@@ -133,7 +131,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
               >
                 {categories.map((cat) => (
                   <MenuItem key={cat._id} value={cat.name} id={cat._id}>
-                                        {cat.name}
+                    {cat.name}
                   </MenuItem>
                 ))}
               </Select>

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsersAndProductsData } from "../../Redux/Reducers/userReducer";
-import MaterialTableComp from "../Utils/MaterialTableComp";
+import { fetchUsersAndProductsData } from "../../../Redux/Reducers/userReducer";
+import MaterialTableComp from "../../Utils/MaterialTableComp";
 
 /**
  * AdminCustomersComp Component

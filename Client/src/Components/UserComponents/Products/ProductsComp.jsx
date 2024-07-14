@@ -6,9 +6,9 @@ import FilterBarComp from "./FilterBarComp";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FeedbackIcon from "@mui/icons-material/Feedback";
-import { NoticeMessageComp } from "../Utils/indexUtil";
+import { NoticeMessageComp } from "../../Utils/indexUtil";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCategoriesData } from "../../Redux/Reducers/categoriesReducer";
+import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer";
 
 const ProductsComp = () => {
   const dispatch = useDispatch();

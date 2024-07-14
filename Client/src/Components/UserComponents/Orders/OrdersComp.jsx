@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import useFetch from "../../Hooks/useFetch";
-import { LoadingComp, MaterialTableComp } from "../Utils/indexUtil";
-import { transformOrdersToProducts } from "../../Services/OrderService";
+import useFetch from "../../../Hooks/useFetch";
+import { LoadingComp, MaterialTableComp } from "../../Utils/indexUtil";
+import { transformOrdersToProducts } from "../../../Services/OrderService";
 import Cookies from "universal-cookie";
 import { Avatar } from "@mui/material";
-import { orderTableColumns } from "../../Constants/orderTableColumns";
-import API_BASE_URL from "../../Constants/serverUrl";
-import { defaultDate } from "../../Constants/defaultDates";
+import { orderTableColumns } from "../../../Constants/orderTableColumns";
+import API_BASE_URL from "../../../Constants/serverUrl";
+import { defaultDate } from "../../../Constants/defaultDates";
 
 const OrdersComp = () => {
   const cookies = useMemo(() => new Cookies(), []);
