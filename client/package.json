@@ -17,6 +17,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -60,5 +61,8 @@
   },
   "devDependencies": {
     "@hookform/devtools": "^4.3.1"
+  },
+  "devServer": {
+    "disableHostCheck": true
   }
 }

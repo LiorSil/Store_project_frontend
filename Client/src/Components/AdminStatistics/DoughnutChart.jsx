@@ -1,11 +1,46 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { fetchProductsData } from "../../Redux/Reducers/productsReducer";
 import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-const DoughnutChart = () => {
+Chart.register(ChartDataLabels);
+
+const getRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+const DoughnutChart = React.memo(() => {
+  const dispatch = useDispatch();
+  const products = useSelector(
+    (state) => state.products.productsData,
+    shallowEqual
+  );
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
+    dispatch(fetchProductsData());
+  }, [dispatch]);
+
+  const createChart = useCallback(() => {
+    if (!products || products.length === 0) return;
+
+    const filteredProducts = products.filter((product) => product.bought > 0);
+    const totalBought = filteredProducts.reduce(
+      (sum, product) => sum + product.bought,
+      0
+    );
+    const labels = filteredProducts.map((product) => product.title);
+    const data = filteredProducts.map((product) => product.bought);
+    const backgroundColors = filteredProducts.map(() => getRandomColor());
+    const borderColors = backgroundColors.map((color) => color);
+
     const ctx = canvasRef.current.getContext("2d");
 
     if (chartRef.current) {
@@ -15,28 +50,14 @@ const DoughnutChart = () => {
     chartRef.current = new Chart(ctx, {
       type: "doughnut",
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels,
         datasets: [
           {
-            label: "# of Votes",
-            data: [12, 19, 3, 5, 2, 3],
+            label: "# of Bought Products",
+            data,
             borderWidth: 1,
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(153, 102, 255, 0.2)",
-              "rgba(255, 159, 64, 0.2)",
-            ],
-            borderColor: [
-              "rgba(255, 99, 132, 1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(153, 102, 255, 1)",
-              "rgba(255, 159, 64, 1)",
-            ],
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
           },
         ],
       },
@@ -46,16 +67,33 @@ const DoughnutChart = () => {
           legend: {
             position: "top",
           },
+          datalabels: {
+            formatter: (value, context) => {
+              const percentage = ((value / totalBought) * 100).toFixed(2);
+              return `${percentage}%`;
+            },
+            color: "#fff",
+            labels: {
+              title: {
+                font: {
+                  weight: "bold",
+                },
+              },
+            },
+          },
         },
       },
     });
+  }, [products]);
 
+  useEffect(() => {
+    createChart();
     return () => {
       if (chartRef.current) {
         chartRef.current.destroy();
       }
     };
-  }, []);
+  }, [products, createChart]);
 
   return (
     <canvas
@@ -68,6 +106,6 @@ const DoughnutChart = () => {
       ref={canvasRef}
     ></canvas>
   );
-};
+});
 
 export default DoughnutChart;
