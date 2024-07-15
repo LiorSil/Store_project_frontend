@@ -60,8 +60,8 @@
     ]
   },
   "devDependencies": {
-    "@hookform/devtools": "^4.3.1",
-    "@babel/plugin-proposal-private-property-in-object": "^7.16.7"
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
+    "@hookform/devtools": "^4.3.1"
   },
   "devServer": {
     "disableHostCheck": true

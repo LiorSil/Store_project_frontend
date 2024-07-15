@@ -43,15 +43,18 @@ router.post("/signUp", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await UserService.authenticateUser(req.body);
+    if (!user) {
+      throw new Error("Invalid username or password.");
+    }
     const token = jwt.sign(
-      { username: user.username, userId: user._id },
+      { userId: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
       }
     );
-
-    res.status(200).json({ token, isAdmin: user.isAdmin });
+    res.cookie("token", token, { httpOnly: true });
+    res.status(200).json({ token });
   } catch (error) {
     res.status(400).send(error.message);
   }

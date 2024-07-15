@@ -3,9 +3,10 @@ import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
 const userInitialState = {
-  isAdmin: true,
   customers: [],
   products: [],
+  loading: false,
+  error: null,
 };
 
 export const fetchUsersAndProductsData = createAsyncThunk(

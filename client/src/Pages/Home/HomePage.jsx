@@ -16,7 +16,6 @@ import {
   AdminCustomersComp,
   AdminStatisticsComp,
 } from "../../Components/adminComponents";
-import { useSelector } from "react-redux";
 
 const userComponents = {
   Products: ProductsComp,
