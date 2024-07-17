@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Container } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
 import Cookies from "universal-cookie";
 
 import ErrorPage from "../../Pages/Error/ErrorPage";
@@ -16,6 +18,7 @@ import {
   AdminCustomersComp,
   AdminStatisticsComp,
 } from "../../Components/adminComponents";
+import WelcomePage from "./WelcomePage";
 
 const userComponents = {
   Products: ProductsComp,
@@ -32,6 +35,18 @@ const adminComponents = {
   Logout: LogoutComp,
 };
 
+const pageVariants = {
+  initial: { opacity: 0, x: "-100vw" },
+  in: { opacity: 1, x: 0 },
+  out: { opacity: 0, x: "100vw" },
+};
+
+const pageTransition = {
+  type: "spring",
+  stiffness: 200,
+  damping: 25,
+};
+
 const HomePage = () => {
   const cookies = useMemo(() => new Cookies(), []);
   const isAdmin = cookies.get("isAdmin");
@@ -41,7 +56,6 @@ const HomePage = () => {
 
   const currentPath = useMemo(() => {
     const path = location.pathname.split("/").pop();
-
     return path.charAt(0).toUpperCase() + path.slice(1);
   }, [location.pathname]);
 
@@ -61,9 +75,17 @@ const HomePage = () => {
 
   const renderComponent = useMemo(() => {
     const components = isAdmin ? adminComponents : userComponents;
-    const Component = components[selectedPage] || ErrorPage; // Default to ErrorPage if not found
-    return <Component />;
-  }, [selectedPage, isAdmin]);
+    //if path /home then render WelcomePage
+    if (!isAdmin && location.pathname === "/home") {
+      console.log("isAdmin", isAdmin);
+
+      return <WelcomePage onSelectedPage={handleSelectedPage} />;
+    } else {
+      const Component = components[selectedPage] || ErrorPage; // Default to ErrorPage if not found
+
+      return <Component />;
+    }
+  }, [selectedPage, isAdmin, location.pathname]);
 
   return (
     <>
@@ -72,7 +94,30 @@ const HomePage = () => {
         onSelectedPage={handleSelectedPage}
         selectedPage={selectedPage}
       />
-      {renderComponent}
+      <Container>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedPage}
+            initial="initial"
+            animate="in"
+            exit="out"
+            variants={pageVariants}
+            transition={pageTransition}
+          >
+            <Box
+              sx={{
+                padding: 3,
+                borderRadius: 2,
+                boxShadow: 3,
+                backgroundColor: "#f4f6f8",
+                marginTop: 2,
+              }}
+            >
+              {renderComponent}
+            </Box>
+          </motion.div>
+        </AnimatePresence>
+      </Container>
     </>
   );
 };

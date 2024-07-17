@@ -138,7 +138,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          sx={{ width: "150%" }}
+          sx={{ width: "100%" }}
           valueLabelFormat={(value) => `$${value}`}
         />
       </Box>

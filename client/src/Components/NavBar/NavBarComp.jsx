@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { AppBar, Toolbar, Button, Stack } from "@mui/material";
+import Cookies from "universal-cookie";
 
 // Memoized Button to prevent unnecessary re-renders
 const MemoizedButton = memo(({ page, selectedPage, onSelectedPage }) => (
@@ -19,7 +20,8 @@ const MemoizedButton = memo(({ page, selectedPage, onSelectedPage }) => (
 ));
 
 const NavBarComp = ({ pages, onSelectedPage, selectedPage }) => {
-  const isAdmin = localStorage.getItem("isAdmin");
+  const cookies = new Cookies();
+  const isAdmin = cookies.get("isAdmin"); // Retrieve admin status from cookies and parse it as a boolean
   const buttonWidth = 100; // width of each button in pixels
   const totalWidth = pages.length * buttonWidth + (pages.length - 1) * 16; // total width including spacing
 
@@ -30,7 +32,7 @@ const NavBarComp = ({ pages, onSelectedPage, selectedPage }) => {
         margin: "0 auto",
         maxWidth: `${totalWidth}px`,
         borderRadius: 4,
-        backgroundColor: isAdmin === true ? "primary.main" : "secondary.main",
+        backgroundColor: isAdmin ? "primary.main" : "secondary.main",
       }}
     >
       <Toolbar>
@@ -53,4 +55,5 @@ const NavBarComp = ({ pages, onSelectedPage, selectedPage }) => {
     </AppBar>
   );
 };
+
 export default NavBarComp;
