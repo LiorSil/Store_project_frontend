@@ -44,6 +44,7 @@ function LoginPage() {
   useEffect(() => {
     if (data) {
       const { token } = data;
+      console.log("token", token);
       const decodedToken = jwtDecode(token);
 
       // Clear all cookies
@@ -52,14 +53,11 @@ function LoginPage() {
 
       cookies.set("token", token, {
         expires: new Date(decodedToken.exp * 1000),
-        httpOnly: true,
-        secure: true,
       });
 
       cookies.set("isAdmin", decodedToken.isAdmin, {
         expires: new Date(decodedToken.exp * 1000),
       });
-
 
       navigate("/home");
     }
@@ -73,7 +71,6 @@ function LoginPage() {
   if (error) return <Typography color="error">{error.message}</Typography>;
 
   return (
-    
     <Container component="main" maxWidth="xs">
       <Box className={classes["login-form"]}>
         <form onSubmit={handleSubmit(onSubmit)}>

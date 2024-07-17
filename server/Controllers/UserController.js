@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
         expiresIn: "1h",
       }
     );
-    res.cookie("token", token, { httpOnly: true });
+
     res.status(200).json({ token });
   } catch (error) {
     res.status(400).send(error.message);
