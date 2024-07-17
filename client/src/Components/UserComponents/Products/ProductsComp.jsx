@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Box, IconButton } from "@mui/material";
 import CartComp from "./CartComp";
 import ProductsListComp from "./ProductsListComp";
@@ -12,8 +12,9 @@ import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer";
 
 const ProductsComp = () => {
   const dispatch = useDispatch();
-  const { data: categories } = useSelector(
-    useMemo(() => (state) => state.categories, [])
+  // Memoized selector to avoid unnecessary re-renders
+  const categories = useSelector(
+    useMemo(() => (state) => state.categories.data, [])
   );
 
   const {
@@ -22,30 +23,36 @@ const ProductsComp = () => {
     error: productsError,
   } = useSelector((state) => state.products);
 
+  // Local state for order confirmation message, cart visibility, and filters
   const [orderConfirmed, setOrderConfirmed] = useState("");
   const [isCartOpen, setCartOpen] = useState(false);
   const [filters, setFilters] = useState({
     category: { _id: "All", name: "All" },
-
     price: 1000,
     text: "",
   });
 
+  // Fetch categories data on component mount
   useEffect(() => {
-    dispatch(fetchCategoriesData());
+    dispatch(fetchCategoriesData()).catch((error) =>
+      console.error("Error fetching categories data:", error)
+    );
   }, [dispatch]);
 
-  const handleOrderConfirmed = (message) => {
+  // Handler for order confirmation
+  const handleOrderConfirmed = useCallback((message) => {
     setOrderConfirmed(message);
-  };
+  }, []);
 
-  const toggleCart = () => {
-    setCartOpen(!isCartOpen);
-  };
+  // Toggle cart visibility
+  const toggleCart = useCallback(() => {
+    setCartOpen((prevState) => !prevState);
+  }, []);
 
-  const handleFilterChange = (newFilters) => {
+  // Handle filter changes
+  const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
   return (
     <Box
@@ -97,7 +104,7 @@ const ProductsComp = () => {
           IconComp={CheckCircleIcon}
           onClose={() => {
             setOrderConfirmed("");
-            //enforce a refresh of the page to update the quantity of products
+            // Refresh the page to update the quantity of products
             window.location.reload();
           }}
         />

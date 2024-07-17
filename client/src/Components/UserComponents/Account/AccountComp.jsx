@@ -1,4 +1,5 @@
 import React, {
+  lazy,
   Suspense,
   useCallback,
   useEffect,
@@ -6,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import LoadingComp from "../../Utils/LoadingComp";
-import { NoticeMessageComp, ConfirmComp } from "../../Utils/indexUtil";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import {
@@ -31,16 +31,34 @@ import {
   firstNameValidator,
   lastNameValidator,
   passwordValidator,
-} from "../../Utils/Validators/indexValidator";
+} from "../../Utils/Validators/accountDetailsValidators/userIndexValidator";
 import API_BASE_URL from "../../../Constants/serverUrl";
+import { createSelector } from "reselect";
+
+// Lazy load components
+const LazyNoticeMessageComp = lazy(() =>
+  import("../../Utils/NoticeMessageComp")
+);
+const LazyConfirmComp = lazy(() => import("../../Utils/ConfirmComp"));
+
+// Memoized selector using reselect
+const selectAccountState = createSelector(
+  (state) => state.account,
+  (account) => ({
+    oldAccount: account.oldAccount,
+    formData: account.formData,
+  })
+);
 
 const AccountComp = () => {
+  // Create a memoized instance of Cookies to avoid re-instantiation on every render
   const cookies = useMemo(() => new Cookies(), []);
-  //redux
-  const dispatch = useDispatch();
-  const { oldAccount, formData } = useSelector((state) => state.account);
 
-  //form management
+  // Redux hooks
+  const dispatch = useDispatch();
+  const { oldAccount, formData } = useSelector(selectAccountState);
+
+  // Form management using react-hook-form
   const {
     register,
     handleSubmit,
@@ -51,19 +69,15 @@ const AccountComp = () => {
     defaultValues: oldAccount,
   });
 
-  //dirty fields
+  // Get the dirty state of the form
   const { isDirty } = useFormState({ control });
 
-  //loading state
+  // Component state for loading, confirmation dialog, and notice message
   const [loading, setLoading] = useState(true);
-
-  //dialog states
   const [confirmMessage, setConfirmMessage] = useState(false);
-  const [noticeMessage, setNoticeMessage] = useState({
-    open: false,
-  });
+  const [noticeMessage, setNoticeMessage] = useState({ open: false });
 
-  // Fetch user data and populate form fields
+  // Fetch user data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -74,14 +88,25 @@ const AccountComp = () => {
             Authorization: "Bearer " + cookies.get("token"),
           },
         });
-        const data = await response.json();
-        //populate form fields
-        for (const key in data) {
-          setValue(key, data[key]);
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
 
+        const data = await response.json();
+
+        if (typeof data !== "object" || Array.isArray(data)) {
+          throw new Error("Invalid data format");
+        }
+
+        console.log("Fetched data:", data); // Debugging log
+
+        // Batch updating form values
+        Object.keys(data).forEach((key) => {
+          setValue(key, data[key]);
+        });
+
         dispatch(setAccount(data));
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching user data: ", error.message);
       } finally {
@@ -92,6 +117,7 @@ const AccountComp = () => {
     fetchData();
   }, [cookies, dispatch, setValue]);
 
+  // Handle the confirm order action
   const handleConfirmOrder = useCallback(async () => {
     try {
       const options = {
@@ -114,6 +140,8 @@ const AccountComp = () => {
           icon: CheckCircleIcon,
           color: "green",
         });
+      } else {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error updating user: ", error.message);
@@ -127,33 +155,44 @@ const AccountComp = () => {
     }
   }, [cookies, dispatch, formData]);
 
-  const handleOnSubmit = async (updatedAccountDetails) => {
-    dispatch(updateAccount(updatedAccountDetails));
-    setConfirmMessage(true);
-  };
-
-  const confirmDialog = (
-    <ConfirmComp
-      open={confirmMessage}
-      onClose={() => setConfirmMessage(false)}
-      onConfirm={handleConfirmOrder}
-      title="Confirm Order"
-      description="Are you sure you want to update your account details?"
-    />
+  // Handle form submission
+  const handleOnSubmit = useCallback(
+    async (updatedAccountDetails) => {
+      dispatch(updateAccount(updatedAccountDetails));
+      setConfirmMessage(true);
+    },
+    [dispatch]
   );
+
+  // Confirmation dialog component
+  const confirmDialog = (
+    <Suspense fallback={<LoadingComp />}>
+      <LazyConfirmComp
+        open={confirmMessage}
+        onClose={() => setConfirmMessage(false)}
+        onConfirm={handleConfirmOrder}
+        title="Confirm Order"
+        description="Are you sure you want to update your account details?"
+      />
+    </Suspense>
+  );
+
+  // Notice message component
   const noticeDialog = noticeMessage.open && (
-    <NoticeMessageComp
-      open={true}
-      message={noticeMessage.message}
-      IconComp={noticeMessage.icon}
-      color={noticeMessage.color}
-      onClose={() =>
-        setNoticeMessage((prevMessage) => ({
-          ...prevMessage,
-          open: false,
-        }))
-      }
-    />
+    <Suspense fallback={<LoadingComp />}>
+      <LazyNoticeMessageComp
+        open={true}
+        message={noticeMessage.message}
+        IconComp={noticeMessage.icon}
+        color={noticeMessage.color}
+        onClose={() =>
+          setNoticeMessage((prevMessage) => ({
+            ...prevMessage,
+            open: false,
+          }))
+        }
+      />
+    </Suspense>
   );
 
   return (

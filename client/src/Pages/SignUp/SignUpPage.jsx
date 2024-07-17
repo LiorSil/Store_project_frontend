@@ -16,7 +16,7 @@ import {
   lastNameValidator,
   passwordValidator,
   usernameValidator,
-} from "../../Components/Utils/Validators/indexValidator";
+} from "../../Components/Utils/Validators/accountDetailsValidators/userIndexValidator";
 
 import classes from "./SignUpPage.module.css";
 import API_BASE_URL from "../../Constants/serverUrl";

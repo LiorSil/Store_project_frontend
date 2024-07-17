@@ -5,23 +5,28 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../../Redux/Reducers/cartReducer";
 
 const ProductItemComp = ({ product }) => {
-  //redux
   const dispatch = useDispatch();
 
+  // Local state for managing quantity and alert visibility
   const [quantity, setQuantity] = useState(1);
-  const [showAlert, setShowAlert] = useState(false);
 
+  // Increment the quantity of the product
   const handleIncrement = () => {
-    setQuantity(quantity + 1);
+    setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
+  // Decrement the quantity of the product
   const handleDecrement = () => {
-    if (quantity === 1) return;
-    setQuantity(quantity > 1 ? quantity - 1 : 1);
+    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
+  // Add the product to the cart with the specified quantity
   const handleAddToCart = () => {
-    dispatch(addToCart({ ...product, quantity }));
+    if (quantity <= product.quantity && product.quantity > 0) {
+      dispatch(addToCart({ ...product, quantity }));
+    } else {
+      console.error("Invalid quantity or product out of stock");
+    }
   };
 
   return (
@@ -36,7 +41,7 @@ const ProductItemComp = ({ product }) => {
         margin: 2,
       }}
     >
-      <Typography component={"h6"} gutterBottom>
+      <Typography component="h6" gutterBottom>
         {product.title}
       </Typography>
       <Typography variant="body1" gutterBottom>
@@ -80,8 +85,7 @@ const ProductItemComp = ({ product }) => {
         >
           +
         </Button>
-
-        <Box alignContent="flex-end" ml="auto">
+        <Box ml="auto">
           <IconButton
             disabled={quantity > product.quantity || product.quantity === 0}
             color="primary"

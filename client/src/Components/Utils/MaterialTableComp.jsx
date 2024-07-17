@@ -18,16 +18,19 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   borderRadius: "10px",
   border: "1px solid",
   boxShadow: "0px 3px 6px #00000029",
+  fontFamily: "'Open Sans', sans-serif", // Applying font style
 }));
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
   backgroundColor: theme.palette.grey[300],
   color: theme.palette.common.black,
+  fontFamily: "'Open Sans', sans-serif", // Applying font style
 }));
 
 const StyledTableFooter = styled(TableFooter)(({ theme }) => ({
   backgroundColor: theme.palette.grey[300],
   color: theme.palette.common.black,
+  fontFamily: "'Open Sans', sans-serif", // Applying font style
 }));
 
 const StyledTableHeadCell = styled(TableCell)(({ theme }) => ({
@@ -35,17 +38,20 @@ const StyledTableHeadCell = styled(TableCell)(({ theme }) => ({
   color: theme.palette.common.black,
   borderBottom: "2px solid",
   borderColor: theme.palette.grey[400],
+  fontFamily: "'Open Sans', sans-serif", // Applying font style
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.grey[100],
   },
+  fontFamily: "'Open Sans', sans-serif", // Applying font style
 }));
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottom: "1px solid",
   borderColor: theme.palette.grey[300],
+  fontFamily: "'Open Sans', sans-serif", // Applying font style
 }));
 
 /**
@@ -100,13 +106,6 @@ const MaterialTableComp = ({ columns = [], data = [] }) => {
             );
           })}
         </TableBody>
-        <StyledTableFooter>
-          <TableRow>
-            <StyledTableHeadCell colSpan={columns.length}>
-              Total Items: {data.length}
-            </StyledTableHeadCell>
-          </TableRow>
-        </StyledTableFooter>
       </Table>
     </StyledTableContainer>
   );

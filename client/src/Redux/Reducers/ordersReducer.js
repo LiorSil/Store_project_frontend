@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
+// Async thunk for fetching orders data
 export const fetchOrdersData = createAsyncThunk(
   "orders/fetchData",
   async (_, thunkAPI) => {
@@ -22,11 +23,11 @@ export const fetchOrdersData = createAsyncThunk(
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch orders data");
+        const errorDetail = await response.json();
+        throw new Error(errorDetail.message || "Failed to fetch orders data");
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

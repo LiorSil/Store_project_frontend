@@ -29,21 +29,34 @@ const trendingColors = [
   "#FFD633",
 ];
 
+/**
+ * DoughnutChart Component
+ *
+ * This component renders a doughnut chart using the Chart.js library. It displays the
+ * number of bought products and their respective percentages.
+ *
+ * @returns {JSX.Element} - The rendered doughnut chart component.
+ */
 const DoughnutChart = React.memo(() => {
   const dispatch = useDispatch();
   const products = useSelector(
     (state) => state.products.boughtProducts,
     shallowEqual
   );
+
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
+  // Fetch bought products if not already fetched
   useEffect(() => {
     if (products.length === 0) {
       dispatch(fetchOnlyBoughtProducts());
     }
   }, [dispatch, products.length]);
 
+  /**
+   * Creates and renders the chart using Chart.js.
+   */
   const createChart = useCallback(() => {
     if (!products || products.length === 0) return;
 
@@ -56,7 +69,6 @@ const DoughnutChart = React.memo(() => {
     const backgroundColors = products.map(
       (_, index) => trendingColors[index % trendingColors.length]
     );
-    const borderColors = backgroundColors.map((color) => color);
 
     const ctx = canvasRef.current.getContext("2d");
 
@@ -74,7 +86,6 @@ const DoughnutChart = React.memo(() => {
             data,
             borderWidth: 1,
             backgroundColor: backgroundColors,
-            borderColor: borderColors,
           },
         ],
       },
@@ -85,7 +96,7 @@ const DoughnutChart = React.memo(() => {
             position: "top",
           },
           datalabels: {
-            formatter: (value, context) => {
+            formatter: (value) => {
               const percentage = ((value / totalBought) * 100).toFixed(2);
               return `${percentage}%`;
             },
@@ -103,6 +114,7 @@ const DoughnutChart = React.memo(() => {
     });
   }, [products]);
 
+  // Create chart on component mount and clean up on unmount
   useEffect(() => {
     createChart();
     return () => {
@@ -110,7 +122,7 @@ const DoughnutChart = React.memo(() => {
         chartRef.current.destroy();
       }
     };
-  }, [products, createChart]);
+  }, [createChart]);
 
   return (
     <canvas

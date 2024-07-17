@@ -1,7 +1,5 @@
 import React, { useState, useMemo, useCallback, Suspense } from "react";
-import { NoticeMessageComp, ConfirmComp } from "../../Utils/indexUtil";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
+import { useDispatch, useSelector } from "react-redux";
 import {
   TextField,
   MenuItem,
@@ -14,14 +12,18 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import EditIcon from "@mui/icons-material/Edit";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { useForm } from "react-hook-form";
-import validateProductTitle from "../../Utils/Validators/adminProductValidators/productTitleValidator";
-import validateProductPrice from "../../Utils/Validators/adminProductValidators/productPriceValidator";
-import validateProductDescription from "../../Utils/Validators/adminProductValidators/productDescriptionValidator";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  Save as SaveIcon,
+  Edit as EditIcon,
+  Cancel as CancelIcon,
+  CheckCircle as CheckCircleIcon,
+  Error as ErrorIcon,
+} from "@mui/icons-material";
+import { NoticeMessageComp, ConfirmComp } from "../../Utils/indexUtil";
+import validateProductTitle from "../../Utils/Validators/adminProductValidators/adminValidators/productTitleValidator";
+import validateProductPrice from "../../Utils/Validators/adminProductValidators/adminValidators/productPriceValidator";
+import validateProductDescription from "../../Utils/Validators/adminProductValidators/adminValidators/productDescriptionValidator";
 import { updateProductData } from "../../../Redux/Reducers/productsReducer";
 
 const MaterialTableComp = React.lazy(() =>
@@ -38,14 +40,14 @@ const MaterialTableComp = React.lazy(() =>
  */
 const AdminProductItem = ({ product, orders, customers }) => {
   const dispatch = useDispatch();
-  const [editMode, setEditMode] = useState(false); // State to toggle edit mode
+  const [editMode, setEditMode] = useState(false);
   const [dialogState, setDialogState] = useState({
     confirm: false,
     notice: { open: false, message: "", icon: null, color: "" },
   });
-  const [localProduct, setLocalProduct] = useState(product); // Local state for product details
+  const [localProduct, setLocalProduct] = useState(product);
 
-  const categories = useSelector((state) => state.categories.data); // Fetch categories from Redux store
+  const categories = useSelector((state) => state.categories.data);
 
   const {
     handleSubmit,
@@ -78,7 +80,7 @@ const AdminProductItem = ({ product, orders, customers }) => {
       setError("description", { message: descriptionError });
       return;
     }
-    setEditMode(false);
+
     clearErrors();
     setDialogState((prev) => ({ ...prev, confirm: true }));
   };
@@ -95,6 +97,7 @@ const AdminProductItem = ({ product, orders, customers }) => {
         ...data,
         category: category._id,
       };
+
       dispatch(updateProductData(updatedProduct))
         .then((resolve) => {
           if (resolve.type === "products/updateData/fulfilled") {
@@ -259,7 +262,7 @@ const AdminProductItem = ({ product, orders, customers }) => {
                         Select Category
                       </MenuItem>
                       {categories.map((cat) => (
-                        <MenuItem key={cat._id} value={cat.name} _id={cat._id}>
+                        <MenuItem key={cat._id} value={cat.name}>
                           {cat.name}
                         </MenuItem>
                       ))}

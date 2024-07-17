@@ -14,10 +14,17 @@ const LoadingItemPlaceholderComp = () => {
         margin: 2,
       }}
     >
+      {/* Placeholder for title */}
       <Skeleton variant="text" height={30} width="80%" />
+
+      {/* Placeholder for description */}
       <Skeleton variant="text" height={20} width="60%" />
       <Skeleton variant="text" height={20} width="50%" />
+
+      {/* Placeholder for image */}
       <Skeleton variant="rectangular" height={200} sx={{ my: 2 }} />
+
+      {/* Placeholder for action buttons and quantity */}
       <Box display="flex" alignItems="center">
         <Skeleton variant="rectangular" height={36} width={36} />
         <Box mx={4}>

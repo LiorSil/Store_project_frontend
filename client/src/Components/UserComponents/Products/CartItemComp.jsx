@@ -18,15 +18,24 @@ import {
 } from "../../../Redux/Reducers/cartReducer";
 
 const CartItemComp = ({ cartItem, catalogProduct }) => {
-  const total = cartItem.price * cartItem.quantity;
   const dispatch = useDispatch();
+  const total = cartItem.price * cartItem.quantity;
 
-  const handleIncrement = (item) => {
-    dispatch(incrementCartItemCount(item._id));
+  // Handle incrementing the cart item quantity
+  const handleIncrement = () => {
+    dispatch(incrementCartItemCount(cartItem._id));
   };
 
-  const handleDecrement = (item) => {
-    dispatch(decrementCartItemCount(item._id));
+  // Handle decrementing the cart item quantity
+  const handleDecrement = () => {
+    if (cartItem.quantity > 1) {
+      dispatch(decrementCartItemCount(cartItem._id));
+    }
+  };
+
+  // Handle removing the cart item
+  const handleRemove = () => {
+    dispatch(removeCartItem(cartItem._id));
   };
 
   return (
@@ -59,7 +68,7 @@ const CartItemComp = ({ cartItem, catalogProduct }) => {
         secondary={
           <>
             <Typography component="span" variant="body2" color="text.primary">
-              Total: ${total}
+              Total: ${total.toFixed(2)}
             </Typography>
             <br />
             <Typography
@@ -71,11 +80,9 @@ const CartItemComp = ({ cartItem, catalogProduct }) => {
             </Typography>
             <Box mt={2} display="flex" alignItems="center" component="span">
               <Button
-                variant={cartItem.quantity === 1 ? "contained" : "outlined"}
+                variant="outlined"
                 disabled={cartItem.quantity === 1}
-                onClick={() => {
-                  handleDecrement(cartItem);
-                }}
+                onClick={handleDecrement}
               >
                 -
               </Button>
@@ -89,15 +96,11 @@ const CartItemComp = ({ cartItem, catalogProduct }) => {
               <Button
                 variant="outlined"
                 disabled={cartItem.quantity >= catalogProduct.quantity}
-                onClick={() => handleIncrement(cartItem)}
+                onClick={handleIncrement}
               >
                 +
               </Button>
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={() => dispatch(removeCartItem(cartItem._id))}
-              >
+              <IconButton edge="end" aria-label="delete" onClick={handleRemove}>
                 <DeleteIcon />
               </IconButton>
             </Box>

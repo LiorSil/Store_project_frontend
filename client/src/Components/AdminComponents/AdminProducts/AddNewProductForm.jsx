@@ -11,18 +11,25 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { LoadingComp } from "../../Utils/indexUtil";
-// import validators
-import validateProductTitle from "../../Utils/Validators/adminProductValidators/productTitleValidator";
-import validateProductPrice from "../../Utils/Validators/adminProductValidators/productPriceValidator";
-import validateProductDescription from "../../Utils/Validators/adminProductValidators/productDescriptionValidator";
-import validateProductImageReference from "../../Utils/Validators/adminProductValidators/productImageReferenceValidator";
-import validateProductQuantity from "../../Utils/Validators/adminProductValidators/productQuantityValidator";
-// import redux
 import { useDispatch } from "react-redux";
 import { addProductData } from "../../../Redux/Reducers/addProductReducer";
+import {
+  validateProductTitle,
+  validateProductPrice,
+  validateProductDescription,
+  validateProductImageReference,
+  validateProductQuantity,
+} from "../../Utils/Validators/adminProductValidators/adminIndexValidator.js";
 
-const AddNewProductForm = ({ onConfirm, categories }) => {
+/**
+ * AddNewProductForm component for adding a new product.
+ *
+ * @param {Object} props - The component props.
+ * @param {Function} props.onConfirm - Callback function for when the form is submitted.
+ * @param {Array} props.categories - List of categories to select from.
+ * @returns {JSX.Element} - The rendered component.
+ */
+const AddNewProductForm = ({ categories }) => {
   const {
     handleSubmit,
     register,
@@ -40,14 +47,28 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
       imageReference: "",
     },
   });
+
   const dispatch = useDispatch();
-  const [openNewProductForm, setOpenNewProductForm] = useState(false);
-  const openNewProductFormHandler = () => setOpenNewProductForm(true);
+  const [openForm, setOpenForm] = useState(false);
+
+  /**
+   * Opens the form modal.
+   */
+  const handleOpenForm = () => setOpenForm(true);
+
+  /**
+   * Closes the form modal and resets the form.
+   */
   const handleCloseForm = () => {
-    setOpenNewProductForm(false);
+    setOpenForm(false);
     reset();
   };
 
+  /**
+   * Handles form submission for adding a new product.
+   *
+   * @param {Object} data - The form data.
+   */
   const onSubmitHandler = async (data) => {
     const titleError = await validateProductTitle(data.title);
     const priceError = await validateProductPrice(data.price);
@@ -56,6 +77,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
       data.imageReference
     );
     const quantityError = await validateProductQuantity(data.quantity);
+
     if (
       titleError ||
       priceError ||
@@ -69,26 +91,24 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
       setError("imageReference", { message: imageReferenceError });
       setError("quantity", { message: quantityError });
       return;
-    } else {
-      // dispatch addProductData
-      dispatch(addProductData(data));
-      setOpenNewProductForm(false);
-      reset();
-      clearErrors();
     }
+
+    dispatch(addProductData(data));
+
+    setOpenForm(false);
+    reset();
+    clearErrors();
+    //reload
+    window.location.reload();
   };
 
   return (
     <>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={openNewProductFormHandler}
-      >
+      <Button variant="contained" color="primary" onClick={handleOpenForm}>
         Add New Product
       </Button>
       <Modal
-        open={openNewProductForm}
+        open={openForm}
         onClose={handleCloseForm}
         aria-labelledby="add-new-product-form"
         aria-describedby="form-to-add-new-product"
@@ -112,7 +132,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
           <form onSubmit={handleSubmit(onSubmitHandler)}>
             <TextField
               {...register("title", {
-                required: true,
+                required: "Title is required",
                 validate: validateProductTitle,
               })}
               label="Title"
@@ -124,13 +144,18 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
             <FormControl fullWidth margin="normal">
               <InputLabel>Category</InputLabel>
               <Select
-                {...register("categoryName", { required: true })}
+                {...register("categoryName", {
+                  required: "Category is required",
+                })}
                 label="Category"
                 defaultValue=""
-                error={!!errors.category}
+                error={!!errors.categoryName}
               >
+                <MenuItem value="" disabled>
+                  Select Category
+                </MenuItem>
                 {categories.map((cat) => (
-                  <MenuItem key={cat._id} value={cat.name} id={cat._id}>
+                  <MenuItem key={cat._id} value={cat.name}>
                     {cat.name}
                   </MenuItem>
                 ))}
@@ -139,7 +164,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
             <TextField
               label="Description"
               {...register("description", {
-                required: true,
+                required: "Description is required",
                 validate: validateProductDescription,
               })}
               fullWidth
@@ -153,7 +178,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
               label="Price"
               type="number"
               {...register("price", {
-                required: true,
+                required: "Price is required",
                 validate: validateProductPrice,
               })}
               fullWidth
@@ -165,7 +190,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
               label="Quantity"
               type="number"
               {...register("quantity", {
-                required: true,
+                required: "Quantity is required",
                 validate: validateProductQuantity,
               })}
               fullWidth
@@ -177,7 +202,7 @@ const AddNewProductForm = ({ onConfirm, categories }) => {
               label="Image Reference"
               placeholder="file_name.png"
               {...register("imageReference", {
-                required: true,
+                required: "Image Reference is required",
                 validate: validateProductImageReference,
               })}
               fullWidth

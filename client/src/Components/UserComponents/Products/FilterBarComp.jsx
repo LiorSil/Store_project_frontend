@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -11,18 +11,25 @@ import {
   InputLabel,
 } from "@mui/material";
 import LoadingComp from "../../Utils/LoadingComp";
+import MaxPriceTypography from "./MaxPriceTypography";
 
 const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
-  const All = { _id: "All", name: "All" };
-  const objectedCategories = [All, ...categories];
+  // Default category to include "All"
+  const defaultCategory = useMemo(() => ({ _id: "All", name: "All" }), []);
+  const categoryOptions = useMemo(
+    () => [defaultCategory, ...categories],
+    [categories, defaultCategory]
+  );
 
-  const [selectedCategory, setSelectedCategory] = useState(All);
+  // Local state for filters
+  const [selectedCategory, setSelectedCategory] = useState(defaultCategory);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [searchText, setSearchText] = useState("");
 
+  // Handle category change
   const handleCategoryChange = (event) => {
     const selectedCategoryId = event.target.value;
-    const selectedCategoryObject = objectedCategories.find(
+    const selectedCategoryObject = categoryOptions.find(
       (category) => category._id === selectedCategoryId
     );
 
@@ -35,6 +42,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
     });
   };
 
+  // Handle max price change
   const handleMaxPriceChange = (event, newMaxPrice) => {
     setMaxPrice(newMaxPrice);
     onFilterChange({
@@ -44,6 +52,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
     });
   };
 
+  // Handle search text change
   const handleSearchTextChange = (event) => {
     const newText = event.target.value;
     setSearchText(newText);
@@ -54,16 +63,31 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
     });
   };
 
+  // Handle clear filters
   const handleClearFilters = () => {
-    setSelectedCategory(All);
+    setSelectedCategory(defaultCategory);
     setMaxPrice(1000);
     setSearchText("");
     onFilterChange({
-      category: All,
+      category: defaultCategory,
       price: 1000,
       text: "",
     });
   };
+
+  // Show loading component if loading state is true
+  if (loading) {
+    return <LoadingComp />;
+  }
+
+  // Show error message if error state is true
+  if (error) {
+    return (
+      <Typography color="error" variant="h6">
+        Error loading filters: {error.message}
+      </Typography>
+    );
+  }
 
   return (
     <Box
@@ -92,7 +116,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           displayEmpty
           label="Category"
         >
-          {objectedCategories.map((category) => (
+          {categoryOptions.map((category) => (
             <MenuItem key={category._id} value={category._id}>
               {category.name}
             </MenuItem>
@@ -107,14 +131,14 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           alignItems: "center",
         }}
       >
-        <Typography gutterBottom>Max Price: {`${maxPrice}$`}</Typography>
+        <MaxPriceTypography maxPrice={maxPrice} />
         <Slider
           value={maxPrice}
           onChange={handleMaxPriceChange}
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          sx={{ width: "100%" }}
+          sx={{ width: "150%" }}
           valueLabelFormat={(value) => `$${value}`}
         />
       </Box>
@@ -124,7 +148,24 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
         onChange={handleSearchTextChange}
         sx={{ minWidth: 200 }}
       />
-      <Button variant="outlined" onClick={handleClearFilters}>
+      <Button
+        variant="outlined"
+        onClick={handleClearFilters}
+        sx={{
+          borderColor: "primary.main",
+          color: "primary.main",
+          fontWeight: "bold",
+          padding: "8px 16px",
+          borderRadius: "8px",
+          textTransform: "none",
+          transition: "all 0.3s ease",
+          "&:hover": {
+            backgroundColor: "primary.main",
+            color: "white",
+            borderColor: "primary.main",
+          },
+        }}
+      >
         Clear
       </Button>
     </Box>

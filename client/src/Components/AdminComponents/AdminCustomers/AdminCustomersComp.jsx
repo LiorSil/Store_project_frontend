@@ -46,15 +46,16 @@ const AdminCustomersComp = () => {
         product:
           products.find((product) => product._id === item.productId)?.title ||
           "Product not found",
-        //product: item.productId,
         quantity: item.quantity,
         orderDate: new Date(item.orderDate).toLocaleDateString(),
       })),
     }));
   };
 
+  // Format the customer data
   const formattedData = formatCustomerData(customers);
 
+  // Render the table with formatted customer data
   return (
     <div>
       <MaterialTableComp columns={columns} data={formattedData} />

@@ -7,53 +7,77 @@ import React, {
   useMemo,
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProductsData } from "../../../Redux/Reducers/productsReducer.js";
-import { fetchOrdersData } from "../../../Redux/Reducers/ordersReducer.js";
-import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer.js";
+import { fetchProductsData } from "../../../Redux/Reducers/productsReducer";
+import { fetchOrdersData } from "../../../Redux/Reducers/ordersReducer";
+import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer";
+import { fetchUsersAndProductsData } from "../../../Redux/Reducers/userReducer";
 import { Grid, Box, CircularProgress } from "@mui/material";
-import { fetchUsersAndProductsData } from "../../../Redux/Reducers/userReducer.js";
 import LoadingPlaceholder from "./LoadingPlaceholder";
-import getAllItems from "./getAllItems.js";
+import getAllItems from "./getAllItems";
 
-const AdminProductItem = lazy(() => import("./AdminProductItem.jsx"));
+const AdminProductItem = lazy(() => import("./AdminProductItem"));
 
+/**
+ * AdminProductsListComp Component
+ *
+ * This component fetches and displays a list of products for the admin.
+ * It handles data fetching for products, orders, categories, and users,
+ * and renders each product item with its associated orders and customers.
+ */
 const AdminProductsListComp = () => {
   const dispatch = useDispatch();
   const [renderCount, setRenderCount] = useState(0);
   const [dataFetched, setDataFetched] = useState(false);
 
-  const productsData = useSelector((state) => state.products.productsData, []);
-  console.log("productsData", productsData);
-  const customers = useSelector((state) => state.users.customers, []);
-  const ordersData = useSelector((state) => state.orders.ordersData, []);
+  const products = useSelector((state) => state.products.productsData);
+  const customers = useSelector((state) => state.users.customers);
+  const orders = useSelector((state) => state.orders.ordersData);
 
+  /**
+   * Fetch all necessary data when the component mounts.
+   * Uses useCallback to memoize the fetch function.
+   */
   const fetchData = useCallback(async () => {
-    await Promise.all([
-      dispatch(fetchProductsData()),
-      dispatch(fetchOrdersData()),
-      dispatch(fetchCategoriesData()),
-      dispatch(fetchUsersAndProductsData()),
-    ]);
-    setDataFetched(true);
+    try {
+      await Promise.all([
+        dispatch(fetchProductsData()),
+        dispatch(fetchOrdersData()),
+        dispatch(fetchCategoriesData()),
+        dispatch(fetchUsersAndProductsData()),
+      ]);
+      setDataFetched(true);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, [dispatch]);
 
+  // Fetch data on component mount
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  /**
+   * Incrementally render product items for better performance.
+   */
   useEffect(() => {
-    if (dataFetched && renderCount < productsData.length) {
+    if (dataFetched && renderCount < products.length) {
       const interval = setInterval(() => {
-        setRenderCount((prev) =>
-          prev < productsData.length ? prev + 1 : prev
+        setRenderCount((prevCount) =>
+          prevCount < products.length ? prevCount + 1 : prevCount
         );
       }, 200);
       return () => clearInterval(interval);
     }
-  }, [dataFetched, renderCount, productsData.length]);
+  }, [dataFetched, renderCount, products.length]);
 
-  const orders = useMemo(() => getAllItems(ordersData), [ordersData]);
+  const processedOrders = useMemo(() => getAllItems(orders), [orders]);
 
+  /**
+   * Render a product item or a loading placeholder based on the render count.
+   *
+   * @param {Object} product - The product data.
+   * @param {number} index - The index of the product in the list.
+   */
   const renderProductItem = useCallback(
     (product, index) => (
       <Grid item xs={12} sm={6} md={4} key={product._id}>
@@ -61,7 +85,9 @@ const AdminProductsListComp = () => {
           <Suspense fallback={<CircularProgress />}>
             <AdminProductItem
               product={product}
-              orders={orders.filter((order) => order.productId === product._id)}
+              orders={processedOrders.filter(
+                (order) => order.productId === product._id
+              )}
               customers={customers}
             />
           </Suspense>
@@ -70,13 +96,13 @@ const AdminProductsListComp = () => {
         )}
       </Grid>
     ),
-    [renderCount, orders, customers]
+    [renderCount, processedOrders, customers]
   );
 
   return (
     <Box>
       <Grid container spacing={2}>
-        {productsData.map(renderProductItem)}
+        {products.map(renderProductItem)}
       </Grid>
     </Box>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Drawer,
   Box,
@@ -19,63 +19,70 @@ import CartItemComp from "./CartItemComp";
 import useFetch from "../../../Hooks/useFetch";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../../Constants/serverUrl";
+import EmptyCartMessage from "./EmptyCartMessage";
+import TotalComp from "./TotalComp";
 
 const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
-  const [showAlert, setShowAlert] = useState(false);
-  const [showQuantityAlert, setShowQuantityAlert] = useState(false);
-  const { cart } = useSelector((state) => state.cart);
-
-  const totalPrice = useSelector(totalPriceReducer);
   const dispatch = useDispatch();
+
+  // Local state for managing alerts and confirmation dialog
+  const [showEmptyCartAlert, setShowEmptyCartAlert] = useState(false);
+  const [showQuantityAlert, setShowQuantityAlert] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const { cart } = useSelector((state) => state.cart);
+  const totalPrice = useSelector(totalPriceReducer);
+
   const { fetchData, loading, error } = useFetch();
-  const [openDialog, setOpenDialog] = useState(false);
 
-  const handleOpenDialog = () => {
-    if (!!totalPrice === false) {
-      setShowAlert(true);
+  // Open the confirmation dialog
+  const openDialog = () => {
+    if (totalPrice === 0) {
+      setShowEmptyCartAlert(true);
       return;
-    } else {
-      setShowAlert(false);
-
-      //validate that the each cart item quantity is less than the product max quantity and if not, show an alert message
-      for (let i = 0; i < cart.length; i++) {
-        const product = products.find((prod) => prod._id === cart[i]._id);
-        if (cart[i].quantity > product.quantity) {
-          setShowQuantityAlert(true);
-          dispatch(
-            updateCartItemCount({
-              _id: product._id,
-              quantity: product.quantity,
-            })
-          );
-          return;
-        }
-      }
-      setOpenDialog(true);
     }
+
+    setShowEmptyCartAlert(false);
+
+    for (let i = 0; i < cart.length; i++) {
+      const product = products.find((prod) => prod._id === cart[i]._id);
+      if (cart[i].quantity > product.quantity) {
+        setShowQuantityAlert(true);
+        dispatch(
+          updateCartItemCount({
+            _id: product._id,
+            quantity: product.quantity,
+          })
+        );
+        return;
+      }
+    }
+
+    setIsDialogOpen(true);
   };
 
-  const handleCloseDialog = () => setOpenDialog(false);
-  const handleCloseAlert = () => {
-    setShowAlert(false);
+  // Close the confirmation dialog
+  const closeDialog = () => setIsDialogOpen(false);
+
+  // Close the alerts
+  const closeAlert = () => {
+    setShowEmptyCartAlert(false);
     setShowQuantityAlert(false);
   };
-  const handleConfirmOrder = async () => {
-    //validate that the each cart item quantity is less than the product max quantity and if not, show an alert message
 
+  // Handle order confirmation
+  const confirmOrder = async () => {
     try {
       const orderData = {
         items: cart.map((item) => ({
           productId: item._id,
           quantity: item.quantity,
           price: item.price,
-          orderDate: new Date().toLocaleString("he-Il", {
-            timeZone: "Asia/Jerusalem",
-          }),
+          orderDate: new Date().toISOString(),
           imageUrl: item.imageUrl,
         })),
-        totalAmount: totalPrice, // Include totalAmount in orderData
-        orderDate: new Date().toISOString(), // Use ISO string for date
+        totalAmount: totalPrice,
+        orderDate: new Date().toISOString(),
       };
 
       const cookies = new Cookies();
@@ -83,33 +90,32 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + cookies.get("token"),
+          Authorization: `Bearer ${cookies.get("token")}`,
         },
         body: JSON.stringify(orderData),
       };
 
-      // Perform the POST request using fetchData from useFetch hook
       const success = await fetchData(`${API_BASE_URL}/orders`, options);
 
-      // Clear the cart after successful order creation
-      dispatch(clearCart());
-      handleCloseDialog();
-      toggleCart();
       if (success) {
+        dispatch(clearCart());
+        toggleCart();
         onGetSuccessMessage("success");
       } else {
         onGetSuccessMessage("error");
       }
+
+      closeDialog();
     } catch (error) {
       console.error("Error placing order: ", error.message);
       onGetSuccessMessage("error");
     }
   };
 
-  if (loading) return <LoadingComp />; // Show loading indicator if fetching data
+  if (loading) return <LoadingComp />;
 
   if (error) {
-    return <div>Error: {error.message}</div>; // Show error message if fetch fails
+    return <div>Error: {error.message}</div>;
   }
 
   return (
@@ -145,16 +151,7 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
               />
             ))
           ) : (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
-              Cart is empty
-            </Box>
+            <EmptyCartMessage />
           )}
         </Box>
         <Box
@@ -165,29 +162,29 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
             fontWeight: "bold",
           }}
         >
-          Total: ${totalPrice}
+          <TotalComp total={totalPrice} />
         </Box>
         <Button
           variant="contained"
           color="primary"
-          onClick={handleOpenDialog}
+          onClick={openDialog}
           sx={{ marginBottom: 2 }}
         >
           Place Order
         </Button>
-        {showAlert && (
+        {showEmptyCartAlert && (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
-            Please add items to cart before placing order
+            Please add items to the cart before placing an order.
           </Alert>
         )}
         {showQuantityAlert && (
           <Alert severity="info">
-            <AlertTitle>info</AlertTitle>
-            Quantity exceeds available stock - Quantity has been adjusted to the
-            maximum available stock
+            <AlertTitle>Info</AlertTitle>
+            Quantity exceeds available stock. Quantity has been adjusted to the
+            maximum available stock.
             <Button
-              onClick={handleCloseAlert}
+              onClick={closeAlert}
               color="inherit"
               size="small"
               style={{ marginLeft: "auto" }}
@@ -197,9 +194,9 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
           </Alert>
         )}
         <ConfirmComp
-          open={openDialog}
-          onClose={handleCloseDialog}
-          onConfirm={handleConfirmOrder}
+          open={isDialogOpen}
+          onClose={closeDialog}
+          onConfirm={confirmOrder}
           title="Confirm Order"
           description="Are you sure you want to place this order?"
         />

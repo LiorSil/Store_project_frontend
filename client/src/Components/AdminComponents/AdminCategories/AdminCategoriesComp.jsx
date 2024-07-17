@@ -6,13 +6,23 @@ import React, {
   useMemo,
   memo,
 } from "react";
-import { TextField, Button, IconButton, Stack, Container } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {
+  TextField,
+  Button,
+  IconButton,
+  Stack,
+  Container,
+  Typography,
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Save as SaveIcon,
+  Cancel as CancelIcon,
+  CheckCircle as CheckCircleIcon,
+  Error as ErrorIcon,
+} from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCategoriesData,
@@ -23,25 +33,23 @@ import LoadingComp from "../../Utils/LoadingComp";
 import ErrorPage from "../../../Pages/Error/ErrorPage";
 import ConfirmComp from "../../Utils/ConfirmComp";
 import NoticeMessageComp from "../../Utils/NoticeMessageComp";
-import ErrorIcon from "@mui/icons-material/Error";
-
-import { validateCategoryName } from "../../Utils/Validators/categoriesFormValidator"; // Import validator
+import { validateCategoryName } from "../../Utils/Validators/categoriesFormValidator";
 
 const MaterialTableComp = lazy(() => import("../../Utils/MaterialTableComp"));
 
+/**
+ * AdminCategoriesComp Component
+ *
+ * This component allows the admin to manage product categories. It includes
+ * functionalities for adding, editing, and deleting categories.
+ */
 const AdminCategoriesComp = memo(() => {
   const dispatch = useDispatch();
   const {
     data: categories,
     loading,
     error,
-  } = useSelector(
-    useMemo(() => (state) => state.categories, []),
-    []
-  );
-  useEffect(() => {
-    dispatch(fetchCategoriesData());
-  }, [dispatch]);
+  } = useSelector((state) => state.categories);
 
   const [editMode, setEditMode] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -50,11 +58,25 @@ const AdminCategoriesComp = memo(() => {
   const [noticeMessage, setNoticeMessage] = useState({ open: false });
   const [validationError, setValidationError] = useState("");
 
+  useEffect(() => {
+    dispatch(fetchCategoriesData());
+  }, [dispatch]);
+
+  /**
+   * Handles the click event to edit a category.
+   *
+   * @param {Object} category - The category to edit.
+   */
   const handleEditClick = (category) => {
     setEditMode(category._id);
     setEditValue(category.name);
   };
 
+  /**
+   * Handles the save event after editing a category.
+   *
+   * @param {Object} category - The category to save.
+   */
   const handleSaveClick = (category) => {
     const error = validateCategoryName(editValue, categories);
     if (error) {
@@ -73,29 +95,38 @@ const AdminCategoriesComp = memo(() => {
     setEditValue("");
   };
 
+  /**
+   * Handles the cancel event to discard changes.
+   */
   const handleCancelClick = () => {
     setValidationError("");
     setEditMode(null);
     setEditValue("");
   };
 
+  /**
+   * Handles the delete event to mark a category as deleted.
+   *
+   * @param {Object} category - The category to delete.
+   */
   const handleDeleteClick = (category) => {
     const updatedCategories = categories.map((cat) =>
       cat._id === category._id ? { ...cat, isDeleted: true } : cat
     );
-
     dispatch(updateCategories(updatedCategories));
   };
 
+  /**
+   * Handles the add event to add a new category.
+   */
   const handleAddClick = () => {
     const error = validateCategoryName(newCategory, categories);
     if (error) {
       setValidationError(error);
       return;
-    } else {
-      setValidationError("");
     }
-    //isNew is a boolean field that is used to db to identify new categories
+    setValidationError("");
+
     const newCat = {
       _id: Date.now().toString(),
       name: newCategory,
@@ -106,9 +137,11 @@ const AdminCategoriesComp = memo(() => {
     setNewCategory("");
   };
 
+  /**
+   * Handles the confirm event to save all changes to the categories.
+   */
   const handleConfirmCategories = () => {
     dispatch(fetchConfirmChanges(categories)).then((resolve) => {
-      console.log("resolve", resolve);
       if (resolve.type === "categories/confirmChange/fulfilled") {
         setNoticeMessage({
           open: true,
@@ -116,7 +149,6 @@ const AdminCategoriesComp = memo(() => {
           color: "success",
           icon: CheckCircleIcon,
         });
-        window.location.reload();
       } else {
         setNoticeMessage({
           open: true,
@@ -128,12 +160,6 @@ const AdminCategoriesComp = memo(() => {
     });
 
     setConfirmMessage(false);
-    setNoticeMessage({
-      open: true,
-      message: "Categories have been updated.",
-      color: "success",
-      icon: CheckCircleIcon,
-    });
   };
 
   const columns = [
@@ -141,7 +167,7 @@ const AdminCategoriesComp = memo(() => {
     { key: "actions", title: "Actions" },
   ];
 
-  const data = categories.map((category) => ({
+  const tableData = categories.map((category) => ({
     key: category._id,
     name:
       editMode === category._id ? (
@@ -199,18 +225,14 @@ const AdminCategoriesComp = memo(() => {
       description="Are you sure you want to save the changes?"
     />
   );
+
   const noticeDialog = noticeMessage.open && (
     <NoticeMessageComp
       open={true}
       message={noticeMessage.message}
       IconComp={noticeMessage.icon}
       color={noticeMessage.color}
-      onClose={() =>
-        setNoticeMessage((prevMessage) => ({
-          ...prevMessage,
-          open: false,
-        }))
-      }
+      onClose={() => window.location.reload()}
     />
   );
 
@@ -234,10 +256,17 @@ const AdminCategoriesComp = memo(() => {
           border: "2px solid",
           borderColor: "primary.main",
           padding: 2,
+          fontFamily: "Open Sans, sans-serif",
         }}
       >
-        <h2>Manage Categories</h2>
-        <MaterialTableComp columns={columns} data={data} />
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ fontFamily: "Open Sans, sans-serif" }}
+        >
+          Manage Categories
+        </Typography>
+        <MaterialTableComp columns={columns} data={tableData} />
         <Stack
           direction="row"
           spacing={1}
@@ -256,6 +285,7 @@ const AdminCategoriesComp = memo(() => {
             sx={{
               backgroundColor: "#eeeeee",
               borderRadius: 2,
+              fontFamily: "Open Sans, sans-serif",
             }}
           />
           <Button
@@ -263,6 +293,7 @@ const AdminCategoriesComp = memo(() => {
               borderColor: "primary.main",
               color: "primary.main",
               backgroundColor: "white",
+              fontFamily: "Open Sans, sans-serif",
             }}
             startIcon={<AddIcon />}
             onClick={handleAddClick}
@@ -277,6 +308,7 @@ const AdminCategoriesComp = memo(() => {
             marginTop: 2,
             height: 50,
             borderRadius: 1,
+            fontFamily: "Open Sans, sans-serif",
           }}
           variant="contained"
           color="primary"
