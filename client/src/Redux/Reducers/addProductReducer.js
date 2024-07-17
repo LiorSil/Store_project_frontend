@@ -2,13 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
-// Async Thunk for Adding Data
-
+// Async thunk for adding product data
 export const addProductData = createAsyncThunk(
   "products/addData",
   async (product, thunkAPI) => {
     try {
-      console.log("product", product); // Debugging
       const cookies = new Cookies();
       const token = cookies.get("token");
 
@@ -26,11 +24,11 @@ export const addProductData = createAsyncThunk(
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add product data");
+        const errorDetail = await response.json();
+        throw new Error(errorDetail.message || "Failed to add product data");
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -38,9 +36,8 @@ export const addProductData = createAsyncThunk(
   }
 );
 
-// Slice for Add Product
-
-const addProductReducer = createSlice({
+// Slice for managing the add product state
+const addProductSlice = createSlice({
   name: "addProduct",
   initialState: {
     newProduct: {},
@@ -52,7 +49,7 @@ const addProductReducer = createSlice({
     builder
       .addCase(addProductData.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.error = null; // Clear any previous errors
       })
       .addCase(addProductData.fulfilled, (state, action) => {
         state.loading = false;
@@ -65,4 +62,5 @@ const addProductReducer = createSlice({
   },
 });
 
-export default addProductReducer.reducer;
+// Export the reducer
+export default addProductSlice.reducer;

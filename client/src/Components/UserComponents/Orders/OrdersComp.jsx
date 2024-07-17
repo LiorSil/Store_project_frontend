@@ -3,7 +3,7 @@ import { Avatar, Box } from "@mui/material";
 import Cookies from "universal-cookie";
 import useFetch from "../../../Hooks/useFetch";
 import { LoadingComp, MaterialTableComp } from "../../Utils/indexUtil";
-import { transformOrdersToProducts } from "../../../Services/OrderService";
+
 import { orderTableColumns } from "../../../Constants/orderTableColumns";
 import API_BASE_URL from "../../../Constants/serverUrl";
 import { defaultDate } from "../../../Constants/defaultDates";
@@ -29,7 +29,10 @@ const OrdersComp = () => {
             Authorization: `Bearer ${cookies.get("token")}`,
           },
         };
-        await fetchData(`${API_BASE_URL}/orders/getCustomerOrders`, options);
+        await fetchData(
+          `${API_BASE_URL}/orders/getProductsFromOrders`,
+          options
+        );
       } catch (error) {
         console.error("Error fetching orders:", error.message);
       }
@@ -41,7 +44,7 @@ const OrdersComp = () => {
   const transformData = useCallback(() => {
     if (!data || data.length === 0) return;
 
-    const transformed = transformOrdersToProducts(data).map((item, index) => ({
+    const transformed = data.map((item, index) => ({
       key: index,
       title: item.title || "Unknown",
       quantity: item.quantity || 0,

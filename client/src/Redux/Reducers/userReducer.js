@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
+// Initial state for user-related data
 const userInitialState = {
   customers: [],
   products: [],
@@ -9,6 +10,7 @@ const userInitialState = {
   error: null,
 };
 
+// Async thunk for fetching users and products data
 export const fetchUsersAndProductsData = createAsyncThunk(
   "users/fetchData",
   async (_, thunkAPI) => {
@@ -32,8 +34,10 @@ export const fetchUsersAndProductsData = createAsyncThunk(
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch users data");
+        const errorDetail = await response.json();
+        throw new Error(errorDetail.message || "Failed to fetch users data");
       }
+
       const data = await response.json();
       const { users, products } = data;
 
@@ -44,7 +48,8 @@ export const fetchUsersAndProductsData = createAsyncThunk(
   }
 );
 
-const usersReducer = createSlice({
+// Slice for users data
+const usersSlice = createSlice({
   name: "users",
   initialState: userInitialState,
   reducers: {
@@ -71,5 +76,6 @@ const usersReducer = createSlice({
   },
 });
 
-export const { setIsAdmin } = usersReducer.actions;
-export default usersReducer.reducer;
+// Export the actions and reducer
+export const { setIsAdmin } = usersSlice.actions;
+export default usersSlice.reducer;

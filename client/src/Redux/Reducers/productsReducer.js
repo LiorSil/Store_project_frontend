@@ -3,7 +3,7 @@ import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 import isEqual from "lodash/isEqual"; // Add lodash for deep equality checks
 
-// Async Thunk for Fetching Data
+// Async thunk for fetching products data
 export const fetchProductsData = createAsyncThunk(
   "products/fetchData",
   async (_, thunkAPI) => {
@@ -24,11 +24,11 @@ export const fetchProductsData = createAsyncThunk(
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch products data");
+        const errorDetail = await response.json();
+        throw new Error(errorDetail.message || "Failed to fetch products data");
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -36,7 +36,7 @@ export const fetchProductsData = createAsyncThunk(
   }
 );
 
-// Async Thunk for Updating Data
+// Async thunk for updating product data
 export const updateProductData = createAsyncThunk(
   "products/updateData",
   async (product, thunkAPI) => {
@@ -58,16 +58,18 @@ export const updateProductData = createAsyncThunk(
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update product data");
-      } else {
-        return product;
+        const errorDetail = await response.json();
+        throw new Error(errorDetail.message || "Failed to update product data");
       }
+
+      return product;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
+// Async thunk for fetching only bought products
 export const fetchOnlyBoughtProducts = createAsyncThunk(
   "products/onlyBoughtProducts",
   async (_, thunkAPI) => {
@@ -91,11 +93,11 @@ export const fetchOnlyBoughtProducts = createAsyncThunk(
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch products data");
+        const errorDetail = await response.json();
+        throw new Error(errorDetail.message || "Failed to fetch products data");
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -103,15 +105,18 @@ export const fetchOnlyBoughtProducts = createAsyncThunk(
   }
 );
 
-// Slice for Products Data
+// Initial state for products
+const initialState = {
+  productsData: [],
+  boughtProducts: [],
+  loading: false,
+  error: null,
+};
+
+// Slice for products data
 const productsSlice = createSlice({
   name: "products",
-  initialState: {
-    productsData: [],
-    boughtProducts: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     setProducts: (state, action) => {
       state.productsData = action.payload;
@@ -137,9 +142,12 @@ const productsSlice = createSlice({
       })
       .addCase(updateProductData.fulfilled, (state, action) => {
         state.loading = false;
-        state.productsData = state.productsData.map((product) =>
-          product._id === action.payload._id ? action.payload : product
+        const index = state.productsData.findIndex(
+          (product) => product._id === action.payload._id
         );
+        if (index !== -1) {
+          state.productsData[index] = action.payload;
+        }
       })
       .addCase(updateProductData.rejected, (state, action) => {
         state.loading = false;

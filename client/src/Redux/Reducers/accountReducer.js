@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const accountInitialState = {
+const initialState = {
   oldAccount: {
     firstName: "",
     lastName: "",
@@ -13,12 +13,12 @@ const accountInitialState = {
 
 const accountSlice = createSlice({
   name: "account",
-  initialState: accountInitialState,
+  initialState,
   reducers: {
-    setAccount: (state, action) => {
+    setAccount(state, action) {
       state.oldAccount = action.payload;
     },
-    updateAccount: (state, action) => {
+    updateAccount(state, action) {
       state.formData = action.payload;
     },
   },

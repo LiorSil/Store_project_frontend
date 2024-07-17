@@ -35,20 +35,23 @@ export const fetchOrdersData = createAsyncThunk(
   }
 );
 
+// Initial state for orders
+const initialState = {
+  ordersData: [],
+  loading: false,
+  error: null,
+};
+
 // Slice for Orders Data
 const ordersSlice = createSlice({
   name: "orders",
-  initialState: {
-    ordersData: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchOrdersData.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.error = null; // Clear any previous errors
       })
       .addCase(fetchOrdersData.fulfilled, (state, action) => {
         state.loading = false;

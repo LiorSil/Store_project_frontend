@@ -1,66 +1,64 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const cartInitialState = {
+const initialState = {
   cart: [],
 };
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: cartInitialState,
+  initialState,
   reducers: {
-    addToCart: (state, action) => {
+    addToCart(state, action) {
       const newItem = action.payload;
-      const existingItemIndex = state.cart.findIndex(
-        (item) => item._id === newItem._id
-      );
+      const existingItem = state.cart.find((item) => item._id === newItem._id);
 
-      if (existingItemIndex !== -1) {
+      if (existingItem) {
         // If the item with the same _id already exists, merge the quantities
-        state.cart[existingItemIndex].quantity += newItem.quantity;
+        existingItem.quantity += newItem.quantity;
       } else {
         // Otherwise, add the new item to the cart
         state.cart.push(newItem);
       }
     },
-    decrementCartItemCount: (state, action) => {
-      state.cart = state.cart.map((item) =>
-        item._id === action.payload
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      );
+    decrementCartItemCount(state, action) {
+      const item = state.cart.find((item) => item._id === action.payload);
+      if (item) {
+        item.quantity -= 1;
+      }
     },
-    incrementCartItemCount: (state, action) => {
-      state.cart = state.cart.map((item) =>
-        item._id === action.payload
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
+    incrementCartItemCount(state, action) {
+      const item = state.cart.find((item) => item._id === action.payload);
+      if (item) {
+        item.quantity += 1;
+      }
     },
-    updateCartItemCount: (state, action) => {
-      console.log("action.payload", action.payload);
-      state.cart = state.cart.map((item) =>
-        item._id === action.payload._id
-          ? { ...item, quantity: action.payload.quantity }
-          : item
-      );
+    updateCartItemCount(state, action) {
+      const { _id, quantity } = action.payload;
+      const item = state.cart.find((item) => item._id === _id);
+      if (item) {
+        item.quantity = quantity;
+      }
     },
-
-    removeCartItem: (state, action) => {
+    removeCartItem(state, action) {
       state.cart = state.cart.filter((item) => item._id !== action.payload);
     },
-
-    clearCart: (state) => {
+    clearCart(state) {
       state.cart = [];
     },
   },
 });
 
-const totalPriceReducer = (state) => {
-  return state.cart.cart.reduce(
+/**
+ * Calculates the total price of items in the cart.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {number} - The total price of items in the cart.
+ */
+const totalPriceReducer = (state) =>
+  state.cart.cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
-};
 
 export const {
   addToCart,

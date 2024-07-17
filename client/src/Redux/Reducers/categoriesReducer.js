@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import API_BASE_URL from "../../Constants/serverUrl";
 
-// Async Thunk for Fetching Data
+// Async Thunk for Fetching Categories Data
 export const fetchCategoriesData = createAsyncThunk(
   "categories/fetchData",
   async (_, thunkAPI) => {
@@ -27,7 +27,6 @@ export const fetchCategoriesData = createAsyncThunk(
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -35,7 +34,7 @@ export const fetchCategoriesData = createAsyncThunk(
   }
 );
 
-// Async Thunk for Updating Category Data
+// Async Thunk for Confirming Category Changes
 export const fetchConfirmChanges = createAsyncThunk(
   "categories/confirmChange",
   async (categories, thunkAPI) => {
@@ -58,25 +57,28 @@ export const fetchConfirmChanges = createAsyncThunk(
 
       if (!response.ok) {
         throw new Error("Failed to update categories data");
-      } else {
-        return categories;
       }
+
+      return categories;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-// Data Slice
-const categoriesReducer = createSlice({
+// Initial state for categories
+const initialState = {
+  data: [],
+  loading: false,
+  error: null,
+};
+
+// Slice for Categories Data
+const categoriesSlice = createSlice({
   name: "categories",
-  initialState: {
-    data: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    updateCategories: (state, action) => {
+    updateCategories(state, action) {
       state.data = action.payload;
     },
   },
@@ -110,6 +112,7 @@ const categoriesReducer = createSlice({
 });
 
 // Export Actions
-export const { updateCategories } = categoriesReducer.actions;
+export const { updateCategories } = categoriesSlice.actions;
 
-export default categoriesReducer.reducer;
+// Export Reducer
+export default categoriesSlice.reducer;

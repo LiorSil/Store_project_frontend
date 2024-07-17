@@ -53,7 +53,13 @@ router.get("/", async (req, res) => {
  * @throws {Error} - If the orders could not be retrieved.
  */
 
-router.get("/getCustomerOrders", async (req, res) => {
+/**
+ * Get all products of the user from all his orders (transformed)
+ * @returns {Promise<Array>} - The products from orders
+ * @throws {Error} - If the products could not be retrieved.
+ */
+
+router.get("/getProductsFromOrders", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = validateToken(token, process.env.JWT_SECRET);
@@ -62,7 +68,22 @@ router.get("/getCustomerOrders", async (req, res) => {
       return;
     }
     const orders = await OrderService.getOrdersByUserId(decodedToken.userId);
-    res.status(200).json(orders);
+    let products = [];
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        let product = {
+          key: item.productId,
+          title: item.title,
+          imageUrl: item.imageUrl,
+          quantity: item.quantity,
+          total: item.quantity * item.price,
+          date: order.orderDate,
+        };
+        products.push(product);
+      });
+    });
+
+    res.status(200).json(products);
   } catch (error) {
     res.status(400).send(error.message);
   }
