@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import AdminProductsListComp from "./AdminProductListComp";
 import AddNewProductForm from "./AddNewProductForm";
 import { fetchCategoriesData } from "../../../Redux/Reducers/categoriesReducer";
-import { fetchProductsData } from "../../../Redux/Reducers/productsReducer";
 
 /**
  * AdminProductsComp Component
@@ -20,11 +19,6 @@ const AdminProductsComp = () => {
   useEffect(() => {
     dispatch(fetchCategoriesData());
   }, [dispatch]);
-
-  // Callback function to re-fetch products data
-  const handleConfirm = () => {
-    dispatch(fetchProductsData());
-  };
 
   return (
     <Container>

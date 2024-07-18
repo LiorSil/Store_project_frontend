@@ -254,7 +254,9 @@ const AdminProductItem = ({ product, orders, customers }) => {
                       })}
                       select
                       value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
+                      onChange={(e) => {
+                        setCategoryName(e.target.value);
+                      }}
                       label="Category"
                       fullWidth
                       variant="outlined"

@@ -28,7 +28,7 @@ const userComponents = {
 
 const adminComponents = {
   Categories: AdminCategoriesComp,
-  "Admin Products": AdminProductsComp,
+  Aproducts: AdminProductsComp,
   Customers: AdminCustomersComp,
   Statistics: AdminStatisticsComp,
   Logout: LogoutComp,
@@ -39,12 +39,12 @@ const HomePage = () => {
   const isAdmin = cookies.get("isAdmin");
   const location = useLocation();
   const navigate = useNavigate();
-  const [selectedPage, setSelectedPage] = useState(null);
 
   const currentPath = useMemo(() => {
     const path = location.pathname.split("/").pop();
     return path.charAt(0).toUpperCase() + path.slice(1);
   }, [location.pathname]);
+  const [selectedPage, setSelectedPage] = useState(currentPath);
 
   useEffect(() => {
     const components = isAdmin ? adminComponents : userComponents;
@@ -67,8 +67,6 @@ const HomePage = () => {
     const components = isAdmin ? adminComponents : userComponents;
     //if path /home then render WelcomePage
     if (!isAdmin && location.pathname === "/home") {
-      console.log("isAdmin", isAdmin);
-
       return <WelcomePage onSelectedPage={handleSelectedPage} />;
     } else if (isAdmin && location.pathname === "/home") {
       return <AdminStatisticsComp />;

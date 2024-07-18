@@ -8,6 +8,7 @@ const MemoizedButton = memo(({ page, selectedPage, onSelectedPage }) => (
     color="inherit"
     onClick={() => onSelectedPage(page)}
     sx={{
+      maxWidth: 100,
       borderBottom:
         selectedPage === page ? "2px solid white" : "2px solid transparent",
       "&:hover": {

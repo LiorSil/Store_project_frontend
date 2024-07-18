@@ -44,7 +44,7 @@ function LoginPage() {
   useEffect(() => {
     if (data) {
       const { token } = data;
-      console.log("token", token);
+
       const decodedToken = jwtDecode(token);
 
       // Clear all cookies
