@@ -46,6 +46,7 @@ const AdminProductItem = ({ product, orders, customers }) => {
     notice: { open: false, message: "", icon: null, color: "" },
   });
   const [localProduct, setLocalProduct] = useState(product);
+  const [categoryName, setCategoryName] = useState(product.categoryName);
 
   const categories = useSelector((state) => state.categories.data);
 
@@ -184,12 +185,13 @@ const AdminProductItem = ({ product, orders, customers }) => {
           message={dialogState.notice.message}
           IconComp={dialogState.notice.icon}
           color={dialogState.notice.color}
-          onClose={() =>
+          onClose={() => {
             setDialogState((prev) => ({
               ...prev,
               notice: { ...prev.notice, open: false },
-            }))
-          }
+            }));
+            window.location.reload();
+          }}
         />
       )}
       <Card sx={{ margin: 2, boxShadow: 3 }}>
@@ -251,7 +253,8 @@ const AdminProductItem = ({ product, orders, customers }) => {
                         required: "Category is required",
                       })}
                       select
-                      defaultValue={localProduct.categoryName}
+                      value={categoryName}
+                      onChange={(e) => setCategoryName(e.target.value)}
                       label="Category"
                       fullWidth
                       variant="outlined"

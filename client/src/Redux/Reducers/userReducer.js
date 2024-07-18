@@ -64,7 +64,6 @@ const usersSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUsersAndProductsData.fulfilled, (state, action) => {
-        console.log("action.payload", action.payload);
         state.loading = false;
         state.customers = action.payload.users;
         state.products = action.payload.products;

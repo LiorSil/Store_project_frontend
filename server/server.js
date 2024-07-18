@@ -14,16 +14,15 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/favicon.ico", (req, res) => res.status(204).send());
 
-const userController = require("./Controllers/UserController");
-const imageController = require("./Controllers/ImageController");
-const productController = require("./Controllers/ProductController");
-const orderController = require("./Controllers/OrderController");
-const categoryController = require("./Controllers/CategoryController");
-app.use("/users", userController);
-app.use("/images", imageController);
-app.use("/products", productController);
-app.use("/orders", orderController);
-app.use("/categories", categoryController);
+const categoryRoutes = require("./Routes/CategoryRoutes");
+const orderRoutes = require("./Routes/OrderRoutes");
+const productRoutes = require("./Routes/ProductRoutes");
+const userRoutes = require("./Routes/UserRoutes");
+
+app.use("/products", productRoutes);
+app.use("/categories", categoryRoutes);
+app.use("/orders", orderRoutes);
+app.use("/users", userRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);

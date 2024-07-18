@@ -1,50 +1,35 @@
-const express = require("express");
-const router = express.Router();
 const ProductService = require("../Services/ProductService");
 const ImageService = require("../Services/ImageService");
-const validateToken = require("../Services/Util");
-
-router.post("/", async (req, res) => {
-  try {
-    const products = await ProductService.createProduct(req.body);
-    res.status(201).json(products);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-});
 
 /**
- * Route to get all products with their associated image URLs.
- * This endpoint fetches product data from the ProductService and
- * their corresponding image URLs from the ImageService.
+ * Creates a new product.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
  */
-router.get("/", async (req, res) => {
+const createProduct = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = validateToken(token, process.env.JWT_SECRET);
-    if (!decodedToken) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
+    const product = await ProductService.createProduct(req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
+/**
+ * Gets all products with their associated image URLs.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+const getProducts = async (req, res) => {
+  try {
     const products = await ProductService.getProducts();
 
-    // Convert each product to a plain JavaScript object
     const plainProducts = products.map((product) => product.toObject());
-    // Remove duplicate image references
     const uniqueImageReferences = [
       ...new Set(plainProducts.map((product) => product.imageReference)),
     ];
-    const imageUrlMap = {};
-    for (const ref of uniqueImageReferences) {
-      try {
-        const imageUrl = await ImageService.getImage(ref);
-        imageUrlMap[ref] = imageUrl;
-      } catch (error) {
-        // If fetching image fails, set imageUrl to null
-        imageUrlMap[ref] = null;
-      }
-    }
+
+    const imageUrlMap = await fetchImageUrls(uniqueImageReferences);
 
     const productsWithImages = plainProducts.map((product) => ({
       ...product,
@@ -53,79 +38,67 @@ router.get("/", async (req, res) => {
 
     res.status(200).json(productsWithImages);
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ error: error.message });
   }
-});
+};
 
-router.get("/categories", async (req, res) => {
+/**
+ * Helper function to fetch image URLs for each unique image reference.
+ * @param {Array} uniqueImageReferences - Array of unique image references.
+ * @returns {Object} - Map of image references to their URLs.
+ */
+const fetchImageUrls = async (uniqueImageReferences) => {
+  const imageUrlMap = {};
+  await Promise.all(
+    uniqueImageReferences.map(async (ref) => {
+      try {
+        const imageUrl = await ImageService.getImage(ref);
+        imageUrlMap[ref] = imageUrl;
+      } catch (error) {
+        imageUrlMap[ref] = null;
+      }
+    })
+  );
+  return imageUrlMap;
+};
+
+/**
+ * Updates a product by ID.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+const updateProduct = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = validateToken(token, process.env.JWT_SECRET);
-    if (!decodedToken) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-    const categories = await ProductService.getCategories();
-    res.status(200).json(categories);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-});
-
-router.put("/categories", async (req, res) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = validateToken(token, process.env.JWT_SECRET);
-    if (!decodedToken) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-    //TODO: Add logic and validate user is an admin
-
-    res.status(200).send("Category updated successfully.");
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-});
-
-router.put("/:id", async (req, res) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = validateToken(token, process.env.JWT_SECRET);
-    if (!decodedToken) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
+    const { id: productId } = req.params;
     const product = req.body;
-    const productId = req.params.id;
-    console.log("product", product);
     const updatedProduct = await ProductService.updateProduct(
       productId,
       product
     );
     res.status(200).json(updatedProduct);
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ error: error.message });
   }
-});
+};
 
-router.get("/onlyBoughtProducts", async (req, res) => {
+/**
+ * Gets only bought products.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+const getOnlyBoughtProducts = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = validateToken(token, process.env.JWT_SECRET);
-    if (!decodedToken) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
     const products = await ProductService.getProducts();
-    // Filter out products that have not been bought
     const boughtProducts = products.filter((product) => product.bought > 0);
     res.status(200).json(boughtProducts);
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ error: error.message });
   }
-});
+};
 
-module.exports = router;
-
-// Path: Server/Services/ProductService.js
+module.exports = {
+  createProduct,
+  getProducts,
+  updateProduct,
+  getOnlyBoughtProducts,
+};
