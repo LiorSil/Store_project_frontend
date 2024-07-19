@@ -1,0 +1,15 @@
+# Exported from Render on 2024-07-19T08:03:49Z
+services:
+- type: web
+  name: lior's-eCommerce-app
+  runtime: static
+  repo: https://github.com/LiorSil/Store_project_frontend
+  envVars:
+  - key: PORT
+    sync: false
+  - key: HOST
+    sync: false
+  buildCommand: npm run build
+  staticPublishPath: build
+  rootDir: client
+version: "1"
