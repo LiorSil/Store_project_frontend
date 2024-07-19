@@ -1,15 +1,36 @@
-
-
-.login-form{
-	padding: 50px 0;
+.login-form {
+    padding: 50px 0;
 }
 
-.login-form form{
+.login-form form {
     background-color: #fff;
     max-width: 600px;
     margin: auto;
     padding: 50px 70px;
     border-radius: 30px;
-    
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.075);
+}
+
+/* Media query for devices with a max width of 768px (e.g., tablets and mobile devices) */
+@media (max-width: 768px) {
+    .login-form {
+        padding: 30px 0;
+    }
+
+    .login-form form {
+        padding: 30px 50px;
+        max-width: 90%;
+    }
+}
+
+/* Media query for devices with a max width of 480px (e.g., small mobile devices) */
+@media (max-width: 480px) {
+    .login-form {
+        padding: 20px 0;
+    }
+
+    .login-form form {
+        padding: 20px 30px;
+        max-width: 100%;
+    }
 }

@@ -119,11 +119,23 @@ const AddNewProductForm = ({ categories }) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
+            width: "50%",
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
+            "@media (max-width: 7612px)": {
+              width: "400",
+              p: 2,
+            },
+            "@media (max-width: 600px)": {
+              width: "80%",
+              p: 1,
+            },
+            "@media (max-width: 480px)": {
+              width: "80%",
+              p: 1,
+            },
           }}
         >
           <Typography id="add-new-product-form" variant="h6" component="h2">
@@ -140,6 +152,11 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.title}
               helperText={errors.title?.message}
+              sx={{
+                "@media (max-width: 480px)": {
+                  margin: "12px 0",
+                },
+              }}
             />
             <FormControl fullWidth margin="normal">
               <InputLabel>Category</InputLabel>
@@ -150,6 +167,11 @@ const AddNewProductForm = ({ categories }) => {
                 label="Category"
                 defaultValue=""
                 error={!!errors.categoryName}
+                sx={{
+                  "@media (max-width: 480px)": {
+                    margin: "12px 0",
+                  },
+                }}
               >
                 <MenuItem value="" disabled>
                   Select Category
@@ -173,6 +195,11 @@ const AddNewProductForm = ({ categories }) => {
               rows={4}
               error={!!errors.description}
               helperText={errors.description?.message}
+              sx={{
+                "@media (max-width: 480px)": {
+                  margin: "12px 0",
+                },
+              }}
             />
             <TextField
               label="Price"
@@ -185,6 +212,11 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.price}
               helperText={errors.price?.message}
+              sx={{
+                "@media (max-width: 480px)": {
+                  margin: "12px 0",
+                },
+              }}
             />
             <TextField
               label="Quantity"
@@ -197,6 +229,11 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.quantity}
               helperText={errors.quantity?.message}
+              sx={{
+                "@media (max-width: 480px)": {
+                  margin: "12px 0",
+                },
+              }}
             />
             <TextField
               label="Image Reference"
@@ -209,22 +246,46 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.imageReference}
               helperText={errors.imageReference?.message}
+              sx={{
+                "@media (max-width: 480px)": {
+                  margin: "12px 0",
+                },
+              }}
             />
             <Box
-              sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 2,
+                "@media (max-width: 480px)": {
+                  flexDirection: "column",
+                  alignItems: "center",
+                },
+              }}
             >
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 disabled={!isDirty}
+                sx={{
+                  "@media (max-width: 480px)": {
+                    width: "80%",
+                    marginBottom: "16px",
+                  },
+                }}
               >
                 Add Product
               </Button>
               <Button
                 onClick={handleCloseForm}
                 variant="contained"
-                color="secondary"
+                color="warning"
+                sx={{
+                  "@media (max-width: 480px)": {
+                    width: "80%",
+                  },
+                }}
               >
                 Cancel
               </Button>

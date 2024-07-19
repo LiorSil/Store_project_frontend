@@ -105,9 +105,21 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
         transform: "translateX(-50%)",
         zIndex: 1000,
         margin: 2,
+        "@media (max-width: 768px)": {
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 1,
+        },
       }}
     >
-      <FormControl sx={{ minWidth: 180 }}>
+      <FormControl
+        sx={{
+          minWidth: 180,
+          "@media (max-width: 768px)": {
+            minWidth: "100%",
+          },
+        }}
+      >
         <InputLabel id="category-select-label">Category</InputLabel>
         <Select
           labelId="category-select-label"
@@ -129,6 +141,9 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          "@media (max-width: 768px)": {
+            width: "100%",
+          },
         }}
       >
         <MaxPriceTypography maxPrice={maxPrice} />
@@ -138,7 +153,12 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          sx={{ width: "100%" }}
+          sx={{
+            width: "100%",
+            "@media (max-width: 768px)": {
+              width: "90%",
+            },
+          }}
           valueLabelFormat={(value) => `$${value}`}
         />
       </Box>
@@ -146,7 +166,12 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
         label="Search"
         value={searchText}
         onChange={handleSearchTextChange}
-        sx={{ minWidth: 200 }}
+        sx={{
+          minWidth: 200,
+          "@media (max-width: 768px)": {
+            width: "100%",
+          },
+        }}
       />
       <Button
         variant="outlined"
@@ -163,6 +188,10 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
             backgroundColor: "primary.main",
             color: "white",
             borderColor: "primary.main",
+          },
+          "@media (max-width: 768px)": {
+            width: "100%",
+            padding: "8px",
           },
         }}
       >

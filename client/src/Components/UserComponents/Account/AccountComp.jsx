@@ -99,8 +99,6 @@ const AccountComp = () => {
           throw new Error("Invalid data format");
         }
 
-        console.log("Fetched data:", data); // Debugging log
-
         // Batch updating form values
         Object.keys(data).forEach((key) => {
           setValue(key, data[key]);
@@ -202,7 +200,15 @@ const AccountComp = () => {
           {confirmDialog}
           {noticeDialog}
 
-          <Stack className={classes["account-form"]} direction="column">
+          <Stack
+            className={classes["account-form"]}
+            direction="column"
+            sx={{
+              "@media (max-width: 768px)": {
+                padding: 2,
+              },
+            }}
+          >
             <Box
               component={"form"}
               onSubmit={handleSubmit(handleOnSubmit)}
@@ -221,6 +227,11 @@ const AccountComp = () => {
                     fullWidth
                     error={!!errors.firstName}
                     helperText={errors.firstName?.message}
+                    sx={{
+                      "@media (max-width: 768px)": {
+                        marginBottom: 2,
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -232,6 +243,11 @@ const AccountComp = () => {
                     fullWidth
                     error={!!errors.lastName}
                     helperText={errors.lastName?.message}
+                    sx={{
+                      "@media (max-width: 768px)": {
+                        marginBottom: 2,
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -244,10 +260,24 @@ const AccountComp = () => {
                     fullWidth
                     error={!!errors.password}
                     helperText={errors.password?.message}
+                    sx={{
+                      "@media (max-width: 768px)": {
+                        marginBottom: 2,
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField {...register("username")} fullWidth disabled />
+                  <TextField
+                    {...register("username")}
+                    fullWidth
+                    disabled
+                    sx={{
+                      "@media (max-width: 768px)": {
+                        marginBottom: 2,
+                      },
+                    }}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <FormControlLabel

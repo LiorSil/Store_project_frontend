@@ -3,10 +3,10 @@ import { Avatar, Box } from "@mui/material";
 import Cookies from "universal-cookie";
 import useFetch from "../../../Hooks/useFetch";
 import { LoadingComp, MaterialTableComp } from "../../Utils/indexUtil";
-
 import { orderTableColumns } from "../../../Constants/orderTableColumns";
 import API_BASE_URL from "../../../Constants/serverUrl";
 import { defaultDate } from "../../../Constants/defaultDates";
+import NoOrdersFoundComp from "./NoOrdersFoundComp";
 
 /**
  * OrdersComp component fetches and displays customer orders in a table.
@@ -82,12 +82,16 @@ const OrdersComp = () => {
         width: "60vw",
         margin: "auto",
         fontFamily: "'Open Sans', sans-serif",
+        "@media (max-width: 768px)": {
+          width: "90vw",
+          maxWidth: "90vw",
+        },
       }}
     >
       <MaterialTableComp columns={orderTableColumns} data={tableData} />
     </Box>
   ) : (
-    <div>No orders found</div>
+    <NoOrdersFoundComp />
   );
 };
 
