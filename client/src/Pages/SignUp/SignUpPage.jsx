@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense, useState } from "react";
 import {
   Button,
   TextField,
@@ -20,8 +20,16 @@ import {
 
 import classes from "./SignUpPage.module.css";
 import API_BASE_URL from "../../Constants/serverUrl";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import LoadingComp from "../../Components/Utils/LoadingComp";
+
+const LazyNoticeMessageComp = lazy(() =>
+  import("../../Components/Utils/NoticeMessageComp")
+);
 
 const SignUpPage = () => {
+  const [noticeMessage, setNoticeMessage] = useState({ open: false });
   const navigate = useNavigate();
   const {
     register,
@@ -40,17 +48,45 @@ const SignUpPage = () => {
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        alert("Sign up successful");
-        navigate("/login");
+        setNoticeMessage({
+          open: true,
+          message: "Successfully updated user",
+          icon: CheckCircleIcon,
+          color: "green",
+        });
       } else {
-        alert("Sign up failed");
+        setNoticeMessage({
+          open: true,
+          message: "Failed to update user",
+          icon: ErrorIcon,
+          color: "red",
+        });
       }
     } catch (error) {
       console.error("Error occurred during sign up:", error);
     }
   };
+
+  const noticeDialog = noticeMessage.open && (
+    <Suspense fallback={<LoadingComp />}>
+      <LazyNoticeMessageComp
+        open={true}
+        message={noticeMessage.message}
+        IconComp={noticeMessage.icon}
+        color={noticeMessage.color}
+        onClose={() => {
+          setNoticeMessage((prevMessage) => ({
+            ...prevMessage,
+            open: false,
+          }));
+          navigate("/login");
+        }}
+      />
+    </Suspense>
+  );
   return (
     <>
+      {noticeDialog}
       <Stack className={classes[`registration-form`]} direction="column">
         <Box
           component={"form"}

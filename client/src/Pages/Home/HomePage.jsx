@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Cookies from "universal-cookie";
-
 import ErrorPage from "../../Pages/Error/ErrorPage";
 import {
   ProductsComp,
@@ -18,6 +17,7 @@ import {
   AdminStatisticsComp,
 } from "../../Components/adminComponents";
 import WelcomePage from "./WelcomePage";
+import styles from "./HomePage.module.css"; // Import the CSS module
 
 const userComponents = {
   Products: ProductsComp,
@@ -85,7 +85,7 @@ const HomePage = () => {
         selectedPage={selectedPage}
       />
 
-      {renderComponent}
+      <div className={styles.pageContent}>{renderComponent}</div>
     </>
   );
 };

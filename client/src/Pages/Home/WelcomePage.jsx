@@ -1,7 +1,6 @@
 import React from "react";
-import { Container, Typography, Box, Button } from "@mui/material";
+import { Container, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
 
 const buttonVariants = {
   hover: {
@@ -35,6 +34,10 @@ const WelcomePage = ({ onSelectedPage }) => {
         backgroundColor: "#f4f6f8",
         padding: 4,
         borderRadius: 2,
+        "@media (max-width: 768px)": {
+          padding: 2,
+          borderRadius: 1,
+        },
       }}
     >
       <Typography
@@ -44,7 +47,13 @@ const WelcomePage = ({ onSelectedPage }) => {
         transition={{ delay: 0.2, type: "spring", stiffness: 120 }}
         variant="h2"
         gutterBottom
-        sx={{ fontWeight: "bold", fontFamily: "Open Sans, sans-serif" }}
+        sx={{
+          fontWeight: "bold",
+          fontFamily: "Open Sans, sans-serif",
+          "@media (max-width: 768px)": {
+            fontSize: "1.5rem",
+          },
+        }}
       >
         Welcome to Our E-commerce Site!
       </Typography>
@@ -55,7 +64,14 @@ const WelcomePage = ({ onSelectedPage }) => {
         transition={{ delay: 0.5, duration: 1.5 }}
         variant="h6"
         gutterBottom
-        sx={{ fontFamily: "Open Sans, sans-serif", marginBottom: 4 }}
+        sx={{
+          fontFamily: "Open Sans, sans-serif",
+          marginBottom: 4,
+          "@media (max-width: 768px)": {
+            fontSize: "1rem",
+            marginBottom: 2,
+          },
+        }}
       >
         Discover a variety of products at the best prices. Enjoy your shopping
         experience with us!
@@ -74,6 +90,10 @@ const WelcomePage = ({ onSelectedPage }) => {
           fontFamily: "Open Sans, sans-serif",
           borderRadius: "5px",
           textTransform: "none",
+          "@media (max-width: 768px)": {
+            padding: "8px 16px",
+            fontSize: "16px",
+          },
         }}
       >
         Start Shopping
