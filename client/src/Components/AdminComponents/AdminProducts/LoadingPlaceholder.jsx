@@ -5,9 +5,7 @@ import {
   Card,
   CardContent,
   CardActions,
-  Button,
   Grid,
-  Typography,
 } from "@mui/material";
 
 const LoadingPlaceholder = () => {

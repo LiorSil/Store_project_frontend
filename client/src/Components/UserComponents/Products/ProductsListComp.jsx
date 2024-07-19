@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import ProductItem from "./ProductItemComp";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchProductsData } from "../../../Redux/Reducers/productsReducer";
 import classes from "./ProductsListComp.module.css";
 import LoadingItemPlaceholderComp from "./LoadingItemPlaceholderComp";

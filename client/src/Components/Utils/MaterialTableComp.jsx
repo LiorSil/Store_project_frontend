@@ -6,7 +6,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TableFooter,
+  
   Paper,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -22,12 +22,6 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
 }));
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[300],
-  color: theme.palette.common.black,
-  fontFamily: "'Open Sans', sans-serif", // Applying font style
-}));
-
-const StyledTableFooter = styled(TableFooter)(({ theme }) => ({
   backgroundColor: theme.palette.grey[300],
   color: theme.palette.common.black,
   fontFamily: "'Open Sans', sans-serif", // Applying font style

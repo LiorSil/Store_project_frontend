@@ -17,12 +17,11 @@ import useFetch from "../../Hooks/useFetch";
 import classes from "./LoginPage.module.css";
 import LoadingComp from "../../Components/Utils/LoadingComp";
 import API_BASE_URL from "../../Constants/serverUrl";
-import { useDispatch } from "react-redux";
-import { setIsAdmin } from "../../Redux/Reducers/userReducer";
+
 
 function LoginPage() {
   const cookies = useMemo(() => new Cookies(), []);
-  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
