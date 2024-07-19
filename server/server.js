@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors");
+
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 require("./Configurations/db.js");
@@ -9,7 +9,6 @@ const app = express();
 //run firebase config
 require("./Configurations/firebase.config.js");
 
-app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/favicon.ico", (req, res) => res.status(204).send());
