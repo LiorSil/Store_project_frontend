@@ -6,7 +6,7 @@ const initialState = {
     lastName: "",
     password: "",
     username: "",
-    allowOrders: false,
+    allowOthersToSeePurchasedProducts: false,
   },
   formData: {},
 };

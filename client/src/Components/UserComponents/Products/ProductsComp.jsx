@@ -1,5 +1,11 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Box, Button, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import CartComp from "./CartComp";
 import ProductsListComp from "./ProductsListComp";
 import FilterBarComp from "./FilterBarComp";
@@ -55,7 +61,7 @@ const ProductsComp = () => {
   }, []);
 
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md")); // Adjusted to "md" (less than 850px)
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Adjusted to "md" (less than 850px)
 
   return (
     <Box
@@ -85,9 +91,8 @@ const ProductsComp = () => {
             position: "relative",
           }}
         >
-          <Button
+          <IconButton
             onClick={toggleCart}
-            endIcon={<ShoppingCartIcon />}
             sx={{
               position: "fixed",
               top: isSmallScreen ? "25%" : 16,
@@ -95,15 +100,19 @@ const ProductsComp = () => {
               transform: isSmallScreen ? "translateY(-50%)" : "none",
               zIndex: 1000,
               backgroundColor: "white",
-
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+              boxShadow:
+                "0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19)", // More pronounced shadow
+              transition: "box-shadow 0.3s ease-in-out",
               "&:hover": {
                 backgroundColor: "rgba(0, 0, 0, 0.05)",
+                boxShadow:
+                  "0 8px 16px rgba(0, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.25)", // Shadow effect on hover
               },
             }}
           >
-            Cart
-          </Button>
+            <ShoppingCartIcon />
+          </IconButton>
+
           <FilterBarComp
             categories={categories}
             onFilterChange={handleFilterChange}

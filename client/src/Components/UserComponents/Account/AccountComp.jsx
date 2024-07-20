@@ -57,6 +57,7 @@ const AccountComp = () => {
   // Redux hooks
   const dispatch = useDispatch();
   const { oldAccount, formData } = useSelector(selectAccountState);
+  
 
   // Form management using react-hook-form
   const {
@@ -188,12 +189,13 @@ const AccountComp = () => {
         message={noticeMessage.message}
         IconComp={noticeMessage.icon}
         color={noticeMessage.color}
-        onClose={() =>
+        onClose={() => {
           setNoticeMessage((prevMessage) => ({
             ...prevMessage,
             open: false,
-          }))
-        }
+          }));
+          window.location.reload();
+        }}
       />
     </Suspense>
   );
@@ -291,8 +293,10 @@ const AccountComp = () => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        {...register("allowOrders")}
-                        defaultChecked={oldAccount.allowOrders}
+                        {...register("allowOthersToSeePurchasedProducts")}
+                        defaultChecked={
+                          oldAccount.allowOthersToSeePurchasedProducts
+                        }
                       />
                     }
                     label="Allow others to see my orders"
