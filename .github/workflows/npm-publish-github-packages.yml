@@ -1,4 +1,4 @@
-name: Run Node.js Script On-Demand
+name: Initialize my eCommerce webstite Database script 
 
 on:
   workflow_dispatch:
