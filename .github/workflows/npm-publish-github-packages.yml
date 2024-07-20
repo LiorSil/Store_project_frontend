@@ -1,4 +1,4 @@
-name: Run Node.js Script to initialize Store Database
+name: Run Node.js Script On-Demand
 
 on:
   workflow_dispatch:
@@ -20,5 +20,8 @@ jobs:
         run: |
           cd server
           npm install
+
       - name: Run Node.js script
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
         run: node server/initializeDB.js
