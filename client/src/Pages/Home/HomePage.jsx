@@ -28,7 +28,7 @@ const userComponents = {
 
 const adminComponents = {
   Categories: AdminCategoriesComp,
-  Aproducts: AdminProductsComp,
+  "Admin Products": AdminProductsComp,
   Customers: AdminCustomersComp,
   Statistics: AdminStatisticsComp,
   Logout: LogoutComp,
@@ -46,7 +46,8 @@ const HomePage = () => {
   }
 
   const currentPath = useMemo(() => {
-    const path = location.pathname.split("/").pop();
+    let path = location.pathname.split("/").pop();
+
     return path.charAt(0).toUpperCase() + path.slice(1);
   }, [location.pathname]);
   const [selectedPage, setSelectedPage] = useState(currentPath);
@@ -55,6 +56,8 @@ const HomePage = () => {
     const components = isAdmin ? adminComponents : userComponents;
     if (selectedPage in components) {
       setSelectedPage(selectedPage);
+    } else if (selectedPage === "Admin%20products") {
+      setSelectedPage("Admin Products");
     } else {
       setSelectedPage(null); // Reset selectedPage if the path is not found in pages array
     }

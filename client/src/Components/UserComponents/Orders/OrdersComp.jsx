@@ -48,7 +48,7 @@ const OrdersComp = () => {
       key: index,
       title: item.title || "Unknown",
       quantity: item.quantity || 0,
-      total: item.total || 0,
+      total: `${item.total}$` || `0$`,
       date: new Date(item.date).toLocaleString("en-GB") || defaultDate,
       image: (
         <Avatar

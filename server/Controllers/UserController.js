@@ -70,7 +70,7 @@ const getUser = async (req, res) => {
       lastName: user.lastName,
       username: user.username,
       password: user.password,
-      allowOrders: user.allowOthersToSeePurchasedProducts,
+      allowOthersToSeePurchasedProducts: user.allowOthersToSeePurchasedProducts,
     };
 
     res.status(200).json(clientUser);
