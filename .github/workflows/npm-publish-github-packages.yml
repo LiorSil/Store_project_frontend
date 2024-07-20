@@ -18,7 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd Server
+          cd server
           npm install
       - name: Run Node.js script
         run: node server/initializeDB.js
