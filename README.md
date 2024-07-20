@@ -2,7 +2,7 @@
 
 Welcome to Lior's E-commerce Application, a full-stack MERN project built with a focus on modular architecture, state management using Redux, and JWT authentication and authorization. This project is a part of my portfolio showcasing my skills as a junior developer.
 
-You can log in using these credentials at the following URL: [Admin Login](https://liors-ecommerce-app.onrender.com/login)
+You can log in using these credentials at the following URL: [https://liors-ecommerce-app.onrender.com/login](https://liors-ecommerce-app.onrender.com/login)
 
 ## Features
 
