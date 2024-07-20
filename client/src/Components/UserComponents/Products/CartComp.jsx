@@ -112,96 +112,110 @@ const CartComp = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
     }
   };
 
-  if (loading) return <LoadingComp />;
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   return (
-    <Drawer
-      anchor="left"
-      open={isOpen}
-      onClose={toggleCart}
-      sx={{ position: "fixed", top: 0, zIndex: 1000, height: "100vh" }}
-    >
-      <Box
-        sx={{
-          width: 300,
-          padding: 2,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-        role="presentation"
-      >
-        <Box>
-          <IconButton onClick={toggleCart}>
-            <CloseIcon />
-          </IconButton>
-          {cart.length > 0 ? (
-            cart.map((item) => (
-              <CartItemComp
-                key={item._id}
-                cartItem={item}
-                catalogProduct={products.find(
-                  (product) => product._id === item._id
-                )}
-              />
-            ))
-          ) : (
-            <EmptyCartMessage />
-          )}
-        </Box>
+    <>
+      {loading && (
         <Box
           sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 2000,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            fontWeight: "bold",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
           }}
         >
-          <TotalComp total={totalPrice} />
+          <LoadingComp />
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={openDialog}
-          sx={{ marginBottom: 2 }}
+      )}
+      <Drawer
+        anchor="left"
+        open={isOpen}
+        onClose={toggleCart}
+        sx={{ position: "fixed", top: 0, zIndex: 1000, height: "100vh" }}
+      >
+        <Box
+          sx={{
+            width: 300,
+            padding: 2,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+          role="presentation"
         >
-          Place Order
-        </Button>
-        {showEmptyCartAlert && (
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            Please add items to the cart before placing an order.
-          </Alert>
-        )}
-        {showQuantityAlert && (
-          <Alert severity="info">
-            <AlertTitle>Info</AlertTitle>
-            Quantity exceeds available stock. Quantity has been adjusted to the
-            maximum available stock.
-            <Button
-              onClick={closeAlert}
-              color="inherit"
-              size="small"
-              style={{ marginLeft: "auto" }}
-            >
-              Close
-            </Button>
-          </Alert>
-        )}
-        <ConfirmComp
-          open={isDialogOpen}
-          onClose={closeDialog}
-          onConfirm={confirmOrder}
-          title="Confirm Order"
-          description="Are you sure you want to place this order?"
-        />
-      </Box>
-    </Drawer>
+          <Box>
+            <IconButton onClick={toggleCart}>
+              <CloseIcon />
+            </IconButton>
+            {cart.length > 0 ? (
+              cart.map((item) => (
+                <CartItemComp
+                  key={item._id}
+                  cartItem={item}
+                  catalogProduct={products.find(
+                    (product) => product._id === item._id
+                  )}
+                />
+              ))
+            ) : (
+              <EmptyCartMessage />
+            )}
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontWeight: "bold",
+            }}
+          >
+            <TotalComp total={totalPrice} />
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={openDialog}
+            sx={{ marginBottom: 2 }}
+          >
+            Place Order
+          </Button>
+          {showEmptyCartAlert && (
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              Please add items to the cart before placing an order.
+            </Alert>
+          )}
+          {showQuantityAlert && (
+            <Alert severity="info">
+              <AlertTitle>Info</AlertTitle>
+              Quantity exceeds available stock. Quantity has been adjusted to
+              the maximum available stock.
+              <Button
+                onClick={closeAlert}
+                color="inherit"
+                size="small"
+                style={{ marginLeft: "auto" }}
+              >
+                Close
+              </Button>
+            </Alert>
+          )}
+          <ConfirmComp
+            open={isDialogOpen}
+            onClose={closeDialog}
+            onConfirm={confirmOrder}
+            title="Confirm Order"
+            description="Are you sure you want to place this order?"
+          />
+        </Box>
+      </Drawer>
+    </>
   );
 };
 
