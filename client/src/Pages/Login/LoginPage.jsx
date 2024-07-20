@@ -80,10 +80,8 @@ function LoginPage() {
     if (error) {
       setNoticeMessage({
         open: true,
-        message:
-          error.message === "Unauthorized"
-            ? "Invalid username or password"
-            : "Failed to login",
+        message: error.message,
+
         color: "red",
         icon: ErrorIcon,
       });
