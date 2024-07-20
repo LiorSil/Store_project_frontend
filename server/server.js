@@ -2,7 +2,7 @@ const express = require("express");
 
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const cors = require("cors");
+
 require("./Configurations/db.js");
 
 const port = 5000;
@@ -11,8 +11,7 @@ const app = express();
 require("./Configurations/firebase.config.js");
 
 app.use(bodyParser.json());
-//cors
-app.use(cors());
+
 app.use(cookieParser());
 app.use("/favicon.ico", (req, res) => res.status(204).send());
 
