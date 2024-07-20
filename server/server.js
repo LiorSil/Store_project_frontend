@@ -7,12 +7,13 @@ require("./Configurations/db.js");
 
 const port = 5000;
 const app = express();
+const cors = require("cors");
 //run firebase config
 require("./Configurations/firebase.config.js");
 
 app.use(bodyParser.json());
-
 app.use(cookieParser());
+app.use(cors());
 app.use("/favicon.ico", (req, res) => res.status(204).send());
 
 const categoryRoutes = require("./Routes/CategoryRoutes");
