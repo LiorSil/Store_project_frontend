@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import ErrorIcon from "@mui/icons-material/Error";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "universal-cookie";
 import {
@@ -16,11 +18,17 @@ import {
 import useFetch from "../../Hooks/useFetch";
 import classes from "./LoginPage.module.css";
 import LoadingComp from "../../Components/Utils/LoadingComp";
+import NoticeMessageComp from "../../Components/Utils/NoticeMessageComp";
 import API_BASE_URL from "../../Constants/serverUrl";
-
 
 function LoginPage() {
   const cookies = useMemo(() => new Cookies(), []);
+  const [noticeMessage, setNoticeMessage] = useState({
+    open: false,
+    message: "",
+    color: "",
+    icon: null,
+  });
 
   const {
     register,
@@ -37,6 +45,12 @@ function LoginPage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
+    });
+  };
+
+  const onGuestLogin = () => {
+    fetchData(`${API_BASE_URL}/users/guest`, {
+      method: "POST",
     });
   };
 
@@ -62,15 +76,43 @@ function LoginPage() {
     }
   }, [data, cookies, navigate]);
 
+  useEffect(() => {
+    if (error) {
+      setNoticeMessage({
+        open: true,
+        message:
+          error.message === "Unauthorized"
+            ? "Invalid username or password"
+            : "Failed to login",
+        color: "red",
+        icon: ErrorIcon,
+      });
+    }
+  }, [error]);
+
   const handleSignUpRedirect = () => {
     navigate("/SignUp");
   };
 
-  if (loading) return <LoadingComp />;
-  if (error) return <Typography color="error">{error.message}</Typography>;
-
   return (
     <Container component="main" maxWidth="xs">
+      {loading && <LoadingComp />}
+      {noticeMessage.open && (
+        <NoticeMessageComp
+          open={noticeMessage.open}
+          message={noticeMessage.message}
+          color={noticeMessage.color}
+          IconComp={noticeMessage.icon}
+          onClose={() =>
+            setNoticeMessage({
+              open: false,
+              message: "",
+              color: "",
+              icon: null,
+            })
+          }
+        />
+      )}
       <Box className={classes["login-form"]}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Typography component="h1" variant="h5" margin={2}>
@@ -133,9 +175,21 @@ function LoginPage() {
                 Sign Up
               </Button>
             </Grid>
+            <Grid item xs={12} container justifyContent="center">
+              <Grid item xs={8}>
+                <Button
+                  startIcon={<PersonOutlineIcon />}
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={onGuestLogin}
+                >
+                  Guest Login
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
         </form>
-        {error && <Typography color="error">{error.message}</Typography>}
       </Box>
     </Container>
   );

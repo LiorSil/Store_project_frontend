@@ -1,0 +1,47 @@
+/* ProductItemComp.module.css */
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  position: fixed; /* Fixed position to appear relative to the whole screen */
+  bottom: 20px; /* Start a bit above the bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: green;
+  color: white;
+  padding: 16px 32px; /* Larger padding for a bigger message */
+  border-radius: 8px;
+  font-size: 18px; /* Larger font size */
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInUp 0.5s forwards; /* Duration of the fade-in animation */
+  font-family: 'Open Sans', sans-serif; /* Default font family */
+}
+
+@media (max-width: 850px) {
+  .message {
+    left: 35%;
+  }
+}
+
+.animateMessage {
+  animation: fadeInUp 0.5s forwards, fadeOut 0.5s forwards 1.5s; /* Adding fadeOut after 1.5s */
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

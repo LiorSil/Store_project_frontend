@@ -27,16 +27,21 @@ async function initializeData() {
     console.log("Products updated:", updateProductsResult.modifiedCount);
 
     // Delete all users except the specified one
-    const keepUserId = new ObjectId("668aacadf4cd3c03c1f6ba8a");
+    const keepAdmin = new ObjectId("668aacadf4cd3c03c1f6ba8a");
+    const keepGuest = new ObjectId("669b5fca94b48dc56d3e2ada");
     const deleteUsersResult = await db
       .collection("users")
-      .deleteMany({ _id: { $ne: keepUserId } });
+      .deleteMany({ _id: { $nin: [keepAdmin, keepGuest] } });
     console.log("Users deleted:", deleteUsersResult.deletedCount);
 
     // Update the remaining user's productsBought field
     const updateUsersResult = await db
       .collection("users")
-      .updateOne({ _id: keepUserId }, { $set: { productsBought: [] } });
+      .updateMany(
+        { _id: { $in: [keepAdmin, keepGuest] } },
+        { $set: { productsBought: [] } }
+      );
+
     console.log("Remaining user updated:", updateUsersResult.modifiedCount);
   } catch (error) {
     console.error("Error initializing data:", error);

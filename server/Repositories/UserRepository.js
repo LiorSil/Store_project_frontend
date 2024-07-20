@@ -34,13 +34,22 @@ const createUser = async (userData) => {
 
 /**
  * Gets a user by their username
+ * @description Ignores case when searching for the user
  * @param {*} username
  * @returns
  * @throws {Error} If there was an error getting the user
  */
 
 const getUserByUsername = async (username) => {
-  return await User.findOne({ username: username });
+  // Ignore case
+  try {
+    const user = await User.findOne({
+      username: { $regex: new RegExp(`^${username}$`, "i") },
+    });
+    return user;
+  } catch (error) {
+    console.error("Error getting user.", error.message);
+  }
 };
 
 /**
@@ -80,7 +89,6 @@ const updateUser = async (userId, userData) => {
  */
 
 const pushProductToUser = async (userId, products) => {
- 
   try {
     return await User.findByIdAndUpdate(
       userId,

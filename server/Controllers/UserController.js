@@ -16,23 +16,40 @@ const signUp = async (req, res) => {
   }
 };
 
-/**
- * Authenticates a user.
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- */
 const login = async (req, res) => {
   try {
+    // Authenticate the user using the provided credentials
     const user = await UserService.authenticateUser(req.body);
-    if (!user) {
-      throw new Error("Invalid username or password.");
-    }
+
+    // Generate a JWT token
     const token = jwt.sign(
       { userId: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+    // Send the token in the response
+    res.status(200).json({ token });
+  } catch (error) {
+    // Determine the status code based on the error message
+    if (
+      error.message ===
+      "Failed to authenticate user: Invalid username or password."
+    ) {
+      res.status(401).json({ error: error.message });
+    } else {
+      res.status(400).json({ error: error.message });
+    }
+  }
+};
+const guest = async (req, res) => {
+  try {
+    const user = await UserService.getGuestUser();
+    const token = jwt.sign(
+      { userId: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     res.status(200).json({ token });
   } catch (error) {
     res.status(400).send(error.message);
@@ -72,7 +89,9 @@ const updateUser = async (req, res) => {
     const user = await UserService.updateUser(req.user.userId, req.body);
     res.status(200).json(user);
   } catch (error) {
-    res.status(400).send(error.message);
+    if (error.message === "Cannot update guest user.")
+      res.status(412).send(error.message);
+    else res.status(400).send(error.message);
   }
 };
 
@@ -115,6 +134,7 @@ const getCustomersAndProducts = async (req, res) => {
 module.exports = {
   signUp,
   login,
+  guest,
   getUser,
   updateUser,
   pushProducts,

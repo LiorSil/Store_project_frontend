@@ -36,9 +36,14 @@ const adminComponents = {
 
 const HomePage = () => {
   const cookies = useMemo(() => new Cookies(), []);
-  const isAdmin = cookies.get("isAdmin");
+
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = cookies.get("isAdmin");
+  if (isAdmin === undefined || cookies.get("token") === undefined) {
+    alert("You are not logged in!");
+    navigate("/login", { replace: true });
+  }
 
   const currentPath = useMemo(() => {
     const path = location.pathname.split("/").pop();

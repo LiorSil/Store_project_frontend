@@ -18,6 +18,13 @@ router.post("/signUp", UserController.signUp);
 router.post("/login", UserController.login);
 
 /**
+ * @route POST /users/guest
+ * @description Log in as a guest
+ * @access Public
+ */
+router.post("/guest", UserController.guest);
+
+/**
  * @route GET /users/getUser
  * @description Get a user by their ID
  * @access Private

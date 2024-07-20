@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: function (v) {
         return !/[!@#$%^&*(),.?":{}|<>]/.test(v);
@@ -54,6 +55,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    validate: {
+      validator: function (v) {
+        //at least one lowercase letter, one uppercase letter, one number, and be at least 6 characters long
+        return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid password!`,
+    },
   },
 
   allowOthersToSeePurchasedProducts: {

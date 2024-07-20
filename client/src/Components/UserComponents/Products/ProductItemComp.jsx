@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, IconButton } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../Redux/Reducers/cartReducer";
+import styles from "./ProductItemComp.module.css";
 
 const ProductItemComp = ({ product }) => {
   const dispatch = useDispatch();
 
   // Local state for managing quantity and alert visibility
   const [quantity, setQuantity] = useState(1);
+  const [showMessage, setShowMessage] = useState(false);
 
   // Increment the quantity of the product
   const handleIncrement = () => {
@@ -24,9 +26,18 @@ const ProductItemComp = ({ product }) => {
   const handleAddToCart = () => {
     if (quantity <= product.quantity && product.quantity > 0) {
       dispatch(addToCart({ ...product, quantity }));
+      triggerMessage();
     } else {
       console.error("Invalid quantity or product out of stock");
     }
+  };
+
+  // Trigger the message animation
+  const triggerMessage = () => {
+    setShowMessage(true);
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 2000); // Total duration for the message display
   };
 
   return (
@@ -39,6 +50,7 @@ const ProductItemComp = ({ product }) => {
         borderStyle: "solid",
         borderColor: "primary.main",
         margin: 2,
+        position: "relative",
       }}
     >
       <Typography component="h6" gutterBottom>
@@ -59,10 +71,11 @@ const ProductItemComp = ({ product }) => {
       <Typography variant="body2" gutterBottom>
         Bought: {product.bought}
       </Typography>
-      <img
+      <Box
+        component="img"
         src={product.imageUrl}
         alt={product.title}
-        style={{
+        sx={{
           display: "block",
           margin: "auto",
           height: 200,
@@ -86,17 +99,23 @@ const ProductItemComp = ({ product }) => {
           +
         </Button>
         <Box ml="auto">
-          <IconButton
+          <Button
+            endIcon={<AddShoppingCartIcon />}
             disabled={quantity > product.quantity || product.quantity === 0}
             color="primary"
             size="large"
             aria-label="add to shopping cart"
             onClick={handleAddToCart}
           >
-            <AddShoppingCartIcon />
-          </IconButton>
+            Add
+          </Button>
         </Box>
       </Box>
+      {showMessage && (
+        <Box className={`${styles.message} ${styles.animateMessage}`}>
+          Product added to cart
+        </Box>
+      )}
     </Box>
   );
 };

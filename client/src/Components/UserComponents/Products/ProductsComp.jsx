@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Box, IconButton } from "@mui/material";
+import { Box, Button, useMediaQuery, useTheme } from "@mui/material";
 import CartComp from "./CartComp";
 import ProductsListComp from "./ProductsListComp";
 import FilterBarComp from "./FilterBarComp";
@@ -54,6 +54,9 @@ const ProductsComp = () => {
     setFilters(newFilters);
   }, []);
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md")); // Adjusted to "md" (less than 850px)
+
   return (
     <Box
       sx={{
@@ -79,11 +82,28 @@ const ProductsComp = () => {
           sx={{
             display: "flex",
             alignItems: "center",
+            position: "relative",
           }}
         >
-          <IconButton onClick={toggleCart}>
-            <ShoppingCartIcon />
-          </IconButton>
+          <Button
+            onClick={toggleCart}
+            endIcon={<ShoppingCartIcon />}
+            sx={{
+              position: "fixed",
+              top: isSmallScreen ? "25%" : 16,
+              right: isSmallScreen ? 16 : 16,
+              transform: isSmallScreen ? "translateY(-50%)" : "none",
+              zIndex: 1000,
+              backgroundColor: "white",
+
+              boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+              },
+            }}
+          >
+            Cart
+          </Button>
           <FilterBarComp
             categories={categories}
             onFilterChange={handleFilterChange}

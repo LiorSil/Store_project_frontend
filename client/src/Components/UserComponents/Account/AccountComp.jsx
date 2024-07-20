@@ -117,6 +117,7 @@ const AccountComp = () => {
 
   // Handle the confirm order action
   const handleConfirmOrder = useCallback(async () => {
+    setLoading(true); // Start loading
     try {
       const options = {
         method: "PUT",
@@ -142,14 +143,18 @@ const AccountComp = () => {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Error updating user: ", error.message);
+      let errorMessage = await error.message;
+      if (errorMessage.includes("412"))
+        errorMessage = "412 - Cannot update guest user.";
       setConfirmMessage(false);
       setNoticeMessage({
         open: true,
-        message: "Error updating user",
+        message: errorMessage,
         icon: ErrorIcon,
         color: "red",
       });
+    } finally {
+      setLoading(false); // End loading
     }
   }, [cookies, dispatch, formData]);
 
@@ -193,9 +198,12 @@ const AccountComp = () => {
     </Suspense>
   );
 
+  // Render the component with loading state handling
   return (
     <Suspense fallback={<LoadingComp />}>
-      {!loading && (
+      {loading ? (
+        <LoadingComp />
+      ) : (
         <>
           {confirmDialog}
           {noticeDialog}

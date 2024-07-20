@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense, useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -8,6 +8,9 @@ import {
   Box,
   Typography,
   Stack,
+  useMediaQuery,
+  useTheme,
+  createTheme,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +26,7 @@ import API_BASE_URL from "../../Constants/serverUrl";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import LoadingComp from "../../Components/Utils/LoadingComp";
+import useFetch from "../../Hooks/useFetch"; // Adjust the path accordingly
 
 const LazyNoticeMessageComp = lazy(() =>
   import("../../Components/Utils/NoticeMessageComp")
@@ -37,35 +41,46 @@ const SignUpPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({});
-  const onSubmit = async (data) => {
-    data = { customerRegisterDate: new Date().toISOString(), ...data };
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/signUp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        setNoticeMessage({
-          open: true,
-          message: "Successfully updated user",
-          icon: CheckCircleIcon,
-          color: "green",
-        });
-      } else {
-        setNoticeMessage({
-          open: true,
-          message: "Failed to update user",
-          icon: ErrorIcon,
-          color: "red",
-        });
-      }
-    } catch (error) {
-      console.error("Error occurred during sign up:", error);
-    }
+  const { data, loading, error, fetchData } = useFetch();
+  const customTheme = createTheme({
+    breakpoints: { values: { smallScreenMobile: 480 } },
+  });
+  const isSmallScreen = useMediaQuery(
+    customTheme.breakpoints.down("smallScreenMobile")
+  );
+
+  const onSubmit = async (formData) => {
+    const data = {
+      customerRegisterDate: new Date().toISOString(),
+      ...formData,
+    };
+    await fetchData(`${API_BASE_URL}/users/signUp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
   };
+
+  useEffect(() => {
+    if (data) {
+      setNoticeMessage({
+        open: true,
+        message: "Successfully registered user",
+        icon: CheckCircleIcon,
+        color: "green",
+      });
+    }
+    if (error) {
+      setNoticeMessage({
+        open: true,
+        message: "Failed to register user",
+        icon: ErrorIcon,
+        color: "red",
+      });
+    }
+  }, [data, error]);
 
   const noticeDialog = noticeMessage.open && (
     <Suspense fallback={<LoadingComp />}>
@@ -84,9 +99,11 @@ const SignUpPage = () => {
       />
     </Suspense>
   );
+
   return (
     <>
       {noticeDialog}
+      {loading && <LoadingComp />}
       <Stack className={classes[`registration-form`]} direction="column">
         <Box
           component={"form"}
@@ -98,7 +115,6 @@ const SignUpPage = () => {
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              {/** First Name Field*/}
               <TextField
                 name="firstName"
                 id="firstName"
@@ -113,12 +129,7 @@ const SignUpPage = () => {
               />
             </Grid>
 
-            <br />
-
-            {/** Last Name Field*/}
-
             <Grid item xs={12} sm={6}>
-              {/** First Name Field*/}
               <TextField
                 name="lastName"
                 fullWidth
@@ -134,7 +145,6 @@ const SignUpPage = () => {
               />
             </Grid>
 
-            {/* /** username  */}
             <Grid item xs={12}>
               <TextField
                 name="username"
@@ -151,7 +161,6 @@ const SignUpPage = () => {
               />
             </Grid>
 
-            {/** Password Field */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -162,7 +171,6 @@ const SignUpPage = () => {
                 id="password"
                 {...register("password", {
                   required: "Password is required",
-
                   validate: passwordValidator,
                 })}
                 noValidate
@@ -170,9 +178,7 @@ const SignUpPage = () => {
                 helperText={errors.password?.message}
               />
             </Grid>
-            <br />
 
-            {/* set grid for checkbox */}
             <Grid item xs={12}>
               <Controller
                 name="allowOthersToSeePurchasedProducts"
@@ -191,25 +197,43 @@ const SignUpPage = () => {
                   />
                 )}
               />
+            </Grid>
 
-              <Grid item xs={12}>
-                <Grid container justifyContent="space-between">
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2, width: 150 }}
-                  >
-                    Sign Up
-                  </Button>
-                  <Button
-                    variant="text"
-                    color="primary"
-                    sx={{ mt: 3, mb: 2, width: 150 }}
-                    onClick={() => navigate("/login")}
-                  >
-                    Back to Login
-                  </Button>
-                </Grid>
+            <Grid item xs={12}>
+              <Grid container justifyContent="space-between">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    width: isSmallScreen ? 125 : 150,
+                    fontSize: isSmallScreen ? "0.9rem" : "1.1rem",
+                  }}
+                >
+                  Sign Up
+                </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    width: isSmallScreen ? 125 : 150,
+                    fontSize: isSmallScreen ? "0.9rem" : "1.1rem",
+                  }}
+                  onClick={() => navigate("/login")}
+                  //text size
+                >
+                  Back to Login
+                </Button>
+              </Grid>
+              <Grid container justifyContent="space-between">
+                <Typography variant="body2" color="textSecondary">
+                  Password must contain at least one lowercase letter, one
+                  uppercase letter, one number, and be at least 6 characters
+                  long.
+                </Typography>
               </Grid>
             </Grid>
           </Grid>

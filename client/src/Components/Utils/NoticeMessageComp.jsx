@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
@@ -15,7 +15,22 @@ const StyledDialog = styled(Box)({
   textAlign: "center",
 });
 
+const Overlay = styled(Box)({
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  zIndex: 9998,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
 const NoticeMessageComp = ({ message, onClose, color, IconComp }) => {
+  const okButtonRef = useRef(null);
+
   const IconComponent = styled(IconComp)(({ color }) => ({
     color: color || "green", // Default to green if color prop is not provided
     fontSize: 48,
@@ -26,21 +41,33 @@ const NoticeMessageComp = ({ message, onClose, color, IconComp }) => {
     onClose();
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter" || event.key === "Escape") {
+        handleClose();
+      } else {
+        event.preventDefault();
+      }
+    };
+
+    const handleFocus = (event) => {
+      if (okButtonRef.current && !okButtonRef.current.contains(event.target)) {
+        okButtonRef.current.focus();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown, true);
+    document.addEventListener("focusin", handleFocus, true);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+      document.removeEventListener("focusin", handleFocus, true);
+    };
+  }, []);
+
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 9998,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Overlay>
       <StyledDialog>
         <IconComponent
           color={color}
@@ -48,16 +75,20 @@ const NoticeMessageComp = ({ message, onClose, color, IconComp }) => {
             fontSize: 48,
             marginBottom: 20,
           }}
-        />{" "}
-        {/* Render the chosen icon component */}
+        />
         <Typography variant="body1" sx={{ marginBottom: 2 }}>
           {message}
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleClose}>
+        <Button
+          ref={okButtonRef}
+          variant="contained"
+          color="primary"
+          onClick={handleClose}
+        >
           OK
         </Button>
       </StyledDialog>
-    </Box>
+    </Overlay>
   );
 };
 

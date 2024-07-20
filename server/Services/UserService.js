@@ -1,4 +1,5 @@
 // UserService.js
+const bcrypt = require("bcrypt"); // Ensure you have bcrypt installed and required
 
 const UserRepository = require("../Repositories/UserRepository");
 
@@ -39,14 +40,35 @@ const createUser = async (userData) => {
  */
 
 const authenticateUser = async (userData) => {
-  const user = await UserRepository.getUserByUsername(userData.username);
-  if (!user) {
-    throw new Error("User not found.");
+  try {
+    const user = await UserRepository.getUserByUsername(userData.username);
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+    const isPasswordValid = (await userData.password) === user.password;
+
+    if (!isPasswordValid) {
+      throw new Error("Invalid username or password.");
+    }
+
+    return user;
+  } catch (error) {
+    throw new Error(`Failed to authenticate user: ${error.message}`);
   }
-  if (user.password !== userData.password) {
-    throw new Error("Invalid password.");
+};
+
+const getGuestUser = async () => {
+  try {
+    const user = await UserRepository.getUserByUsername("guest");
+    if (!user) {
+      throw new Error("Guest user not found.");
+    } else {
+      return user;
+    }
+  } catch (error) {
+    throw new Error("Failed to get guest user.");
   }
-  return user;
 };
 
 /**
@@ -74,6 +96,9 @@ const getUserById = async (userId) => {
 
 const updateUser = async (userId, userData) => {
   const oldUser = await UserRepository.getUserById(userId);
+  if (oldUser.username === "guest") {
+    throw new Error("Cannot update guest user.");
+  }
   if (!oldUser) {
     throw new Error("User not found.");
   }
@@ -95,7 +120,6 @@ const updateUser = async (userId, userData) => {
  */
 
 const pushProductsToUser = async (userId, productData) => {
-  console.log("productData", productData);
   try {
     return await UserRepository.pushProductToUser(userId, productData);
   } catch (error) {
@@ -109,4 +133,5 @@ module.exports = {
   getUserById,
   updateUser,
   pushProductsToUser,
+  getGuestUser,
 };

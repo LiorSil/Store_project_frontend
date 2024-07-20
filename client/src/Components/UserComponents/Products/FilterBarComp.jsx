@@ -9,6 +9,8 @@ import {
   Button,
   FormControl,
   InputLabel,
+  createTheme,
+  useMediaQuery,
 } from "@mui/material";
 import LoadingComp from "../../Utils/LoadingComp";
 import MaxPriceTypography from "./MaxPriceTypography";
@@ -25,6 +27,19 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
   const [selectedCategory, setSelectedCategory] = useState(defaultCategory);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [searchText, setSearchText] = useState("");
+
+  const theme = createTheme({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 750,
+        lg: 1200,
+        xl: 1536,
+      },
+    },
+  });
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   // Handle category change
   const handleCategoryChange = (event) => {
@@ -92,32 +107,25 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
   return (
     <Box
       sx={{
-        padding: 1,
+        padding: isSmallScreen ? 0.5 : 1,
         border: 2,
         backgroundColor: "#d0ddf7",
         borderRadius: 2,
         borderColor: "primary.main",
         boxShadow: 0,
         display: "flex",
-        gap: 2,
+        gap: isSmallScreen ? 1 : 2,
         position: "relative",
         left: "50%",
         transform: "translateX(-50%)",
         zIndex: 1000,
         margin: 2,
-        "@media (max-width: 768px)": {
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 1,
-        },
+        flexDirection: isSmallScreen ? "column" : "row",
       }}
     >
       <FormControl
         sx={{
-          minWidth: 180,
-          "@media (max-width: 768px)": {
-            minWidth: "100%",
-          },
+          minWidth: isSmallScreen ? "100%" : 180,
         }}
       >
         <InputLabel id="category-select-label">Category</InputLabel>
@@ -137,13 +145,10 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
       </FormControl>
       <Box
         sx={{
-          width: 200,
+          width: isSmallScreen ? "100%" : 200,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          "@media (max-width: 768px)": {
-            width: "100%",
-          },
         }}
       >
         <MaxPriceTypography maxPrice={maxPrice} />
@@ -154,10 +159,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           min={0}
           max={1000}
           sx={{
-            width: "100%",
-            "@media (max-width: 768px)": {
-              width: "90%",
-            },
+            width: isSmallScreen ? "90%" : "100%",
           }}
           valueLabelFormat={(value) => `$${value}`}
         />
@@ -167,10 +169,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
         value={searchText}
         onChange={handleSearchTextChange}
         sx={{
-          minWidth: 200,
-          "@media (max-width: 768px)": {
-            width: "100%",
-          },
+          minWidth: isSmallScreen ? "100%" : 200,
         }}
       />
       <Button
@@ -180,7 +179,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
           borderColor: "primary.main",
           color: "primary.main",
           fontWeight: "bold",
-          padding: "8px 16px",
+          padding: isSmallScreen ? "8px" : "8px 16px",
           borderRadius: "8px",
           textTransform: "none",
           transition: "all 0.3s ease",
@@ -189,10 +188,7 @@ const FilterBarComp = ({ categories, onFilterChange, error, loading }) => {
             color: "white",
             borderColor: "primary.main",
           },
-          "@media (max-width: 768px)": {
-            width: "100%",
-            padding: "8px",
-          },
+          width: isSmallScreen ? "100%" : "auto",
         }}
       >
         Clear
