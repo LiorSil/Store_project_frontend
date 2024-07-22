@@ -1,0 +1,27 @@
+name: Initialize my eCommerce webstite Database script 
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-node-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm install
+
+      - name: Run Node.js script
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+        run: node server/initializeDB.js
