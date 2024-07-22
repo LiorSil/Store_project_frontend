@@ -119,7 +119,7 @@ function LoginPage() {
           <Typography component="h2" variant="subtitle1" margin={2}>
             for Admin: username: admin, password: admin
           </Typography>
-          <Typography component="h3" variant="subtitle3" margin={2}>
+          <Typography component="h3" variant="subtitle2" margin={2}>
             To wake up the server you have to wait longer than usual at the
             first login.
           </Typography>
