@@ -116,6 +116,12 @@ function LoginPage() {
           <Typography component="h1" variant="h5" margin={2}>
             Sign in
           </Typography>
+          <Typography component="h2" variant="subtitle1" margin={2}>
+            for Admin: username: admin, password: admin
+          </Typography>
+          <Typography component="h3" variant="subtitle1" margin={2}>
+            To wake up the server you have to wait longer than usual
+          </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
