@@ -20,7 +20,7 @@ const NoOrdersFound = () => {
       }}
     >
       <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
-        No Orders Found
+        No Orders Found 😢
       </Typography>
       <Typography variant="body1">
         You have not placed any orders yet. Start shopping now!
