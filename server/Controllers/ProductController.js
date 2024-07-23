@@ -1,5 +1,5 @@
-const ProductService = require("../Services/ProductService");
-const ImageService = require("../Services/ImageService");
+const productService = require("../services/productService");
+const imageService = require("../services/imageService");
 
 /**
  * Creates a new product.
@@ -8,7 +8,7 @@ const ImageService = require("../Services/ImageService");
  */
 const createProduct = async (req, res) => {
   try {
-    const product = await ProductService.createProduct(req.body);
+    const product = await productService.createProduct(req.body);
     res.status(201).json(product);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -22,7 +22,7 @@ const createProduct = async (req, res) => {
  */
 const getProducts = async (req, res) => {
   try {
-    const products = await ProductService.getProducts();
+    const products = await productService.getProducts();
 
     const plainProducts = products.map((product) => product.toObject());
     const uniqueImageReferences = [
@@ -52,7 +52,7 @@ const fetchImageUrls = async (uniqueImageReferences) => {
   await Promise.all(
     uniqueImageReferences.map(async (ref) => {
       try {
-        const imageUrl = await ImageService.getImage(ref);
+        const imageUrl = await imageService.getImage(ref);
         imageUrlMap[ref] = imageUrl;
       } catch (error) {
         imageUrlMap[ref] = null;
@@ -71,7 +71,7 @@ const updateProduct = async (req, res) => {
   try {
     const { id: productId } = req.params;
     const product = req.body;
-    const updatedProduct = await ProductService.updateProduct(
+    const updatedProduct = await productService.updateProduct(
       productId,
       product
     );
@@ -88,7 +88,7 @@ const updateProduct = async (req, res) => {
  */
 const getOnlyBoughtProducts = async (req, res) => {
   try {
-    const products = await ProductService.getProducts();
+    const products = await productService.getProducts();
     const boughtProducts = products.filter((product) => product.bought > 0);
     res.status(200).json(boughtProducts);
   } catch (error) {

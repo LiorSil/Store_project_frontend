@@ -1,7 +1,7 @@
 // UserService.js
-const bcrypt = require("bcrypt"); // Ensure you have bcrypt installed and required
+// Ensure you have bcrypt installed and required
 
-const UserRepository = require("../Repositories/UserRepository");
+const userRepo = require("../repos/userRepo");
 
 /**
  * get users that are customers (not admins)
@@ -11,7 +11,7 @@ const UserRepository = require("../Repositories/UserRepository");
 
 const getCustomers = async () => {
   try {
-    const users = await UserRepository.getAllUsers();
+    const users = await userRepo.getAllUsers();
     const customers = users.filter((user) => !user.isAdmin);
     return customers;
   } catch (error) {
@@ -26,7 +26,7 @@ const getCustomers = async () => {
  */
 const createUser = async (userData) => {
   try {
-    return await UserRepository.createUser(userData);
+    return await userRepo.createUser(userData);
   } catch (error) {
     throw new Error("Failed to create a new user in the database.");
   }
@@ -41,7 +41,7 @@ const createUser = async (userData) => {
 
 const authenticateUser = async (userData) => {
   try {
-    const user = await UserRepository.getUserByUsername(userData.username);
+    const user = await userRepo.getUserByUsername(userData.username);
 
     if (!user) {
       throw new Error("User not found.");
@@ -60,7 +60,7 @@ const authenticateUser = async (userData) => {
 
 const getGuestUser = async () => {
   try {
-    const user = await UserRepository.getUserByUsername("guest");
+    const user = await userRepo.getUserByUsername("guest");
     if (!user) {
       throw new Error("Guest user not found.");
     } else {
@@ -79,7 +79,7 @@ const getGuestUser = async () => {
  */
 
 const getUserById = async (userId) => {
-  let user = await UserRepository.getUserById(userId);
+  let user = await userRepo.getUserById(userId);
   // Remove _id from user object
   user = user.toObject();
 
@@ -95,7 +95,7 @@ const getUserById = async (userId) => {
  */
 
 const updateUser = async (userId, userData) => {
-  const oldUser = await UserRepository.getUserById(userId);
+  const oldUser = await userRepo.getUserById(userId);
   if (oldUser.username === "guest") {
     throw new Error("Cannot update guest user.");
   }
@@ -104,7 +104,7 @@ const updateUser = async (userId, userData) => {
   }
 
   try {
-    const updatedUser = await UserRepository.updateUser(userId, userData);
+    const updatedUser = await userRepo.updateUser(userId, userData);
     return updatedUser;
   } catch (error) {
     throw new Error("Failed to update user in the database.");
@@ -121,7 +121,7 @@ const updateUser = async (userId, userData) => {
 
 const pushProductsToUser = async (userId, productData) => {
   try {
-    return await UserRepository.pushProductToUser(userId, productData);
+    return await userRepo.pushProductToUser(userId, productData);
   } catch (error) {
     throw new Error("Failed to update user in the database.");
   }

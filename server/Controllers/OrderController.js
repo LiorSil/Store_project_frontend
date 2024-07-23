@@ -1,4 +1,4 @@
-const OrderService = require("../Services/OrderService");
+const orderService = require("../services/orderService");
 
 /**
  * Creates a new order in the database.
@@ -8,7 +8,7 @@ const OrderService = require("../Services/OrderService");
 const createOrder = async (req, res) => {
   try {
     req.body.customer = req.user.userId;
-    const order = await OrderService.createOrder(req.body);
+    const order = await orderService.createOrder(req.body);
     res.status(201).json(order);
   } catch (error) {
     res.status(400).send(error.message);
@@ -22,7 +22,7 @@ const createOrder = async (req, res) => {
  */
 const getOrders = async (req, res) => {
   try {
-    const orders = await OrderService.getOrders();
+    const orders = await orderService.getOrders();
     res.status(200).json(orders);
   } catch (error) {
     res.status(400).send(error.message);
@@ -36,7 +36,7 @@ const getOrders = async (req, res) => {
  */
 const getProductsFromOrders = async (req, res) => {
   try {
-    const orders = await OrderService.getOrdersByUserId(req.user.userId);
+    const orders = await orderService.getOrdersByUserId(req.user.userId);
     let products = [];
     orders.forEach((order) => {
       order.items.forEach((item) => {
