@@ -1,13 +1,13 @@
 // src/Redux/store.js
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
-import cartSlice from "./Reducers/cartReducer";
-import accountSlice from "./Reducers/accountReducer";
-import usersSlice from "./Reducers/userReducer";
-import categoriesSlice from "./Reducers/categoriesReducer";
-import productsSlice from "./Reducers/productsReducer";
-import ordersSlice from "./Reducers/ordersReducer";
-import addProductSlice from "./Reducers//addProductReducer";
+import cartSlice from "./reducers/cart";
+import accountSlice from "./reducers/account";
+import usersSlice from "./reducers/user";
+import categoriesSlice from "./reducers/categories";
+import productsSlice from "./reducers/products";
+import ordersSlice from "./reducers/orders";
+import addProductSlice from "./reducers/addProduct";
 
 const rootReducer = combineReducers({
   cart: cartSlice,

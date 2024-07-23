@@ -1,4 +1,4 @@
-export { default as AdminCategoriesComp } from "./AdminComponents/AdminCategories/AdminCategoriesComp";
-export { default as AdminCustomersComp } from "./AdminComponents/AdminCustomers/AdminCustomersComp";
-export { default as AdminProductsComp } from "./AdminComponents/AdminProducts/AdminProductsComp";
-export { default as AdminStatisticsComp } from "./AdminComponents/AdminStatistics/AdminStatisticsComp";
+export { default as Categories } from "./admin/categories/Categories";
+export { default as Customers } from "./admin/customers/Customers";
+export { default as AdminProducts } from "./admin/products/AdminProducts";
+export { default as Statistics } from "./admin/statistics/Statistics";
