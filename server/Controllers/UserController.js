@@ -1,5 +1,5 @@
-const UserService = require("../Services/UserService");
-const ProductService = require("../Services/ProductService");
+const userService = require("../services/userService");
+const productService = require("../services/productService");
 const jwt = require("jsonwebtoken");
 
 /**
@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
  */
 const signUp = async (req, res) => {
   try {
-    const user = await UserService.createUser(req.body);
+    const user = await userService.createUser(req.body);
     res.status(201).json(user);
   } catch (error) {
     res.status(400).send(error.message);
@@ -19,7 +19,7 @@ const signUp = async (req, res) => {
 const login = async (req, res) => {
   try {
     // Authenticate the user using the provided credentials
-    const user = await UserService.authenticateUser(req.body);
+    const user = await userService.authenticateUser(req.body);
 
     // Generate a JWT token
     const token = jwt.sign(
@@ -44,7 +44,7 @@ const login = async (req, res) => {
 };
 const guest = async (req, res) => {
   try {
-    const user = await UserService.getGuestUser();
+    const user = await userService.getGuestUser();
     const token = jwt.sign(
       { userId: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
@@ -63,7 +63,7 @@ const guest = async (req, res) => {
  */
 const getUser = async (req, res) => {
   try {
-    const user = await UserService.getUserById(req.user.userId);
+    const user = await userService.getUserById(req.user.userId);
 
     const clientUser = {
       firstName: user.firstName,
@@ -86,7 +86,7 @@ const getUser = async (req, res) => {
  */
 const updateUser = async (req, res) => {
   try {
-    const user = await UserService.updateUser(req.user.userId, req.body);
+    const user = await userService.updateUser(req.user.userId, req.body);
     res.status(200).json(user);
   } catch (error) {
     if (error.message === "Cannot update guest user.")
@@ -103,7 +103,7 @@ const updateUser = async (req, res) => {
 const pushProducts = async (req, res) => {
   try {
     const { productsBought } = req.body;
-    const user = await UserService.pushProductsToUser(
+    const user = await userService.pushProductsToUser(
       req.user.userId,
       productsBought
     );
@@ -120,8 +120,8 @@ const pushProducts = async (req, res) => {
  */
 const getCustomersAndProducts = async (req, res) => {
   try {
-    const users = await UserService.getCustomers();
-    const products = await ProductService.getProducts();
+    const users = await userService.getCustomers();
+    const products = await productService.getProducts();
     res.status(200).json({
       users,
       products,

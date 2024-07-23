@@ -6,7 +6,7 @@ import FilterBar from "./FilterBar";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FeedbackIcon from "@mui/icons-material/Feedback";
-import { NoticeMessage } from "../../utils/shared/commonComponents";
+import { NoticeMessage } from "../../../utils/shared/commonComponents";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCategoriesData } from "../../../redux/reducers/categories";
 

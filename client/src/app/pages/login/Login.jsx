@@ -15,11 +15,11 @@ import {
   Container,
   Box,
 } from "@mui/material";
-import useFetch from "../../hooks/useFetch";
+import useFetch from "../../../hooks/useFetch";
 import classes from "./Login.module.css";
-import LoadingComp from "../../components/utils/shared/Loading";
-import NoticeMessageComp from "../../components/utils/shared/NoticeMessage";
-import API_BASE_URL from "../../constants/serverUrl";
+import LoadingComp from "../../../utils/shared/Loading";
+import NoticeMessageComp from "../../../utils/shared/NoticeMessage";
+import API_BASE_URL from "../../../constants/serverUrl";
 
 function Login() {
   const cookies = useMemo(() => new Cookies(), []);

@@ -14,7 +14,7 @@ import {
   clearCart,
   updateCartItemCount,
 } from "../../../redux/reducers/cart";
-import { Confirm, Loading } from "../../utils/shared/commonComponents";
+import { Confirm, Loading } from "../../../utils/shared/commonComponents";
 import CartItem from "./CartItem";
 import useFetch from "../../../hooks/useFetch";
 import Cookies from "universal-cookie";

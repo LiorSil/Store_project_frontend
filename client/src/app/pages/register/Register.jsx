@@ -18,17 +18,17 @@ import {
   lastNameValidator,
   passwordValidator,
   usernameValidator,
-} from "../../components/utils/validators/account/accountIndex";
+} from "../../../utils/validators/account/accountIndex";
 
 import classes from "./Register.module.css";
-import API_BASE_URL from "../../constants/serverUrl";
+import API_BASE_URL from "../../../constants/serverUrl";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import Loading from "../../components/utils/shared/Loading";
-import useFetch from "../../hooks/useFetch"; // Adjust the path accordingly
+import Loading from "../../../utils/shared/Loading";
+import useFetch from "../../../hooks/useFetch"; // Adjust the path accordingly
 
 const LazyNoticeMessage = lazy(() =>
-  import("../../components/utils/shared/NoticeMessage")
+  import("../../../utils/shared/NoticeMessage")
 );
 
 const Register = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import ConfirmComp from "../../components/utils/shared/Confirm";
+import ConfirmComp from "../../../utils/shared/Confirm";
 import Cookies from "universal-cookie";
 
 const Logout = () => {

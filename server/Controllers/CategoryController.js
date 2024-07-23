@@ -1,4 +1,4 @@
-const categoryService = require("../Services/CategoryService");
+const categoryService = require("../services/categoryService");
 
 /**
  * Get all categories.

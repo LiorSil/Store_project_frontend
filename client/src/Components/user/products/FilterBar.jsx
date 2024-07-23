@@ -12,7 +12,7 @@ import {
   createTheme,
   useMediaQuery,
 } from "@mui/material";
-import LoadingComp from "../../utils/shared/Loading";
+import LoadingComp from "../../../utils/shared/Loading";
 import MaxPriceTypography from "./MaxPriceTypography";
 
 const FilterBar = ({ categories, onFilterChange, error, loading }) => {

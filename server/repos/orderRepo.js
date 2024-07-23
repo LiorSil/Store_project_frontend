@@ -1,4 +1,4 @@
-const Order = require("../Models/OrderModel");
+const orderModel = require("../models/orderModel");
 
 /**
  * Creates a new order in the database.
@@ -8,7 +8,7 @@ const Order = require("../Models/OrderModel");
 
 const createOrder = async (orderData) => {
   try {
-    const order = new Order(orderData);
+    const order = new orderModel(orderData);
     return await order.save();
   } catch (error) {
     console.error("Error creating order:", error.message);
@@ -24,7 +24,7 @@ const createOrder = async (orderData) => {
 
 const getOrdersByUserId = async (userId) => {
   try {
-    return await Order.find({ customer: userId });
+    return await orderModel.find({ customer: userId });
   } catch (error) {
     console.error("Error getting orders:", error.message);
     throw error;
@@ -39,7 +39,7 @@ const getOrdersByUserId = async (userId) => {
 
 const getOrders = async () => {
   try {
-    return await Order.find();
+    return await orderModel.find();
   } catch (error) {
     console.error("Error getting orders:", error.message);
     throw error;

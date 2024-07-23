@@ -1,5 +1,5 @@
-const ProductRepository = require("../Repositories/ProductRepository");
-const CategoryRepository = require("../Repositories/CategoryRepository");
+const productRepo = require("../repos/productRepo");
+const categoryRepo = require("../repos/categoryRepo");
 
 /**
  * Get a product by its ID.
@@ -7,7 +7,7 @@ const CategoryRepository = require("../Repositories/CategoryRepository");
  * @returns {Promise<object>} The product object.
  */
 const getProduct = async (productId) => {
-  return await ProductRepository.getProduct(productId);
+  return await productRepo.getProduct(productId);
 };
 
 /**
@@ -15,7 +15,7 @@ const getProduct = async (productId) => {
  * @returns {Promise<Array<object>>} Array of product objects.
  */
 const getProducts = async () => {
-  return await ProductRepository.getProducts();
+  return await productRepo.getProducts();
 };
 
 /**
@@ -24,7 +24,7 @@ const getProducts = async () => {
  * @returns {Promise<object>} Created product object.
  */
 const createProduct = async (productData) => {
-  const categories = await CategoryRepository.getCategories();
+  const categories = await categoryRepo.getCategories();
   const category = categories.find(
     (cat) => cat.name === productData.categoryName
   );
@@ -36,7 +36,7 @@ const createProduct = async (productData) => {
   productData.category = category._id;
 
   try {
-    return await ProductRepository.createProduct(productData);
+    return await productRepo.createProduct(productData);
   } catch (error) {
     throw new Error("Failed to create a new product in the database.");
   }
@@ -65,7 +65,7 @@ const createProducts = async (productsData) => {
  */
 const getProductTitleById = async (productId) => {
   try {
-    const product = await ProductRepository.getProductById(productId);
+    const product = await productRepo.getProductById(productId);
     return product.title;
   } catch (error) {
     throw new Error("Failed to get product by id.");
@@ -79,7 +79,7 @@ const getProductTitleById = async (productId) => {
  */
 const getCategories = async () => {
   try {
-    return await CategoryRepository.getCategories();
+    return await categoryRepo.getCategories();
   } catch (error) {
     throw new Error("Failed to get categories.");
   }
@@ -93,7 +93,7 @@ const getCategories = async () => {
  */
 const updateCategory = async (oldCategory, newCategory) => {
   try {
-    await ProductRepository.updateCategory(oldCategory, newCategory);
+    await productRepo.updateCategory(oldCategory, newCategory);
   } catch (error) {
     throw new Error("Failed to update category.");
   }
@@ -108,14 +108,14 @@ const updateCategory = async (oldCategory, newCategory) => {
  */
 const updateProduct = async (productId, productData) => {
   try {
-    const existingProduct = await ProductRepository.getProductById(productId);
+    const existingProduct = await productRepo.getProductById(productId);
 
     const updatedProduct = {
       ...existingProduct._doc,
       ...productData,
     };
 
-    return await ProductRepository.updateProduct(productId, updatedProduct);
+    return await productRepo.updateProduct(productId, updatedProduct);
   } catch (error) {
     throw new Error("Failed to update product.");
   }
@@ -130,11 +130,11 @@ const updateProduct = async (productId, productData) => {
  */
 const updateProductBought = async (productId, quantity) => {
   try {
-    const product = await ProductRepository.getProductById(productId);
+    const product = await productRepo.getProductById(productId);
 
     product.bought += quantity;
 
-    await ProductRepository.updateProduct(productId, product);
+    await productRepo.updateProduct(productId, product);
   } catch (error) {
     throw new Error("Failed to update product bought.");
   }
@@ -149,13 +149,13 @@ const updateProductBought = async (productId, quantity) => {
  */
 const updateProductQuantity = async (productId, quantity) => {
   try {
-    const product = await ProductRepository.getProductById(productId);
+    const product = await productRepo.getProductById(productId);
     product.quantity -= quantity;
 
     if (product.quantity < 0) {
       throw new Error("Quantity cannot be less than 0.");
     }
-    await ProductRepository.updateProduct(productId, product);
+    await productRepo.updateProduct(productId, product);
     return product;
   } catch (error) {
     throw new Error("Failed to update product quantity.");

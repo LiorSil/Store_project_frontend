@@ -1,7 +1,6 @@
-const OrderRepository = require("../Repositories/OrderRepository");
-const UserService = require("./UserService");
-const ProductService = require("./ProductService");
-const ImageService = require("./ImageService");
+const orderRepo = require("../repos/orderRepo");
+const userService = require("./userService");
+const productService = require("./productService");
 
 /**
  * Creates a new order in the database.
@@ -10,7 +9,7 @@ const ImageService = require("./ImageService");
  */
 
 const createOrder = async (orderData) => {
-  const user = await UserService.getUserById(orderData.customer.toString());
+  const user = await userService.getUserById(orderData.customer.toString());
 
   if (user && user.customerRegisterDate) {
     orderData.customerRegisterDate = user.customerRegisterDate;
@@ -25,7 +24,7 @@ const createOrder = async (orderData) => {
   ) {
     orderData.items = await Promise.all(
       orderData.items.map(async (item) => {
-        item.title = await ProductService.getProductTitleById(item.productId);
+        item.title = await productService.getProductTitleById(item.productId);
         return item;
       })
     );
@@ -35,8 +34,8 @@ const createOrder = async (orderData) => {
 
   const userProductsBought = await Promise.all(
     orderData.items.map(async (item) => {
-      await ProductService.updateProductQuantity(item.productId, item.quantity);
-      await ProductService.updateProductBought(item.productId, item.quantity);
+      await productService.updateProductQuantity(item.productId, item.quantity);
+      await productService.updateProductBought(item.productId, item.quantity);
 
       return {
         productId: item.productId,
@@ -47,9 +46,9 @@ const createOrder = async (orderData) => {
     })
   );
 
-  await UserService.pushProductsToUser(user, userProductsBought);
+  await userService.pushProductsToUser(user, userProductsBought);
 
-  return await OrderRepository.createOrder(orderData);
+  return await orderRepo.createOrder(orderData);
 };
 
 /**
@@ -60,7 +59,7 @@ const createOrder = async (orderData) => {
 
 const getOrdersByUserId = async (userId) => {
   try {
-    return await OrderRepository.getOrdersByUserId(userId);
+    return await orderRepo.getOrdersByUserId(userId);
   } catch (error) {
     console.error("Error getting orders:", error.message);
     throw error;
@@ -75,7 +74,7 @@ const getOrdersByUserId = async (userId) => {
 
 const getOrders = async () => {
   try {
-    return await OrderRepository.getOrders();
+    return await orderRepo.getOrders();
   } catch (error) {
     console.error("Error getting orders:", error.message);
     throw error;

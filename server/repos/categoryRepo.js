@@ -1,11 +1,11 @@
-const CategoryModel = require("../Models/CategoryModel");
-const ProductModel = require("../Models/ProductModel");
+const categoryModel = require("../models/categoryModel");
+const productModel = require("../models/productModel");
 /**
  * Retrieves all categories from the database.
  * @returns {Promise<Array<Object>>} - The array of categories.
  */
 const getCategories = async () => {
-  return await CategoryModel.find();
+  return await categoryModel.find();
 };
 
 /**
@@ -17,7 +17,7 @@ const getCategories = async () => {
 
 const createCategory = async (categoryName) => {
   try {
-    const category = new CategoryModel({
+    const category = new categoryModel({
       name: categoryName,
     });
 
@@ -38,11 +38,11 @@ const createCategory = async (categoryName) => {
 
 const updateCategory = async (category) => {
   try {
-    await CategoryModel.findByIdAndUpdate(category._id, category);
-    const products = await ProductModel.find({ category: category._id });
+    await categoryModel.findByIdAndUpdate(category._id, category);
+    const products = await productModel.find({ category: category._id });
     products.forEach(async (product) => {
       product.categoryName = category.name;
-      await ProductModel.findByIdAndUpdate(product._id, product);
+      await productModel.findByIdAndUpdate(product._id, product);
     });
     return category;
   } catch (error) {
@@ -60,7 +60,7 @@ const updateCategory = async (category) => {
 
 const deleteCategory = async (category) => {
   try {
-    return await CategoryModel.findByIdAndDelete(category._id);
+    return await categoryModel.findByIdAndDelete(category._id);
   } catch (error) {
     console.error("Error deleting category:", error.message);
     throw error;

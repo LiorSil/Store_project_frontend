@@ -1,4 +1,4 @@
-const ProductModel = require("../Models/ProductModel");
+const productModel = require("../models/productModel");
 
 /**
  * Retrieves a product from the database.
@@ -7,7 +7,7 @@ const ProductModel = require("../Models/ProductModel");
  */
 
 const getProduct = async (productId) => {
-  return await ProductModel.findById(productId);
+  return await productModel.findById(productId);
 };
 
 /**
@@ -15,7 +15,7 @@ const getProduct = async (productId) => {
  * @returns {Promise<Array<Object>>} - The array of products.
  */
 const getProducts = async () => {
-  return await ProductModel.find();
+  return await productModel.find();
 };
 
 /**
@@ -26,7 +26,7 @@ const getProducts = async () => {
  */
 const createProduct = async (productData) => {
   try {
-    const product = new ProductModel(productData);
+    const product = new productModel(productData);
     return await product.save();
   } catch (error) {
     console.error("Error creating product:", error.message);
@@ -41,7 +41,7 @@ const createProduct = async (productData) => {
  */
 const getProductById = async (productId) => {
   try {
-    return await ProductModel.findById(productId);
+    return await productModel.findById(productId);
   } catch (error) {
     console.error("Error getting product by id:", error.message);
     throw error;
@@ -55,7 +55,7 @@ const getProductById = async (productId) => {
  */
 const getCategories = async () => {
   try {
-    return await ProductModel.distinct("category");
+    return await productModel.distinct("category");
   } catch (error) {
     console.error("Error getting categories:", error.message);
     throw error;
@@ -72,7 +72,7 @@ const getCategories = async () => {
 
 const updateCategory = async (prevCategory, newCategory) => {
   try {
-    return await ProductModel.updateMany(
+    return await productModel.updateMany(
       { category: prevCategory },
       { category: newCategory }
     );
@@ -92,7 +92,7 @@ const updateCategory = async (prevCategory, newCategory) => {
 
 const updateCategoryNameByCategoryId = async (categoryId, newCategoryName) => {
   try {
-    return await ProductModel.updateMany(
+    return await productModel.updateMany(
       { category: categoryId },
       { categoryName: newCategoryName }
     );
@@ -112,7 +112,7 @@ const updateCategoryNameByCategoryId = async (categoryId, newCategoryName) => {
 
 const updateProduct = async (productId, productData) => {
   try {
-    return await ProductModel.findByIdAndUpdate(productId, productData);
+    return await productModel.findByIdAndUpdate(productId, productData);
   } catch (error) {
     console.error("Error updating product:", error.message);
     throw error;

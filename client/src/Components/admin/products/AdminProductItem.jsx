@@ -20,14 +20,14 @@ import {
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
 } from "@mui/icons-material";
-import { NoticeMessage, Confirm } from "../../utils/shared/commonComponents";
-import validateProductTitle from "../../utils/validators/product/title";
-import validateProductPrice from "../../utils/validators/product/price";
-import validateProductDescription from "../../utils/validators/product/description";
+import { NoticeMessage, Confirm } from "../../../utils/shared/commonComponents";
+import validateProductTitle from "../../../utils/validators/product/title";
+import validateProductPrice from "../../../utils/validators/product/price";
+import validateProductDescription from "../../../utils/validators/product/description";
 import { updateProductData } from "../../../redux/reducers/products";
 
 const MaterialTableComp = React.lazy(() =>
-  import("../../utils/shared/MaterialTable")
+  import("../../../utils/shared/MaterialTable")
 );
 
 /**

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Box } from "@mui/material";
 import Cookies from "universal-cookie";
 import useFetch from "../../../hooks/useFetch";
-import { Loading, MaterialTable } from "../../utils/shared/commonComponents";
+import { Loading, MaterialTable } from "../../../utils/shared/commonComponents";
 import { orderTableColumns } from "../../../constants/orderTableColumns";
 import API_BASE_URL from "../../../constants/serverUrl";
 import { defaultDate } from "../../../constants/defaultDates";

@@ -1,4 +1,4 @@
-const validateToken = require("../Services/Util");
+const validateToken = require("../services/util");
 
 /**
  * Middleware to validate the token and check if the user is authorized.

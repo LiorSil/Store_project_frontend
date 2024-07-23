@@ -19,7 +19,7 @@ import {
   validateProductDescription,
   validateProductImageReference,
   validateProductQuantity,
-} from "../../utils/validators/product/adminIndexValidator.js";
+} from "../../../utils/validators/product/adminIndexValidator.js";
 
 /**
  * AddNewProductForm component for adding a new product.

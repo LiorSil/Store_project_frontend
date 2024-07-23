@@ -26,13 +26,13 @@ import {
   Loading,
   Confirm,
   NoticeMessage,
-} from "../../utils/shared/commonComponents";
-import Error from "../../../pages/error/Error";
+} from "../../../utils/shared/commonComponents";
+import Error from "../../../app/pages/error/Error";
 
-import { validateCategory } from "../../utils/validators/product/adminIndexValidator";
+import { validateCategory } from "../../../utils/validators/product/adminIndexValidator";
 
 const MaterialTableComp = lazy(() =>
-  import("../../utils/shared/MaterialTable")
+  import("../../../utils/shared/MaterialTable")
 );
 
 /**

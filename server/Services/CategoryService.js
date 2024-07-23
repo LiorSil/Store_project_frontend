@@ -1,5 +1,4 @@
-const categoryRepository = require("../Repositories/CategoryRepository");
-const productRepository = require("../Repositories/ProductRepository");
+const categoryRepo = require("../repos/categoryRepo");
 
 /**
  * Get all categories
@@ -7,7 +6,7 @@ const productRepository = require("../Repositories/ProductRepository");
  */
 const getCategories = async () => {
   try {
-    return await categoryRepository.getCategories();
+    return await categoryRepo.getCategories();
   } catch (error) {
     console.error("Error getting categories:", error.message);
     throw error;
@@ -22,7 +21,7 @@ const getCategories = async () => {
 
 const createCategory = async (categoryName) => {
   try {
-    return await categoryRepository.createCategory(categoryName);
+    return await categoryRepo.createCategory(categoryName);
   } catch (error) {
     console.error("Error creating category:", error.message);
     throw error;
@@ -36,7 +35,7 @@ const createCategory = async (categoryName) => {
  */
 const updateCategory = async (category) => {
   try {
-    return await categoryRepository.updateCategory(category);
+    return await categoryRepo.updateCategory(category);
   } catch (error) {
     console.error("Error updating category:", error.message);
     throw error;
@@ -50,7 +49,7 @@ const updateCategory = async (category) => {
  */
 const deleteCategory = async (category) => {
   try {
-    return await categoryRepository.deleteCategory(category);
+    return await categoryRepo.deleteCategory(category);
   } catch (error) {
     console.error("Error deleting category:", error.message);
     throw error;

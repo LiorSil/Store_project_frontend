@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const UserController = require("../Controllers/UserController");
-const { authenticateUser } = require("../Middlewares/authMiddleware");
+const UserController = require("../controllers/userController.js");
+const { authenticateUser } = require("../Middlewares/authMiddleware.js");
 
 /**
  * @route POST /users/signUp

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateUser } = require("../Middlewares/authMiddleware");
-const OrderController = require("../Controllers/OrderController");
+const { authenticateUser } = require("../middlewares/authenticateUser");
+const OrderController = require("../controllers/orderController");
 
 /**
  * @route POST /orders

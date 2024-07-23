@@ -1,4 +1,4 @@
-const User = require("../Models/UserModel");
+const userModel = require("../models/userModel");
 
 /**
  * get all users
@@ -7,7 +7,7 @@ const User = require("../Models/UserModel");
  */
 const getAllUsers = async () => {
   try {
-    return await User.find();
+    return await userModel.find();
   } catch (error) {
     console.error("Error getting users:", error.message);
     throw error;
@@ -23,7 +23,7 @@ const getAllUsers = async () => {
 
 const createUser = async (userData) => {
   try {
-    const user = new User(userData);
+    const user = new userModel(userData);
     return await user.save();
   } catch (error) {
     // Handle error (e.g., log, throw, etc.)
@@ -43,7 +43,7 @@ const createUser = async (userData) => {
 const getUserByUsername = async (username) => {
   // Ignore case
   try {
-    const user = await User.findOne({
+    const user = await userModel.findOne({
       username: { $regex: new RegExp(`^${username}$`, "i") },
     });
     return user;
@@ -60,7 +60,7 @@ const getUserByUsername = async (username) => {
  */
 
 const getUserById = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await userModel.findById(userId);
   return user;
 };
 
@@ -74,7 +74,7 @@ const getUserById = async (userId) => {
 
 const updateUser = async (userId, userData) => {
   try {
-    return await User.findByIdAndUpdate(userId, userData);
+    return await userModel.findByIdAndUpdate(userId, userData);
   } catch (error) {
     console.error("Error updating user:", error.message);
     throw error;
@@ -90,7 +90,7 @@ const updateUser = async (userId, userData) => {
 
 const pushProductToUser = async (userId, products) => {
   try {
-    return await User.findByIdAndUpdate(
+    return await userModel.findByIdAndUpdate(
       userId,
       { $push: { productsBought: { $each: products } } },
       { new: true, useFindAndModify: false }

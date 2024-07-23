@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import LoadingComp from "../../utils/shared/Loading";
+import LoadingComp from "../../../utils/shared/Loading";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import {
@@ -28,15 +28,15 @@ import {
   firstNameValidator,
   lastNameValidator,
   passwordValidator,
-} from "../../utils/validators/account/accountIndex";
+} from "../../../utils/validators/account/accountIndex";
 import API_BASE_URL from "../../../constants/serverUrl";
 import { createSelector } from "reselect";
 
 // Lazy load components
 const LazyNoticeMessageComp = lazy(() =>
-  import("../../utils/shared/NoticeMessage")
+  import("../../../utils/shared/NoticeMessage")
 );
-const LazyConfirmComp = lazy(() => import("../../utils/shared/Confirm"));
+const LazyConfirmComp = lazy(() => import("../../../utils/shared/Confirm"));
 
 // Memoized selector using reselect
 const selectAccountState = createSelector(

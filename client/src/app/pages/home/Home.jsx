@@ -3,19 +3,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import Cookies from "universal-cookie";
 import ErrorPage from "../error/Error";
-import {
-  Products,
-  Orders,
-  Account,
-  Logout,
-  NavBar,
-} from "../../components/userComponents";
+import { Products, Orders, Account } from "../../../components/userComponents";
 import {
   Categories,
   AdminProducts,
   Customers,
   Statistics,
-} from "../../components/adminComponents";
+} from "../../../components/adminComponents";
+import Logout from "./Logout";
+import NavBar from "./NavBar";
 
 import styles from "./Home.module.css"; // Import the CSS module
 

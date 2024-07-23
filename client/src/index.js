@@ -9,8 +9,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import App from "./App";
-import "./index.css";
+import App from "./app/App";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
