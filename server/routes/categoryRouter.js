@@ -4,7 +4,7 @@ const categoryController = require("../controllers/categoryController");
 const {
   authenticateUser,
   authorizeAdmin,
-} = require("../Middlewares/authMiddleware");
+} = require("../middlewares/authMiddleware");
 
 /**
  * @route GET /categories
