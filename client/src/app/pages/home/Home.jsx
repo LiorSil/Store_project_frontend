@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import ErrorPage from "../error/Error";
 import { Products, Orders, Account } from "../../../components/userComponents";
+
 import {
   Categories,
   AdminProducts,
@@ -21,7 +22,6 @@ const userComponents = {
   Products,
   Orders,
   Account,
-  Logout,
 };
 
 const adminComponents = {
