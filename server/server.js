@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+
+//run db config
 require("./config/db.js");
 
 const port = 5000;
