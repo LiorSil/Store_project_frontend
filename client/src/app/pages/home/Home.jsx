@@ -13,15 +13,14 @@ import {
 } from "../../../components/adminComponents";
 import Logout from "./Logout";
 import NavBar from "./NavBar";
-
 import styles from "./Home.module.css"; // Import the CSS module
-
 import Welcome from "./Welcome";
 
 const userComponents = {
   Products,
   Orders,
   Account,
+  Logout,
 };
 
 const adminComponents = {
