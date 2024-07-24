@@ -11,7 +11,7 @@ export const addProductData = createAsyncThunk(
       const token = cookies.get("token");
 
       if (!token) {
-        throw new Error("No valid token found");
+        throw new Error("No valid token found ");
       }
 
       const response = await fetch(`${API_BASE_URL}/products`, {
