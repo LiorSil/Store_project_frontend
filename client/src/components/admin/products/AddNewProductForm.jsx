@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React from "react";
 import {
   TextField,
   Select,
@@ -11,96 +10,19 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { addProductData } from "../../../redux/reducers/addProduct.js";
-import {
-  validateProductTitle,
-  validateProductPrice,
-  validateProductDescription,
-  validateProductImageReference,
-  validateProductQuantity,
-} from "../../../utils/validators/product/adminIndexValidator.js";
+import useAddNewProductForm from "../../../hooks/admin/products/useAddNewProductForm"; // Adjust the path according to your project structure
 
-/**
- * AddNewProductForm component for adding a new product.
- *
- * @param {Object} props - The component props.
- * @param {Function} props.onConfirm - Callback function for when the form is submitted.
- * @param {Array} props.categories - List of categories to select from.
- * @returns {JSX.Element} - The rendered component.
- */
 const AddNewProductForm = ({ categories }) => {
   const {
     handleSubmit,
     register,
-    setError,
-    clearErrors,
-    reset,
-    formState: { errors, isDirty },
-  } = useForm({
-    defaultValues: {
-      title: "",
-      categoryName: "",
-      description: "",
-      price: "",
-      quantity: "",
-      imageReference: "",
-    },
-  });
-
-  const dispatch = useDispatch();
-  const [openForm, setOpenForm] = useState(false);
-
-  /**
-   * Opens the form modal.
-   */
-  const handleOpenForm = () => setOpenForm(true);
-
-  /**
-   * Closes the form modal and resets the form.
-   */
-  const handleCloseForm = () => {
-    setOpenForm(false);
-    reset();
-  };
-
-  /**
-   * Handles form submission for adding a new product.
-   *
-   * @param {Object} data - The form data.
-   */
-  const onSubmitHandler = async (data) => {
-    const titleError = await validateProductTitle(data.title);
-    const priceError = await validateProductPrice(data.price);
-    const descriptionError = await validateProductDescription(data.description);
-    const imageReferenceError = await validateProductImageReference(
-      data.imageReference
-    );
-    const quantityError = await validateProductQuantity(data.quantity);
-
-    if (
-      titleError ||
-      priceError ||
-      descriptionError ||
-      imageReferenceError ||
-      quantityError
-    ) {
-      setError("title", { message: titleError });
-      setError("price", { message: priceError });
-      setError("description", { message: descriptionError });
-      setError("imageReference", { message: imageReferenceError });
-      setError("quantity", { message: quantityError });
-      return;
-    }
-
-    dispatch(addProductData(data));
-
-    setOpenForm(false);
-    reset();
-    clearErrors();
-    //reload
-    window.location.reload();
-  };
+    errors,
+    isDirty,
+    handleOpenForm,
+    handleCloseForm,
+    onSubmitHandler,
+    openForm,
+  } = useAddNewProductForm(categories);
 
   return (
     <>
@@ -124,17 +46,9 @@ const AddNewProductForm = ({ categories }) => {
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
-            "@media (max-width: 7612px)": {
-              width: "400",
+            "@media (max-width: 768px)": {
+              width: "80%",
               p: 2,
-            },
-            "@media (max-width: 600px)": {
-              width: "80%",
-              p: 1,
-            },
-            "@media (max-width: 480px)": {
-              width: "80%",
-              p: 1,
             },
           }}
         >
@@ -145,7 +59,6 @@ const AddNewProductForm = ({ categories }) => {
             <TextField
               {...register("title", {
                 required: "Title is required",
-                validate: validateProductTitle,
               })}
               label="Title"
               fullWidth
@@ -187,7 +100,6 @@ const AddNewProductForm = ({ categories }) => {
               label="Description"
               {...register("description", {
                 required: "Description is required",
-                validate: validateProductDescription,
               })}
               fullWidth
               margin="normal"
@@ -206,7 +118,6 @@ const AddNewProductForm = ({ categories }) => {
               type="number"
               {...register("price", {
                 required: "Price is required",
-                validate: validateProductPrice,
               })}
               fullWidth
               margin="normal"
@@ -223,7 +134,6 @@ const AddNewProductForm = ({ categories }) => {
               type="number"
               {...register("quantity", {
                 required: "Quantity is required",
-                validate: validateProductQuantity,
               })}
               fullWidth
               margin="normal"
@@ -240,7 +150,6 @@ const AddNewProductForm = ({ categories }) => {
               placeholder="file_name.png"
               {...register("imageReference", {
                 required: "Image Reference is required",
-                validate: validateProductImageReference,
               })}
               fullWidth
               margin="normal"

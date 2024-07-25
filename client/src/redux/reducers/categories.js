@@ -27,6 +27,7 @@ export const fetchCategoriesData = createAsyncThunk(
       }
 
       const data = await response.json();
+
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

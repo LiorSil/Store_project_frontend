@@ -1,58 +1,42 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../../redux/reducers/cart";
+import useProductItem from "../../../hooks/user/products/useProductItem"; // Adjust the path according to your project structure
 import styles from "./ProductItem.module.css";
 
 const ProductItem = ({ product }) => {
-  const dispatch = useDispatch();
+  const {
+    quantity,
+    showMessage,
+    handleIncrement,
+    handleDecrement,
+    handleAddToCart,
+  } = useProductItem(product);
 
-  // Local state for managing quantity and alert visibility
-  const [quantity, setQuantity] = useState(1);
-  const [showMessage, setShowMessage] = useState(false);
-
-  // Increment the quantity of the product
-  const handleIncrement = () => {
-    setQuantity((prevQuantity) => prevQuantity + 1);
-  };
-
-  // Decrement the quantity of the product
-  const handleDecrement = () => {
-    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
-  };
-
-  // Add the product to the cart with the specified quantity
-  const handleAddToCart = () => {
-    if (quantity <= product.quantity && product.quantity > 0) {
-      dispatch(addToCart({ ...product, quantity }));
-      triggerMessage();
-    } else {
-      console.error("Invalid quantity or product out of stock");
-    }
-  };
-
-  // Trigger the message animation
-  const triggerMessage = () => {
-    setShowMessage(true);
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 2000); // Total duration for the message display
+  const productStyles = {
+    container: {
+      flex: 1,
+      padding: 2,
+      backgroundColor: "#f8f8f8",
+      borderRadius: 5,
+      borderStyle: "solid",
+      borderColor: "primary.main",
+      margin: 2,
+      position: "relative",
+    },
+    image: {
+      display: "block",
+      margin: "auto",
+      height: 200,
+      width: "auto",
+    },
+    quantityText: {
+      fontSize: "1.5rem",
+    },
   };
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        padding: 2,
-        backgroundColor: "#f8f8f8",
-        borderRadius: 5,
-        borderStyle: "solid",
-        borderColor: "primary.main",
-        margin: 2,
-        position: "relative",
-      }}
-    >
+    <Box sx={productStyles.container}>
       <Typography component="h6" gutterBottom>
         {product.title}
       </Typography>
@@ -75,19 +59,14 @@ const ProductItem = ({ product }) => {
         component="img"
         src={product.imageUrl}
         alt={product.title}
-        sx={{
-          display: "block",
-          margin: "auto",
-          height: 200,
-          width: "auto",
-        }}
+        sx={productStyles.image}
       />
       <Box mt={2} display="flex" alignItems="center">
         <Button variant="outlined" onClick={handleDecrement}>
           -
         </Button>
         <Box mx={4}>
-          <Typography variant="body2" style={{ fontSize: "1.5rem" }}>
+          <Typography variant="body2" sx={productStyles.quantityText}>
             {quantity}
           </Typography>
         </Box>
@@ -120,4 +99,4 @@ const ProductItem = ({ product }) => {
   );
 };
 
-export default ProductItem;
+export default React.memo(ProductItem);

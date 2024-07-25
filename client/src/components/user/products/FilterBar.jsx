@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -14,20 +14,21 @@ import {
 } from "@mui/material";
 import LoadingComp from "../../../utils/shared/Loading";
 import MaxPriceTypography from "./MaxPriceTypography";
+import useFilterBar from "../../../hooks/user/products/useFilterBar"; // Adjust the path according to your project structure
 
 const FilterBar = ({ categories, onFilterChange, error, loading }) => {
-  // Default category to include "All"
-  const defaultCategory = useMemo(() => ({ _id: "All", name: "All" }), []);
-  const categoryOptions = useMemo(
-    () => [defaultCategory, ...categories],
-    [categories, defaultCategory]
-  );
+  const {
+    selectedCategory,
+    categoryOptions,
+    maxPrice,
+    searchText,
+    handleCategoryChange,
+    handleMaxPriceChange,
+    handleSearchTextChange,
+    handleClearFilters,
+  } = useFilterBar(categories, onFilterChange);
 
-  // Local state for filters
-  const [selectedCategory, setSelectedCategory] = useState(defaultCategory);
-  const [maxPrice, setMaxPrice] = useState(1000);
-  const [searchText, setSearchText] = useState("");
-
+  
   const theme = createTheme({
     breakpoints: {
       values: {
@@ -40,55 +41,6 @@ const FilterBar = ({ categories, onFilterChange, error, loading }) => {
     },
   });
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  // Handle category change
-  const handleCategoryChange = (event) => {
-    const selectedCategoryId = event.target.value;
-    const selectedCategoryObject = categoryOptions.find(
-      (category) => category._id === selectedCategoryId
-    );
-
-    setSelectedCategory(selectedCategoryObject);
-
-    onFilterChange({
-      category: selectedCategoryObject,
-      price: maxPrice,
-      text: searchText,
-    });
-  };
-
-  // Handle max price change
-  const handleMaxPriceChange = (event, newMaxPrice) => {
-    setMaxPrice(newMaxPrice);
-    onFilterChange({
-      category: selectedCategory,
-      price: newMaxPrice,
-      text: searchText,
-    });
-  };
-
-  // Handle search text change
-  const handleSearchTextChange = (event) => {
-    const newText = event.target.value;
-    setSearchText(newText);
-    onFilterChange({
-      category: selectedCategory,
-      price: maxPrice,
-      text: newText,
-    });
-  };
-
-  // Handle clear filters
-  const handleClearFilters = () => {
-    setSelectedCategory(defaultCategory);
-    setMaxPrice(1000);
-    setSearchText("");
-    onFilterChange({
-      category: defaultCategory,
-      price: 1000,
-      text: "",
-    });
-  };
 
   // Show loading component if loading state is true
   if (loading) {

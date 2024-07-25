@@ -1,5 +1,4 @@
-import React, { useState, useMemo, useCallback, Suspense } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo, Suspense } from "react";
 import {
   TextField,
   MenuItem,
@@ -12,134 +11,36 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
 import {
   Save as SaveIcon,
   Edit as EditIcon,
   Cancel as CancelIcon,
-  CheckCircle as CheckCircleIcon,
-  Error as ErrorIcon,
 } from "@mui/icons-material";
 import { NoticeMessage, Confirm } from "../../../utils/shared/commonComponents";
-import validateProductTitle from "../../../utils/validators/product/title";
-import validateProductPrice from "../../../utils/validators/product/price";
-import validateProductDescription from "../../../utils/validators/product/description";
-import { updateProductData } from "../../../redux/reducers/products";
+import useAdminProductItem from "../../../hooks/admin/products/useAdminProductItem"; // Adjust the path according to your project structure
 
 const MaterialTableComp = React.lazy(() =>
   import("../../../utils/shared/MaterialTable")
 );
 
-/**
- * AdminProductItem component for displaying and editing a product's details.
- * @param {Object} props - The component props.
- * @param {Object} props.product - The product details.
- * @param {Array} props.orders - The list of orders for the product.
- * @param {Array} props.customers - The list of customers.
- * @returns {JSX.Element} - The rendered component.
- */
 const AdminProductItem = ({ product, orders, customers }) => {
-  const dispatch = useDispatch();
-  const [editMode, setEditMode] = useState(false);
-  const [dialogState, setDialogState] = useState({
-    confirm: false,
-    notice: { open: false, message: "", icon: null, color: "" },
-  });
-  const [localProduct, setLocalProduct] = useState(product);
-  const [categoryName, setCategoryName] = useState(product.categoryName);
-
-  const categories = useSelector((state) => state.categories.data);
-
   const {
+    editMode,
+    setEditMode,
+    dialogState,
+    setDialogState,
+    localProduct,
+    categoryName,
+    setCategoryName,
     handleSubmit,
     register,
-    setError,
-    clearErrors,
-    formState: { errors, isDirty },
-  } = useForm({
-    defaultValues: {
-      title: localProduct.title,
-      price: localProduct.price,
-      imageUrl: localProduct.imageUrl,
-      description: localProduct.description,
-      categoryName: localProduct.categoryName,
-    },
-  });
+    errors,
+    isDirty,
+    onSubmitHandler,
+    onConfirmUpdateHandler,
+    categories,
+  } = useAdminProductItem(product);
 
-  /**
-   * Handles form submission for updating product details.
-   * @param {Object} data - The form data.
-   */
-  const onSubmitHandler = async (data) => {
-    const titleError = await validateProductTitle(data.title);
-    const priceError = await validateProductPrice(data.price);
-    const descriptionError = await validateProductDescription(data.description);
-
-    if (titleError || priceError || descriptionError) {
-      setError("title", { message: titleError });
-      setError("price", { message: priceError });
-      setError("description", { message: descriptionError });
-      return;
-    }
-
-    clearErrors();
-    setDialogState((prev) => ({ ...prev, confirm: true }));
-  };
-
-  /**
-   * Handles confirmation of product update.
-   * @param {Object} data - The updated product data.
-   */
-  const onConfirmUpdateHandler = useCallback(
-    (data) => {
-      const category = categories.find((cat) => cat.name === data.categoryName);
-      const updatedProduct = {
-        ...localProduct,
-        ...data,
-        category: category._id,
-      };
-
-      dispatch(updateProductData(updatedProduct))
-        .then((resolve) => {
-          if (resolve.type === "products/updateData/fulfilled") {
-            setLocalProduct(updatedProduct);
-            setDialogState({
-              confirm: false,
-              notice: {
-                open: true,
-                message: "Product updated successfully",
-                icon: CheckCircleIcon,
-                color: "success",
-              },
-            });
-          } else {
-            setDialogState({
-              confirm: false,
-              notice: {
-                open: true,
-                message: resolve.error.message || "Something went wrong",
-                icon: ErrorIcon,
-                color: "error",
-              },
-            });
-          }
-        })
-        .catch((error) => {
-          setDialogState({
-            confirm: false,
-            notice: {
-              open: true,
-              message: error.message,
-              icon: ErrorIcon,
-              color: "error",
-            },
-          });
-        });
-    },
-    [categories, localProduct, dispatch]
-  );
-
-  // Define columns for the MaterialTableComp
   const columns = useMemo(
     () => [
       { key: "customer", title: "Customer" },
@@ -149,7 +50,6 @@ const AdminProductItem = ({ product, orders, customers }) => {
     []
   );
 
-  // Generate data for the MaterialTableComp
   const data = useMemo(
     () =>
       orders.map((order) => {
@@ -228,7 +128,6 @@ const AdminProductItem = ({ product, orders, customers }) => {
                     <TextField
                       {...register("title", {
                         required: "Title is required",
-                        validate: validateProductTitle,
                       })}
                       label="Title"
                       fullWidth
@@ -239,7 +138,6 @@ const AdminProductItem = ({ product, orders, customers }) => {
                     <TextField
                       {...register("price", {
                         required: "Price is required",
-                        validate: validateProductPrice,
                       })}
                       type="number"
                       label="Price"
@@ -272,7 +170,6 @@ const AdminProductItem = ({ product, orders, customers }) => {
                         </MenuItem>
                       ))}
                     </TextField>
-
                     <TextField
                       {...register("imageUrl")}
                       label="Picture URL"
@@ -283,7 +180,6 @@ const AdminProductItem = ({ product, orders, customers }) => {
                     <TextField
                       {...register("description", {
                         required: "Description is required",
-                        validate: validateProductDescription,
                       })}
                       label="Description"
                       fullWidth

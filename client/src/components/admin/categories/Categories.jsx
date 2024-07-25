@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense, lazy, memo } from "react";
+import React, { Suspense, lazy, memo } from "react";
 import {
   TextField,
   Button,
@@ -16,149 +16,39 @@ import {
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
 } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchCategoriesData,
-  fetchConfirmChanges,
-  updateCategories,
-} from "../../../redux/reducers/categories";
 import {
   Loading,
   Confirm,
   NoticeMessage,
 } from "../../../utils/shared/commonComponents";
 import Error from "../../../app/pages/error/Error";
-
-import { validateCategory } from "../../../utils/validators/product/adminIndexValidator";
+import useCategories from "../../../hooks/admin/categories/useCategories"; // Adjust the path according to your project structure
 
 const MaterialTableComp = lazy(() =>
   import("../../../utils/shared/MaterialTable")
 );
 
-/**
- * Categories Component
- *
- * This component allows the admin to manage product categories. It includes
- * functionalities for adding, editing, and deleting categories.
- */
 const Categories = memo(() => {
-  const dispatch = useDispatch();
   const {
-    data: categories,
+    categories,
     loading,
     error,
-  } = useSelector((state) => state.categories);
-
-  const [editMode, setEditMode] = useState(null);
-  const [editValue, setEditValue] = useState("");
-  const [newCategory, setNewCategory] = useState("");
-  const [confirmMessage, setConfirmMessage] = useState(false);
-  const [noticeMessage, setNoticeMessage] = useState({ open: false });
-  const [validationError, setValidationError] = useState("");
-
-  useEffect(() => {
-    dispatch(fetchCategoriesData());
-  }, [dispatch]);
-
-  /**
-   * Handles the click event to edit a category.
-   *
-   * @param {Object} category - The category to edit.
-   */
-  const handleEditClick = (category) => {
-    setEditMode(category._id);
-    setEditValue(category.name);
-  };
-
-  /**
-   * Handles the save event after editing a category.
-   *
-   * @param {Object} category - The category to save.
-   */
-  const handleSaveClick = (category) => {
-    const error = validateCategory(editValue, categories);
-    if (error) {
-      setValidationError(error);
-      return;
-    }
-
-    const updatedCategories = categories.map((cat) =>
-      cat._id === category._id
-        ? { ...cat, name: editValue, isDirty: true }
-        : cat
-    );
-    dispatch(updateCategories(updatedCategories));
-
-    setEditMode(null);
-    setEditValue("");
-  };
-
-  /**
-   * Handles the cancel event to discard changes.
-   */
-  const handleCancelClick = () => {
-    setValidationError("");
-    setEditMode(null);
-    setEditValue("");
-  };
-
-  /**
-   * Handles the delete event to mark a category as deleted.
-   *
-   * @param {Object} category - The category to delete.
-   */
-  const handleDeleteClick = (category) => {
-    const updatedCategories = categories.map((cat) =>
-      cat._id === category._id ? { ...cat, isDeleted: true } : cat
-    );
-    dispatch(updateCategories(updatedCategories));
-  };
-
-  /**
-   * Handles the add event to add a new category.
-   */
-  const handleAddClick = () => {
-    const error = validateCategory(newCategory, categories);
-    if (error) {
-      setValidationError(error);
-      return;
-    }
-    setValidationError("");
-
-    const newCat = {
-      _id: Date.now().toString(),
-      name: newCategory,
-      isNew: true,
-    };
-    const updatedCategories = [...categories, newCat];
-    dispatch(updateCategories(updatedCategories));
-    setNewCategory("");
-  };
-
-  /**
-   * Handles the confirm event to save all changes to the categories.
-   */
-  const handleConfirmCategories = () => {
-    dispatch(fetchConfirmChanges(categories)).then((resolve) => {
-      if (resolve.type === "categories/confirmChange/fulfilled") {
-        setNoticeMessage({
-          open: true,
-          message: "Categories have been updated.",
-          color: "success",
-          icon: CheckCircleIcon,
-        });
-      } else {
-        setNoticeMessage({
-          open: true,
-          message: "Error updating categories.",
-          color: "error",
-          icon: ErrorIcon,
-        });
-      }
-    });
-
-    setConfirmMessage(false);
-  };
+    editMode,
+    editValue,
+    newCategory,
+    confirmMessage,
+    noticeMessage,
+    validationError,
+    setNewCategory,
+    setConfirmMessage,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+    handleDeleteClick,
+    handleAddClick,
+    handleConfirmCategories,
+    setEditValue,
+  } = useCategories();
 
   const columns = [
     { key: "name", title: "Category Name" },

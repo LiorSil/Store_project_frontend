@@ -10,33 +10,13 @@ import {
   Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch } from "react-redux";
-import {
-  incrementCartItemCount,
-  decrementCartItemCount,
-  removeCartItem,
-} from "../../../redux/reducers/cart";
+import useCartItem from "../../../hooks/user/products/useCartItem"; // Adjust the path according to your project structure
 
 const CartItem = ({ cartItem, catalogProduct }) => {
-  const dispatch = useDispatch();
-  const total = cartItem.price * cartItem.quantity;
-
-  // Handle incrementing the cart item quantity
-  const handleIncrement = () => {
-    dispatch(incrementCartItemCount(cartItem._id));
-  };
-
-  // Handle decrementing the cart item quantity
-  const handleDecrement = () => {
-    if (cartItem.quantity > 1) {
-      dispatch(decrementCartItemCount(cartItem._id));
-    }
-  };
-
-  // Handle removing the cart item
-  const handleRemove = () => {
-    dispatch(removeCartItem(cartItem._id));
-  };
+  const { total, handleIncrement, handleDecrement, handleRemove } = useCartItem(
+    cartItem,
+    catalogProduct
+  );
 
   return (
     <ListItem

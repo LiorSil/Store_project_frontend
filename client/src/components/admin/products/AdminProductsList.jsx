@@ -1,19 +1,7 @@
-import React, {
-  useEffect,
-  Suspense,
-  lazy,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchProductsData } from "../../../redux/reducers/products";
-import { fetchOrdersData } from "../../../redux/reducers/orders";
-import { fetchCategoriesData } from "../../../redux/reducers/categories";
-import { fetchUsersAndProductsData } from "../../../redux/reducers/user";
+import React, { Suspense, lazy, useCallback } from "react";
 import { Grid, Box, CircularProgress } from "@mui/material";
+import useAdminProductsList from "../../../hooks/admin/products/useAdminProductsList"; // Adjust the path according to your project structure
 import LoadingPlaceholder from "./LoadingPlaceholder";
-import getAllItems from "./getAllItems";
 
 const AdminProductItem = lazy(() => import("./AdminProductItem"));
 
@@ -25,59 +13,9 @@ const AdminProductItem = lazy(() => import("./AdminProductItem"));
  * and renders each product item with its associated orders and customers.
  */
 const AdminProductsList = () => {
-  const dispatch = useDispatch();
-  const [renderCount, setRenderCount] = useState(0);
-  const [dataFetched, setDataFetched] = useState(false);
+  const { products, customers, processedOrders, renderCount } =
+    useAdminProductsList();
 
-  const products = useSelector((state) => state.products.productsData);
-  const customers = useSelector((state) => state.users.customers);
-  const orders = useSelector((state) => state.orders.ordersData);
-
-  /**
-   * Fetch all necessary data when the component mounts.
-   * Uses useCallback to memoize the fetch function.
-   */
-  const fetchData = useCallback(async () => {
-    try {
-      await Promise.all([
-        dispatch(fetchProductsData()),
-        dispatch(fetchOrdersData()),
-        dispatch(fetchCategoriesData()),
-        dispatch(fetchUsersAndProductsData()),
-      ]);
-      setDataFetched(true);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, [dispatch]);
-
-  // Fetch data on component mount
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  /**
-   * Incrementally render product items for better performance.
-   */
-  useEffect(() => {
-    if (dataFetched && renderCount < products.length) {
-      const interval = setInterval(() => {
-        setRenderCount((prevCount) =>
-          prevCount < products.length ? prevCount + 1 : prevCount
-        );
-      }, 200);
-      return () => clearInterval(interval);
-    }
-  }, [dataFetched, renderCount, products.length]);
-
-  const processedOrders = useMemo(() => getAllItems(orders), [orders]);
-
-  /**
-   * Render a product item or a loading placeholder based on the render count.
-   *
-   * @param {Object} product - The product data.
-   * @param {number} index - The index of the product in the list.
-   */
   const renderProductItem = useCallback(
     (product, index) => (
       <Grid item xs={12} sm={6} md={4} key={product._id}>

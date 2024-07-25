@@ -38,6 +38,7 @@ const trendingColors = [
  * @returns {JSX.Element} - The rendered doughnut chart component.
  */
 const DoughnutChart = React.memo(() => {
+  // TODO: get data from the component props
   const dispatch = useDispatch();
   const products = useSelector(
     (state) => state.products.boughtProducts,
@@ -47,7 +48,6 @@ const DoughnutChart = React.memo(() => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
-  // Fetch bought products if not already fetched
   useEffect(() => {
     if (products.length === 0) {
       dispatch(fetchOnlyBoughtProducts());
@@ -114,7 +114,6 @@ const DoughnutChart = React.memo(() => {
     });
   }, [products]);
 
-  // Create chart on component mount and clean up on unmount
   useEffect(() => {
     createChart();
     return () => {

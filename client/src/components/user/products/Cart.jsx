@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Drawer,
   Box,
@@ -8,109 +8,25 @@ import {
   AlertTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  totalPriceReducer,
-  clearCart,
-  updateCartItemCount,
-} from "../../../redux/reducers/cart";
-import { Confirm, Loading } from "../../../utils/shared/commonComponents";
 import CartItem from "./CartItem";
-import useFetch from "../../../hooks/useFetch";
-import Cookies from "universal-cookie";
-import API_BASE_URL from "../../../constants/serverUrl";
 import EmptyCartMessage from "./EmptyCartMessage";
 import TotalComp from "./Total";
+import { Confirm, Loading } from "../../../utils/shared/commonComponents";
+import useCart from "../../../hooks/user/products/useCart"; // Adjust the path according to your project structure
 
 const Cart = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
-  const dispatch = useDispatch();
-
-  // Local state for managing alerts and confirmation dialog
-  const [showEmptyCartAlert, setShowEmptyCartAlert] = useState(false);
-  const [showQuantityAlert, setShowQuantityAlert] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const { cart } = useSelector((state) => state.cart);
-  const totalPrice = useSelector(totalPriceReducer);
-
-  const { fetchData, loading } = useFetch();
-
-  // Open the confirmation dialog
-  const openDialog = () => {
-    if (totalPrice === 0) {
-      setShowEmptyCartAlert(true);
-      return;
-    }
-
-    setShowEmptyCartAlert(false);
-
-    for (let i = 0; i < cart.length; i++) {
-      const product = products.find((prod) => prod._id === cart[i]._id);
-      if (cart[i].quantity > product.quantity) {
-        setShowQuantityAlert(true);
-        dispatch(
-          updateCartItemCount({
-            _id: product._id,
-            quantity: product.quantity,
-          })
-        );
-        return;
-      }
-    }
-
-    setIsDialogOpen(true);
-  };
-
-  // Close the confirmation dialog
-  const closeDialog = () => setIsDialogOpen(false);
-
-  // Close the alerts
-  const closeAlert = () => {
-    setShowEmptyCartAlert(false);
-    setShowQuantityAlert(false);
-  };
-
-  // Handle order confirmation
-  const confirmOrder = async () => {
-    try {
-      const orderData = {
-        items: cart.map((item) => ({
-          productId: item._id,
-          quantity: item.quantity,
-          price: item.price,
-          orderDate: new Date().toISOString(),
-          imageUrl: item.imageUrl,
-        })),
-        totalAmount: totalPrice,
-        orderDate: new Date().toISOString(),
-      };
-
-      const cookies = new Cookies();
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies.get("token")}`,
-        },
-        body: JSON.stringify(orderData),
-      };
-
-      const success = await fetchData(`${API_BASE_URL}/orders`, options);
-
-      if (success) {
-        dispatch(clearCart());
-        toggleCart();
-        onGetSuccessMessage("success");
-      } else {
-        onGetSuccessMessage("error");
-      }
-
-      closeDialog();
-    } catch (error) {
-      console.error("Error placing order: ", error.message);
-      onGetSuccessMessage("error");
-    }
-  };
+  const {
+    cart,
+    totalPrice,
+    loading,
+    showEmptyCartAlert,
+    showQuantityAlert,
+    isDialogOpen,
+    openDialog,
+    closeDialog,
+    closeAlert,
+    confirmOrder,
+  } = useCart(products, toggleCart, onGetSuccessMessage);
 
   return (
     <>
