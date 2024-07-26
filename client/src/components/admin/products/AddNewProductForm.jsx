@@ -11,7 +11,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import useAddNewProductForm from "../../../hooks/admin/products/useAddNewProductForm"; // Adjust the path according to your project structure
-
+import classes from "./AddNewProductForm.module.css";
 const AddNewProductForm = ({ categories }) => {
   const {
     handleSubmit,
@@ -35,23 +35,7 @@ const AddNewProductForm = ({ categories }) => {
         aria-labelledby="add-new-product-form"
         aria-describedby="form-to-add-new-product"
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "50%",
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            "@media (max-width: 768px)": {
-              width: "80%",
-              p: 2,
-            },
-          }}
-        >
+        <Box className={classes.modalBox}>
           <Typography id="add-new-product-form" variant="h6" component="h2">
             Add New Product
           </Typography>
@@ -65,11 +49,7 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.title}
               helperText={errors.title?.message}
-              sx={{
-                "@media (max-width: 480px)": {
-                  margin: "12px 0",
-                },
-              }}
+              className={classes.textField}
             />
             <FormControl fullWidth margin="normal">
               <InputLabel>Category</InputLabel>
@@ -80,11 +60,7 @@ const AddNewProductForm = ({ categories }) => {
                 label="Category"
                 defaultValue=""
                 error={!!errors.categoryName}
-                sx={{
-                  "@media (max-width: 480px)": {
-                    margin: "12px 0",
-                  },
-                }}
+                className={classes.textField}
               >
                 <MenuItem value="" disabled>
                   Select Category
@@ -107,11 +83,7 @@ const AddNewProductForm = ({ categories }) => {
               rows={4}
               error={!!errors.description}
               helperText={errors.description?.message}
-              sx={{
-                "@media (max-width: 480px)": {
-                  margin: "12px 0",
-                },
-              }}
+              className={classes.textField}
             />
             <TextField
               label="Price"
@@ -123,11 +95,7 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.price}
               helperText={errors.price?.message}
-              sx={{
-                "@media (max-width: 480px)": {
-                  margin: "12px 0",
-                },
-              }}
+              className={classes.textField}
             />
             <TextField
               label="Quantity"
@@ -139,11 +107,7 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.quantity}
               helperText={errors.quantity?.message}
-              sx={{
-                "@media (max-width: 480px)": {
-                  margin: "12px 0",
-                },
-              }}
+              className={classes.textField}
             />
             <TextField
               label="Image Reference"
@@ -155,34 +119,15 @@ const AddNewProductForm = ({ categories }) => {
               margin="normal"
               error={!!errors.imageReference}
               helperText={errors.imageReference?.message}
-              sx={{
-                "@media (max-width: 480px)": {
-                  margin: "12px 0",
-                },
-              }}
+              className={classes.textField}
             />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mt: 2,
-                "@media (max-width: 480px)": {
-                  flexDirection: "column",
-                  alignItems: "center",
-                },
-              }}
-            >
+            <Box className={classes.buttonContainer}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 disabled={!isDirty}
-                sx={{
-                  "@media (max-width: 480px)": {
-                    width: "80%",
-                    marginBottom: "16px",
-                  },
-                }}
+                className={classes.submitButton}
               >
                 Add Product
               </Button>
@@ -190,11 +135,7 @@ const AddNewProductForm = ({ categories }) => {
                 onClick={handleCloseForm}
                 variant="contained"
                 color="warning"
-                sx={{
-                  "@media (max-width: 480px)": {
-                    width: "80%",
-                  },
-                }}
+                className={classes.cancelButton}
               >
                 Cancel
               </Button>

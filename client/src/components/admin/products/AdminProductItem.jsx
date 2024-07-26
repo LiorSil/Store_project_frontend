@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import { NoticeMessage, Confirm } from "../../../utils/shared/commonComponents";
 import useAdminProductItem from "../../../hooks/admin/products/useAdminProductItem"; // Adjust the path according to your project structure
+import classes from "./AdminProductItem.module.css"; // Import the CSS module
 
 const MaterialTableComp = React.lazy(() =>
   import("../../../utils/shared/MaterialTable")
@@ -94,37 +95,23 @@ const AdminProductItem = ({ product, orders, customers }) => {
           }}
         />
       )}
-      <Card sx={{ margin: 2, boxShadow: 3 }}>
+      <Card className={classes.card}>
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                  }}
-                >
+                <Box className={classes.imgContainer}>
                   <Box
                     component="img"
                     src={localProduct.imageUrl}
                     alt={localProduct.title}
-                    sx={{
-                      width: "100%",
-                      height: "auto",
-                      objectFit: "cover",
-                      borderRadius: 1,
-                    }}
+                    className={classes.img}
                   />
                 </Box>
               </Grid>
               <Grid item xs={12} sm={8}>
                 {editMode ? (
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  >
+                  <Box className={classes.cardContent}>
                     <TextField
                       {...register("title", {
                         required: "Title is required",
@@ -209,7 +196,7 @@ const AdminProductItem = ({ product, orders, customers }) => {
               </Grid>
             </Grid>
           </CardContent>
-          <CardActions sx={{ justifyContent: "flex-end", gap: 1 }}>
+          <CardActions className={classes.cardActions}>
             {editMode && (
               <Button
                 disabled={!isDirty}

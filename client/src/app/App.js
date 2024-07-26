@@ -4,7 +4,7 @@ import Register from "./pages/register/Register";
 import Home from "./pages/home/Home";
 import NotFound from "./pages/error/NotFound.jsx";
 
-import "./variables.css";
+import "../variables.css";
 
 const App = () => {
   return (

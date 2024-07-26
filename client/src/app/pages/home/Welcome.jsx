@@ -36,7 +36,7 @@ const Welcome = ({ onSelectedPage }) => {
         gutterBottom
         className={classes.heading}
       >
-        Welcome to Our E-commerce Site!
+        Welcome to My E-commerce Site!
       </Typography>
       <Typography
         component={motion.p}

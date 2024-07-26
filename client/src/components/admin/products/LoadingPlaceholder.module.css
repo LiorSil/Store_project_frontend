@@ -1,0 +1,30 @@
+/* LoadingPlaceholder.module.css */
+
+.card {
+  margin: 16px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.imgContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+}
+
+.skeletonText {
+  margin: 8px 0;
+}
+
+.cardActions {
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 16px;
+}

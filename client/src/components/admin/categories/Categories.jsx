@@ -13,8 +13,6 @@ import {
   Delete as DeleteIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
-  CheckCircle as CheckCircleIcon,
-  Error as ErrorIcon,
 } from "@mui/icons-material";
 import {
   Loading,
@@ -22,7 +20,8 @@ import {
   NoticeMessage,
 } from "../../../utils/shared/commonComponents";
 import Error from "../../../app/pages/error/NotFound";
-import useCategories from "../../../hooks/admin/categories/useCategories"; // Adjust the path according to your project structure
+import useCategories from "../../../hooks/admin/categories/useCategories"; 
+import classes from "./Categories.module.css";
 
 const MaterialTableComp = lazy(() =>
   import("../../../utils/shared/MaterialTable")
@@ -135,73 +134,36 @@ const Categories = memo(() => {
     <Suspense fallback={<Loading />}>
       {confirmDialog}
       {noticeDialog}
-      <Container
-        component="main"
-        maxWidth="sm"
-        sx={{
-          marginTop: 2,
-          borderRadius: 4,
-          border: "2px solid",
-          borderColor: "primary.main",
-          padding: 2,
-          fontFamily: "Open Sans, sans-serif",
-        }}
-      >
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ fontFamily: "Open Sans, sans-serif" }}
-        >
+      <Container component="main" maxWidth="sm" className={classes.container}>
+        <Typography variant="h4" gutterBottom className={classes.heading}>
           Manage Categories
         </Typography>
         <MaterialTableComp columns={columns} data={tableData} />
-        <Stack
-          direction="row"
-          spacing={1}
-          mt={1}
-          sx={{
-            justifyContent: "center",
-            columnGap: 2,
-          }}
-        >
+        <Stack direction="row" spacing={1} mt={1} className={classes.stack}>
           <TextField
             label="New Category"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
             error={!!validationError}
             helperText={validationError}
-            sx={{
-              backgroundColor: "#eeeeee",
-              borderRadius: 2,
-              fontFamily: "Open Sans, sans-serif",
-            }}
+            className={classes.textField}
           />
           <Button
-            sx={{
-              borderColor: "primary.main",
-              color: "primary.main",
-              backgroundColor: "white",
-              fontFamily: "Open Sans, sans-serif",
-            }}
             startIcon={<AddIcon />}
             onClick={handleAddClick}
             variant="contained"
             color="primary"
+            className={classes.addButton}
           >
             Add Category
           </Button>
         </Stack>
         <Button
-          sx={{
-            marginTop: 2,
-            height: 50,
-            borderRadius: 1,
-            fontFamily: "Open Sans, sans-serif",
-          }}
           variant="contained"
           color="primary"
           fullWidth
           onClick={() => setConfirmMessage(true)}
+          className={classes.saveButton}
         >
           Save
         </Button>

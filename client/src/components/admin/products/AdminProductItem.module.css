@@ -1,0 +1,31 @@
+/* AdminProductItem.module.css */
+
+.card {
+  margin: 1rem;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.imgContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.cardActions {
+  justify-content: flex-end;
+  gap: 1rem;
+}
