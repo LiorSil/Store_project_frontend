@@ -21,7 +21,7 @@ import {
   Confirm,
   NoticeMessage,
 } from "../../../utils/shared/commonComponents";
-import Error from "../../../app/pages/error/Error";
+import Error from "../../../app/pages/error/NotFound";
 import useCategories from "../../../hooks/admin/categories/useCategories"; // Adjust the path according to your project structure
 
 const MaterialTableComp = lazy(() =>

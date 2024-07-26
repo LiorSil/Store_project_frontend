@@ -1,12 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import LoginIcon from "@mui/icons-material/Login";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import ErrorIcon from "@mui/icons-material/Error";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "universal-cookie";
+import React from "react";
 import {
   TextField,
   Button,
@@ -15,82 +7,26 @@ import {
   Container,
   Box,
 } from "@mui/material";
-import useFetch from "../../../hooks/useFetch";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import classes from "./Login.module.css";
 import LoadingComp from "../../../utils/shared/Loading";
 import NoticeMessageComp from "../../../utils/shared/NoticeMessage";
-import API_BASE_URL from "../../../constants/serverUrl";
+import useLogin from "../../../hooks/pages/login/useLogin";
 
 function Login() {
-  const cookies = useMemo(() => new Cookies(), []);
-  const [noticeMessage, setNoticeMessage] = useState({
-    open: false,
-    message: "",
-    color: "",
-    icon: null,
-  });
-
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const navigate = useNavigate();
-  const { data, loading, error, fetchData } = useFetch();
-
-  const onSubmit = async (formData) => {
-    fetchData(`${API_BASE_URL}/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-  };
-
-  const onGuestLogin = () => {
-    fetchData(`${API_BASE_URL}/users/guest`, {
-      method: "POST",
-    });
-  };
-
-  useEffect(() => {
-    if (data) {
-      const { token } = data;
-
-      const decodedToken = jwtDecode(token);
-
-      // Clear all cookies
-      cookies.remove("token");
-      cookies.remove("isAdmin");
-
-      cookies.set("token", token, {
-        expires: new Date(decodedToken.exp * 1000),
-      });
-
-      cookies.set("isAdmin", decodedToken.isAdmin, {
-        expires: new Date(decodedToken.exp * 1000),
-      });
-
-      navigate("/home");
-    }
-  }, [data, cookies, navigate]);
-
-  useEffect(() => {
-    if (error) {
-      setNoticeMessage({
-        open: true,
-        message: error.message,
-
-        color: "red",
-        icon: ErrorIcon,
-      });
-    }
-  }, [error]);
-
-  const handleSignUpRedirect = () => {
-    navigate("/SignUp");
-  };
+    errors,
+    loading,
+    noticeMessage,
+    onSubmit,
+    onGuestLogin,
+    handleSignUpRedirect,
+    closeNoticeMessage,
+  } = useLogin();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -101,14 +37,7 @@ function Login() {
           message={noticeMessage.message}
           color={noticeMessage.color}
           IconComp={noticeMessage.icon}
-          onClose={() =>
-            setNoticeMessage({
-              open: false,
-              message: "",
-              color: "",
-              icon: null,
-            })
-          }
+          onClose={closeNoticeMessage}
         />
       )}
       <Box className={classes["login-form"]}>

@@ -1,4 +1,4 @@
-// src/hooks/useUserAuth.js
+//src/hooks/pages/home/useUserAuth.js
 
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";

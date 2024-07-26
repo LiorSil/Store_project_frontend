@@ -1,11 +1,12 @@
-//src/hooks/pages/home/useLogout.js
+// src/hooks/pages/error/useNotFound.js
+
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
-const useLogout = () => {
+const useNotFound = () => {
   const navigate = useNavigate();
 
-  const logout = () => {
+  const handleGoLoginPage = () => {
     const cookies = new Cookies();
     const allCookies = cookies.getAll();
 
@@ -22,7 +23,7 @@ const useLogout = () => {
     navigate("/login", { replace: true });
   };
 
-  return { logout };
+  return { handleGoLoginPage };
 };
 
-export default useLogout;
+export default useNotFound;

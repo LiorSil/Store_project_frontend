@@ -1,26 +1,13 @@
-// src/hooks/useStatistics.js
+// src/hooks/admin/statistics/useStatistics.js
+
+/**
+ * Custom hook to fetch statistics data
+ * this component is not implemented in the project
+ * it is just a placeholder for the actual implementation
+ */
 
 import { useEffect, useState } from "react";
 
-const useStatistics = () => {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    // Replace this with the actual data fetching logic
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/statistics"); // Replace with actual API endpoint
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching statistics data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  return data;
-};
+const useStatistics = () => {};
 
 export default useStatistics;

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useEffect } from "react";
+import React, { lazy, Suspense } from "react";
 import {
   Button,
   TextField,
@@ -11,8 +11,10 @@ import {
   useMediaQuery,
   createTheme,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import classes from "./Register.module.css";
+import Loading from "../../../utils/shared/Loading";
+import useRegister from "../../../hooks/pages/register/useRegister";  
+import { Controller } from "react-hook-form";
 import {
   firstNameValidator,
   lastNameValidator,
@@ -20,27 +22,11 @@ import {
   usernameValidator,
 } from "../../../utils/validators/account/accountIndex";
 
-import classes from "./Register.module.css";
-import API_BASE_URL from "../../../constants/serverUrl";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
-import Loading from "../../../utils/shared/Loading";
-import useFetch from "../../../hooks/useFetch"; // Adjust the path accordingly
-
 const LazyNoticeMessage = lazy(() =>
   import("../../../utils/shared/NoticeMessage")
 );
 
 const Register = () => {
-  const [noticeMessage, setNoticeMessage] = useState({ open: false });
-  const navigate = useNavigate();
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({});
-  const { data, loading, error, fetchData } = useFetch();
   const customTheme = createTheme({
     breakpoints: { values: { smallScreenMobile: 480 } },
   });
@@ -48,38 +34,16 @@ const Register = () => {
     customTheme.breakpoints.down("smallScreenMobile")
   );
 
-  const onSubmit = async (formData) => {
-    const data = {
-      customerRegisterDate: new Date().toISOString(),
-      ...formData,
-    };
-    await fetchData(`${API_BASE_URL}/users/signUp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-  };
-
-  useEffect(() => {
-    if (data) {
-      setNoticeMessage({
-        open: true,
-        message: "Successfully registered user",
-        icon: CheckCircleIcon,
-        color: "green",
-      });
-    }
-    if (error) {
-      setNoticeMessage({
-        open: true,
-        message: "Failed to register user",
-        icon: ErrorIcon,
-        color: "red",
-      });
-    }
-  }, [data, error]);
+  const {
+    register,
+    control,
+    handleSubmit,
+    errors,
+    loading,
+    noticeMessage,
+    onSubmit,
+    closeNoticeMessage,
+  } = useRegister();
 
   const noticeDialog = noticeMessage.open && (
     <Suspense fallback={<Loading />}>
@@ -88,13 +52,7 @@ const Register = () => {
         message={noticeMessage.message}
         IconComp={noticeMessage.icon}
         color={noticeMessage.color}
-        onClose={() => {
-          setNoticeMessage((prevMessage) => ({
-            ...prevMessage,
-            open: false,
-          }));
-          navigate("/login");
-        }}
+        onClose={closeNoticeMessage}
       />
     </Suspense>
   );
@@ -221,8 +179,7 @@ const Register = () => {
                     width: isSmallScreen ? 125 : 150,
                     fontSize: isSmallScreen ? "0.9rem" : "1.1rem",
                   }}
-                  onClick={() => navigate("/login")}
-                  //text size
+                  onClick={() => closeNoticeMessage}
                 >
                   Back to Login
                 </Button>

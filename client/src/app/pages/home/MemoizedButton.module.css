@@ -1,0 +1,26 @@
+.button {
+  max-width: 100px;
+  border-bottom: 2px solid transparent;
+}
+
+.buttonSelected {
+  border-bottom: 2px solid white;
+}
+
+.button:hover {
+  border-bottom: 2px solid white;
+}
+
+@media (max-width: 768px) {
+  .button {
+    max-width: 80px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    max-width: 60px;
+    font-size: 0.7rem;
+  }
+}

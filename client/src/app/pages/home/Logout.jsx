@@ -3,6 +3,8 @@ import { Box, Typography } from "@mui/material";
 import ConfirmComp from "../../../utils/shared/Confirm";
 import useLogout from "../../../hooks/pages/home/useLogout";
 import { useNavigate } from "react-router-dom";
+import classes from "./Logout.module.css"; // Import the CSS module
+
 const Logout = () => {
   const { logout } = useLogout();
   const navigate = useNavigate();
@@ -15,21 +17,7 @@ const Logout = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "50vh",
-          backgroundColor: "#f4f6f8",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          zIndex: -1,
-        }}
-      >
+      <Box className={classes.container}>
         <Typography variant="h4" component="h1">
           Are you leaving?
         </Typography>

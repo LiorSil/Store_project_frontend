@@ -3,10 +3,10 @@ import { Box, CircularProgress } from "@mui/material";
 import useUserAuth from "../../../hooks/pages/home/useUserAuth";
 import usePageNavigation from "../../../hooks/pages/home/usePageNavigation";
 import Statistics from "../../../components/admin/statistics/Statistics";
-import ErrorPage from "../error/Error";
+import NotFound from "../error/NotFound";
 import Welcome from "./Welcome";
 import NavBar from "./NavBar";
-import styles from "./Home.module.css"; // Import the CSS module
+import classes from "./Home.module.css"; // Import the CSS module
 
 const userComponents = {
   Products: lazy(() => import("../../../components/user/products/Products")),
@@ -42,7 +42,7 @@ const Home = () => {
   const renderComponent = () => {
     const components = isAdmin ? adminComponents : userComponents;
     console.log("selectedPage", selectedPage);
-    const Component = components[selectedPage] || ErrorPage;
+    const Component = components[selectedPage] || NotFound;
 
     // Render the Welcome component if the user is not an admin and the selected page is Home
     if (!isAdmin && selectedPage === "Home") {
@@ -53,12 +53,16 @@ const Home = () => {
       return (
         <Suspense
           fallback={
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Box className={classes.suspense}>
               <CircularProgress />
             </Box>
           }
         >
-          <Component />
+          {Component === NotFound ? (
+            <Component handleGoHome={handleSelectedPage} />
+          ) : (
+            <Component />
+          )}
         </Suspense>
       );
     }
@@ -71,7 +75,7 @@ const Home = () => {
         onSelectedPage={handleSelectedPage}
         selectedPage={selectedPage}
       />
-      <div className={styles.pageContent}>{renderComponent()}</div>
+      <div className={classes.pageContent}>{renderComponent()}</div>
     </>
   );
 };

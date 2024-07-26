@@ -1,6 +1,9 @@
 import React from "react";
 import { Container, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
+import classes from "./Welcome.module.css";
+
+import useWelcome from "../../../hooks/pages/home/useWelcome";
 
 const buttonVariants = {
   hover: {
@@ -14,9 +17,7 @@ const buttonVariants = {
 };
 
 const Welcome = ({ onSelectedPage }) => {
-  const handleStartShopping = () => {
-    onSelectedPage("Products");
-  };
+  const { handleStartShopping } = useWelcome(onSelectedPage);
 
   return (
     <Container
@@ -24,21 +25,7 @@ const Welcome = ({ onSelectedPage }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        textAlign: "center",
-        backgroundColor: "#f4f6f8",
-        padding: 4,
-        borderRadius: 2,
-        "@media (max-width: 768px)": {
-          padding: 2,
-          borderRadius: 1,
-        },
-      }}
+      className={classes.container}
     >
       <Typography
         component={motion.h1}
@@ -47,13 +34,7 @@ const Welcome = ({ onSelectedPage }) => {
         transition={{ delay: 0.2, type: "spring", stiffness: 120 }}
         variant="h2"
         gutterBottom
-        sx={{
-          fontWeight: "bold",
-          fontFamily: "Open Sans, sans-serif",
-          "@media (max-width: 768px)": {
-            fontSize: "1.5rem",
-          },
-        }}
+        className={classes.heading}
       >
         Welcome to Our E-commerce Site!
       </Typography>
@@ -64,14 +45,7 @@ const Welcome = ({ onSelectedPage }) => {
         transition={{ delay: 0.5, duration: 1.5 }}
         variant="h6"
         gutterBottom
-        sx={{
-          fontFamily: "Open Sans, sans-serif",
-          marginBottom: 4,
-          "@media (max-width: 768px)": {
-            fontSize: "1rem",
-            marginBottom: 2,
-          },
-        }}
+        className={classes.paragraph}
       >
         Discover a variety of products at the best prices. Enjoy your shopping
         experience with us!
@@ -81,20 +55,7 @@ const Welcome = ({ onSelectedPage }) => {
         variants={buttonVariants}
         whileHover="hover"
         onClick={handleStartShopping}
-        sx={{
-          backgroundColor: "primary.main",
-          color: "white",
-          padding: "10px 20px",
-          fontSize: "18px",
-          fontWeight: "bold",
-          fontFamily: "Open Sans, sans-serif",
-          borderRadius: "5px",
-          textTransform: "none",
-          "@media (max-width: 768px)": {
-            padding: "8px 16px",
-            fontSize: "16px",
-          },
-        }}
+        className={classes.button}
       >
         Start Shopping
       </Button>

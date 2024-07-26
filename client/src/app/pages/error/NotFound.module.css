@@ -1,0 +1,18 @@
+/* Error.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f4f6f8;
+}
+
+.heading {
+  margin-bottom: 1rem;
+}
+
+.bodyText {
+  margin-bottom: 1rem;
+}

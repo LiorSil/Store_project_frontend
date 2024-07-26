@@ -1,0 +1,44 @@
+/* NavBar.module.css */
+
+.appBar {
+  margin: 0 auto;
+  border-radius: 4px;
+}
+.appBarUser {
+  background-color: var(--mui-color-primary-main);
+}
+
+.appBarAdmin {
+  background-color: var(--mui-color-secondary-main);
+}
+
+
+
+@media (max-width: 768px) {
+  .appBar {
+    max-width: 90%;
+    border-radius: 0;
+  }
+}
+
+.toolbar {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+  }
+}
+
+.stack {
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .stack {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

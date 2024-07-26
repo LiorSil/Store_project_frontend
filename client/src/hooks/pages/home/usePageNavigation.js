@@ -1,4 +1,4 @@
-// src/hooks/pages/home/usePageNavigation.js
+//src/hooks/pages/home/usePageNavigation.js
 
 import { useMemo, useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -39,7 +39,13 @@ const usePageNavigation = (isAdmin, adminComponents, userComponents) => {
     [navigate]
   );
 
-  return { selectedPage, handleSelectedPage };
+  const handleGoHome = useCallback(() => {
+    console.log("Go Home");
+    setSelectedPage("Home");
+    navigate("/home");
+  }, [navigate]);
+
+  return { selectedPage, handleSelectedPage, handleGoHome };
 };
 
 export default usePageNavigation;
