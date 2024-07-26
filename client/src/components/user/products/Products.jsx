@@ -14,6 +14,7 @@ import ProductsList from "./ProductsList";
 import FilterBar from "./FilterBar";
 import { NoticeMessage } from "../../../utils/shared/commonComponents";
 import useProducts from "../../../hooks/user/products/useProducts"; // Adjust the path according to your project structure
+import styles from "./Products.module.css";
 
 const Products = () => {
   const {
@@ -34,7 +35,7 @@ const Products = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", padding: 1 }}>
+    <Box className={styles.productsContainer}>
       <Cart
         isOpen={isCartOpen}
         toggleCart={toggleCart}
@@ -42,27 +43,12 @@ const Products = () => {
         onGetSuccessMessage={handleOrderConfirmed}
       />
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Box
-          sx={{ display: "flex", alignItems: "center", position: "relative" }}
-        >
+        <Box className={styles.filterBarContainer}>
           <IconButton
             onClick={toggleCart}
-            sx={{
-              position: "fixed",
-              top: isSmallScreen ? "25%" : 16,
-              right: isSmallScreen ? 16 : 16,
-              transform: isSmallScreen ? "translateY(-50%)" : "none",
-              zIndex: 1000,
-              backgroundColor: "white",
-              boxShadow:
-                "0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19)",
-              transition: "box-shadow 0.3s ease-in-out",
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.05)",
-                boxShadow:
-                  "0 8px 16px rgba(0, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.25)",
-              },
-            }}
+            className={`${styles.cartButton} ${
+              isSmallScreen ? styles.cartButtonSmallScreen : ""
+            }`}
           >
             <ShoppingCartIcon />
           </IconButton>
@@ -72,9 +58,9 @@ const Products = () => {
           />
         </Box>
         {productsLoading ? (
-          <Typography>Loading...</Typography>
+          <Typography className={styles.loadingText}>Loading...</Typography>
         ) : productsError ? (
-          <Typography color="error">
+          <Typography className={styles.errorText}>
             Error loading products: {productsError.message}
           </Typography>
         ) : (

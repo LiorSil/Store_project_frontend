@@ -1,4 +1,4 @@
-/* ProductItemComp.module.css */
+/* ProductItem.module.css */
 
 @keyframes fadeInUp {
   0% {
@@ -8,6 +8,15 @@
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -37,11 +46,24 @@
   animation: fadeInUp 0.5s forwards, fadeOut 0.5s forwards 1.5s; /* Adding fadeOut after 1.5s */
 }
 
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+.container {
+  flex: 1;
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 16px;
+  border:2px solid;
+  border-color: var(--mui-color-primary-main);
+  margin: 16px;
+  position: relative;
+}
+
+.image {
+  display: block;
+  margin: auto;
+  height: 200px;
+  width: auto;
+}
+
+.quantityText {
+  font-size: 1.5rem;
 }

@@ -4,6 +4,7 @@ import { Loading, MaterialTable } from "../../../utils/shared/commonComponents";
 import { orderTableColumns } from "../../../constants/orderTableColumns";
 import NoOrdersFound from "./NoOrdersFound";
 import useOrders from "../../../hooks/user/orders/useOrders";
+import classes from "./Orders.module.css";
 
 const Orders = () => {
   const { tableData, loading, error } = useOrders();
@@ -13,32 +14,16 @@ const Orders = () => {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div className={classes.errorMessage}>Error: {error.message}</div>;
   }
 
   return tableData.length > 0 ? (
-    <Box
-      sx={{
-        maxWidth: "75vw",
-        width: "60vw",
-        margin: "auto",
-        fontFamily: "'Open Sans', sans-serif",
-        "@media (max-width: 768px)": {
-          width: "90vw",
-          maxWidth: "90vw",
-        },
-      }}
-    >
+    <Box className={classes.ordersContainer}>
       <MaterialTable
         columns={orderTableColumns}
         data={tableData.map((item) => ({
           ...item,
-          image: (
-            <Avatar
-              src={item.image}
-              sx={{ width: 100, height: 100, borderRadius: 2 }}
-            />
-          ),
+          image: <Avatar src={item.image} className={classes.avatar} />,
         }))}
       />
     </Box>

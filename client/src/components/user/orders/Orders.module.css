@@ -1,0 +1,27 @@
+/* Orders.module.css */
+
+.ordersContainer {
+  max-width: 75vw;
+  width: 60vw;
+  margin: auto;
+  font-family: 'Open Sans', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .ordersContainer {
+    width: 90vw;
+    max-width: 90vw;
+  }
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 2px;
+}
+
+.errorMessage {
+  text-align: center;
+  color: red;
+  margin-top: 20px;
+}

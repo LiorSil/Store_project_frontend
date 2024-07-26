@@ -1,0 +1,92 @@
+/* FilterBar.module.css */
+
+.filterBarContainer {
+  padding: 8px;
+  border: 2px solid var(--mui-palette-primary-main);
+  background-color: #d0ddf7;
+  border-radius: 8px;
+  box-shadow: 0;
+  display: flex;
+  gap: 16px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  margin: 16px;
+  flex-direction: row;
+}
+
+@media (max-width: 750px) {
+  .filterBarContainer {
+    padding: 4px;
+    gap: 8px;
+    flex-direction: column;
+  }
+}
+
+.formControl {
+  min-width: 180px;
+}
+
+@media (max-width: 750px) {
+  .formControl {
+    min-width: 100%;
+  }
+}
+
+.maxPriceContainer {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 750px) {
+  .maxPriceContainer {
+    width: 100%;
+  }
+}
+
+.slider {
+  width: 100%;
+}
+
+@media (max-width: 750px) {
+  .slider {
+    width: 90%;
+  }
+}
+
+.searchField {
+  min-width: 200px;
+}
+
+@media (max-width: 750px) {
+  .searchField {
+    min-width: 100%;
+  }
+}
+
+.clearButton {
+  border-color: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-main);
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-transform: none;
+  transition: all 0.3s ease;
+  width: auto;
+}
+
+@media (max-width: 750px) {
+  .clearButton {
+    width: 100%;
+    padding: 8px;
+  }
+}
+
+.clearButton:hover {
+  background-color: var(--mui-palette-primary-main);
+  color: white;
+  border-color: var(--mui-palette-primary-main);
+}

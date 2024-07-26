@@ -15,6 +15,7 @@ import {
 import LoadingComp from "../../../utils/shared/Loading";
 import MaxPriceTypography from "./MaxPriceTypography";
 import useFilterBar from "../../../hooks/user/products/useFilterBar"; // Adjust the path according to your project structure
+import classes from "./FilterBar.module.css";
 
 const FilterBar = ({ categories, onFilterChange, error, loading }) => {
   const {
@@ -28,7 +29,6 @@ const FilterBar = ({ categories, onFilterChange, error, loading }) => {
     handleClearFilters,
   } = useFilterBar(categories, onFilterChange);
 
-  
   const theme = createTheme({
     breakpoints: {
       values: {
@@ -57,29 +57,8 @@ const FilterBar = ({ categories, onFilterChange, error, loading }) => {
   }
 
   return (
-    <Box
-      sx={{
-        padding: isSmallScreen ? 0.5 : 1,
-        border: 2,
-        backgroundColor: "#d0ddf7",
-        borderRadius: 2,
-        borderColor: "primary.main",
-        boxShadow: 0,
-        display: "flex",
-        gap: isSmallScreen ? 1 : 2,
-        position: "relative",
-        left: "50%",
-        transform: "translateX(-50%)",
-        zIndex: 1000,
-        margin: 2,
-        flexDirection: isSmallScreen ? "column" : "row",
-      }}
-    >
-      <FormControl
-        sx={{
-          minWidth: isSmallScreen ? "100%" : 180,
-        }}
-      >
+    <Box className={classes.filterBarContainer}>
+      <FormControl className={classes.formControl}>
         <InputLabel id="category-select-label">Category</InputLabel>
         <Select
           labelId="category-select-label"
@@ -95,14 +74,7 @@ const FilterBar = ({ categories, onFilterChange, error, loading }) => {
           ))}
         </Select>
       </FormControl>
-      <Box
-        sx={{
-          width: isSmallScreen ? "100%" : 200,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <Box className={classes.maxPriceContainer}>
         <MaxPriceTypography maxPrice={maxPrice} />
         <Slider
           value={maxPrice}
@@ -110,9 +82,7 @@ const FilterBar = ({ categories, onFilterChange, error, loading }) => {
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          sx={{
-            width: isSmallScreen ? "90%" : "100%",
-          }}
+          className={classes.slider}
           valueLabelFormat={(value) => `$${value}`}
         />
       </Box>
@@ -120,28 +90,12 @@ const FilterBar = ({ categories, onFilterChange, error, loading }) => {
         label="Search"
         value={searchText}
         onChange={handleSearchTextChange}
-        sx={{
-          minWidth: isSmallScreen ? "100%" : 200,
-        }}
+        className={classes.searchField}
       />
       <Button
         variant="outlined"
         onClick={handleClearFilters}
-        sx={{
-          borderColor: "primary.main",
-          color: "primary.main",
-          fontWeight: "bold",
-          padding: isSmallScreen ? "8px" : "8px 16px",
-          borderRadius: "8px",
-          textTransform: "none",
-          transition: "all 0.3s ease",
-          "&:hover": {
-            backgroundColor: "primary.main",
-            color: "white",
-            borderColor: "primary.main",
-          },
-          width: isSmallScreen ? "100%" : "auto",
-        }}
+        className={classes.clearButton}
       >
         Clear
       </Button>

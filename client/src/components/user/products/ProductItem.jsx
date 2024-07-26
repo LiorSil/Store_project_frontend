@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import useProductItem from "../../../hooks/user/products/useProductItem"; // Adjust the path according to your project structure
-import styles from "./ProductItem.module.css";
+import classes from "./ProductItem.module.css";
 
 const ProductItem = ({ product }) => {
   const {
@@ -13,30 +13,8 @@ const ProductItem = ({ product }) => {
     handleAddToCart,
   } = useProductItem(product);
 
-  const productStyles = {
-    container: {
-      flex: 1,
-      padding: 2,
-      backgroundColor: "#f8f8f8",
-      borderRadius: 5,
-      borderStyle: "solid",
-      borderColor: "primary.main",
-      margin: 2,
-      position: "relative",
-    },
-    image: {
-      display: "block",
-      margin: "auto",
-      height: 200,
-      width: "auto",
-    },
-    quantityText: {
-      fontSize: "1.5rem",
-    },
-  };
-
   return (
-    <Box sx={productStyles.container}>
+    <Box className={classes.container}>
       <Typography component="h6" gutterBottom>
         {product.title}
       </Typography>
@@ -59,14 +37,14 @@ const ProductItem = ({ product }) => {
         component="img"
         src={product.imageUrl}
         alt={product.title}
-        sx={productStyles.image}
+        className={classes.image}
       />
       <Box mt={2} display="flex" alignItems="center">
         <Button variant="outlined" onClick={handleDecrement}>
           -
         </Button>
         <Box mx={4}>
-          <Typography variant="body2" sx={productStyles.quantityText}>
+          <Typography variant="body2" className={classes.quantityText}>
             {quantity}
           </Typography>
         </Box>
@@ -91,7 +69,7 @@ const ProductItem = ({ product }) => {
         </Box>
       </Box>
       {showMessage && (
-        <Box className={`${styles.message} ${styles.animateMessage}`}>
+        <Box className={`${classes.message} ${classes.animateMessage}`}>
           Product added to cart
         </Box>
       )}
