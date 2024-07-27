@@ -1,5 +1,13 @@
 /* Adjust the number of items per row based on the page zoom or viewport size */
 .products-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  
+
+}
+
+.products-container{
 @media (max-width: 600px) {
   .products-container {
     flex-direction: column;

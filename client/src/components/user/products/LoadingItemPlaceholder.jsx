@@ -6,16 +6,20 @@ const LoadingItemPlaceholder = () => {
   return (
     <Box className={classes.container}>
       {/* Placeholder for title */}
-      <Skeleton variant="text" height={30} width="80%" />
+      <Skeleton variant="text" height={30} width="100%" />
 
       {/* Placeholder for description */}
       <Skeleton variant="text" height={20} width="60%" />
       <Skeleton variant="text" height={20} width="50%" />
+      <Skeleton variant="text" height={20} width="30%" />
+      <Skeleton variant="text" height={20} width="40%" />
+      <Skeleton variant="text" height={20} width="10%" />
 
       {/* Placeholder for image */}
       <Skeleton
         variant="rectangular"
         height={200}
+        width={200}
         className={classes.imageSkeleton}
       />
       <Box className={classes.actionContainer}>
