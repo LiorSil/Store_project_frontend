@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import useAddNewProductForm from "../../../hooks/admin/products/useAddNewProductForm"; // Adjust the path according to your project structure
 import classes from "./AddNewProductForm.module.css";
+
 const AddNewProductForm = ({ categories }) => {
   const {
     handleSubmit,
@@ -125,7 +126,7 @@ const AddNewProductForm = ({ categories }) => {
               <Button
                 type="submit"
                 variant="contained"
-                color="primary"
+                color="success"
                 disabled={!isDirty}
                 className={classes.submitButton}
               >
@@ -134,7 +135,7 @@ const AddNewProductForm = ({ categories }) => {
               <Button
                 onClick={handleCloseForm}
                 variant="contained"
-                color="warning"
+                color="error"
                 className={classes.cancelButton}
               >
                 Cancel
