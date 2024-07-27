@@ -4,6 +4,7 @@ import ProductItem from "./ProductItem";
 import useProductsList from "../../../hooks/user/products/useProductsList"; // Adjust the path according to your project structure
 import classes from "./ProductsList.module.css";
 import LoadingItemPlaceholder from "./LoadingItemPlaceholder";
+import Loading from "../../../utils/shared/Loading";
 
 const ProductsList = ({ filters, loading, error }) => {
   const products = useProductsList(filters);
@@ -36,7 +37,7 @@ const ProductsList = ({ filters, loading, error }) => {
       }}
     >
       {products.length === 0 ? (
-        <Typography>No products found</Typography>
+        <Loading />
       ) : (
         products.map((product) => (
           <ProductItem key={product._id} product={product} />
