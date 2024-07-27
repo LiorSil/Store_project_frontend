@@ -18,8 +18,8 @@ const LoadingItemPlaceholder = () => {
       {/* Placeholder for image */}
       <Skeleton
         variant="rectangular"
-        height={200}
-        width={200}
+        height={250}
+        width={250}
         className={classes.imageSkeleton}
       />
       <Box className={classes.actionContainer}>

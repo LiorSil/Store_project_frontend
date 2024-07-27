@@ -13,7 +13,7 @@ const ProductsList = ({ filters, loading, error }) => {
       <Box
         className={classes["products-container"]}
         sx={{
-          marginInline: "5rem",
+          marginInline: "3rem",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "flex-start",

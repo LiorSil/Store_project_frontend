@@ -7,14 +7,14 @@
   border-radius: 16px;
   border:2px solid;
   border-color: var(--mui-color-primary-main);
-  margin: 16px;
+  margin: 24px;
   position: relative;
 }
 
 .imageSkeleton {
-  margin: 8px 0;
-  width: 311px;
-  height: 311px;
+  margin: 0 auto;
+  width: 800px;
+  height: 800px;
 }
 
 .buttonSkeleton {
