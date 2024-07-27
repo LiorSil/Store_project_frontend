@@ -10,9 +10,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import CartItem from "./CartItem";
 import EmptyCartMessage from "./EmptyCartMessage";
-import TotalComp from "./Total";
+import Total from "./Total";
 import { Confirm, Loading } from "../../../utils/shared/commonComponents";
-import useCart from "../../../hooks/user/products/useCart"; // Adjust the path according to your project structure
+import useCart from "../../../hooks/user/products/useCart";
 
 const Cart = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
   const {
@@ -91,7 +91,7 @@ const Cart = ({ isOpen, toggleCart, onGetSuccessMessage, products }) => {
               fontWeight: "bold",
             }}
           >
-            <TotalComp total={totalPrice} />
+            <Total total={totalPrice} />
           </Box>
           <Button
             variant="contained"

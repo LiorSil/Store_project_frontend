@@ -1,10 +1,10 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import styles from "./MaxPriceTypography.module.css";
+import classes from "./MaxPriceTypography.module.css";
 
 const MaxPriceTypography = ({ maxPrice }) => {
   return (
-    <Typography gutterBottom className={styles.maxPriceText}>
+    <Typography gutterBottom className={classes.maxPriceText}>
       Max Price: {`${maxPrice}$`}
     </Typography>
   );

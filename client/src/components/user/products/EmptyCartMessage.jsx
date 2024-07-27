@@ -1,41 +1,16 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import classes from "./EmptyCartMessage.module.css";
 
 const EmptyCartMessage = () => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-        fontFamily: "Roboto",
-        backgroundColor: "#f5f5f5",
-        padding: 2,
-        borderRadius: 2,
-        textAlign: "center",
-      }}
-    >
-      <ShoppingCartOutlinedIcon sx={{ fontSize: 50, color: "grey.500" }} />
-      <Typography
-        variant="h6"
-        sx={{
-          marginTop: 2,
-          color: "grey.700",
-          fontWeight: "bold",
-        }}
-      >
+    <Box className={classes.container}>
+      <ShoppingCartOutlinedIcon className={classes.icon} />
+      <Typography variant="h6" className={classes.title}>
         Your Cart is Empty
       </Typography>
-      <Typography
-        variant="body2"
-        sx={{
-          marginTop: 1,
-          color: "grey.600",
-        }}
-      >
+      <Typography variant="body2" className={classes.message}>
         Looks like you haven't added anything to your cart yet.
       </Typography>
     </Box>

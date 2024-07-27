@@ -1,0 +1,46 @@
+/* LoadingItemPlaceholder.module.css */
+
+.container {
+ 
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 16px;
+  border:2px solid;
+  border-color: var(--mui-color-primary-main);
+  margin: 16px;
+  position: relative;
+}
+
+.imageSkeleton {
+  margin: 16px 0;
+}
+
+.buttonSkeleton {
+  height: 36px;
+  width: 36px;
+}
+
+.textSkeleton {
+  height: 30px;
+  width: 30px;
+}
+
+.actionContainer {
+  display: flex;
+  align-items: center;
+}
+
+.actionContainer .buttonSkeleton {
+  height: 36px;
+  width: 36px;
+}
+
+.actionContainer .textSkeleton {
+  height: 30px;
+  width: 30px;
+}
+
+.alignEnd {
+  align-self: flex-end;
+  margin-left: auto;
+}

@@ -1,0 +1,29 @@
+/* Total.module.css */
+
+.container {
+  background: radial-gradient(
+    circle,
+    rgba(85, 140, 189, 0.2) 35%,
+    rgba(141, 156, 213, 0.1) 95%
+  );
+  color: black;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px 0;
+  border: 2px solid rgba(85, 140, 189, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.totalLabel {
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.totalAmount {
+  font-weight: bold;
+  font-family: sans-serif;
+}

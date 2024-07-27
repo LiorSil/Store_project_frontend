@@ -14,7 +14,7 @@ import ProductsList from "./ProductsList";
 import FilterBar from "./FilterBar";
 import { NoticeMessage } from "../../../utils/shared/commonComponents";
 import useProducts from "../../../hooks/user/products/useProducts"; // Adjust the path according to your project structure
-import styles from "./Products.module.css";
+import classes from "./Products.module.css";
 
 const Products = () => {
   const {
@@ -35,7 +35,7 @@ const Products = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <Box className={styles.productsContainer}>
+    <Box className={classes.productsContainer}>
       <Cart
         isOpen={isCartOpen}
         toggleCart={toggleCart}
@@ -43,11 +43,11 @@ const Products = () => {
         onGetSuccessMessage={handleOrderConfirmed}
       />
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Box className={styles.filterBarContainer}>
+        <Box className={classes.filterBarContainer}>
           <IconButton
             onClick={toggleCart}
-            className={`${styles.cartButton} ${
-              isSmallScreen ? styles.cartButtonSmallScreen : ""
+            className={`${classes.cartButton} ${
+              isSmallScreen ? classes.cartButtonSmallScreen : ""
             }`}
           >
             <ShoppingCartIcon />
@@ -57,15 +57,12 @@ const Products = () => {
             onFilterChange={handleFilterChange}
           />
         </Box>
-        {productsLoading ? (
-          <Typography className={styles.loadingText}>Loading...</Typography>
-        ) : productsError ? (
-          <Typography className={styles.errorText}>
-            Error loading products: {productsError.message}
-          </Typography>
-        ) : (
-          <ProductsList filters={filters} />
-        )}
+
+        <ProductsList
+          filters={filters}
+          loading={productsLoading}
+          error={productsError}
+        />
       </Box>
       {orderConfirmed === "success" && (
         <NoticeMessage

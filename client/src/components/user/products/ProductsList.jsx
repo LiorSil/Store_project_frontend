@@ -3,9 +3,27 @@ import { Box, Typography } from "@mui/material";
 import ProductItem from "./ProductItem";
 import useProductsList from "../../../hooks/user/products/useProductsList"; // Adjust the path according to your project structure
 import classes from "./ProductsList.module.css";
+import LoadingItemPlaceholder from "./LoadingItemPlaceholder";
 
-const ProductsList = ({ filters }) => {
+const ProductsList = ({ filters, loading, error }) => {
   const products = useProductsList(filters);
+
+  if (loading) {
+    return (
+      <Box
+        className={classes["products-container"]}
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-start",
+        }}
+      >
+        {[...Array(10)].map((_, index) => (
+          <LoadingItemPlaceholder key={index} />
+        ))}
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -14,7 +32,6 @@ const ProductsList = ({ filters }) => {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "flex-start",
-        gap: 2,
       }}
     >
       {products.length === 0 ? (
