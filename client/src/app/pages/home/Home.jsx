@@ -3,6 +3,7 @@ import { Box, CircularProgress } from "@mui/material";
 import useUserAuth from "../../../hooks/pages/home/useUserAuth";
 import usePageNavigation from "../../../hooks/pages/home/usePageNavigation";
 import Statistics from "../../../components/admin/statistics/Statistics";
+import Loading from "../../../utils/shared/Loading";
 import NotFound from "../error/NotFound";
 import Welcome from "./Welcome";
 import NavBar from "./NavBar";
@@ -41,7 +42,6 @@ const Home = () => {
 
   const renderComponent = () => {
     const components = isAdmin ? adminComponents : userComponents;
-    console.log("selectedPage", selectedPage);
     const Component = components[selectedPage] || NotFound;
 
     // Render the Welcome component if the user is not an admin and the selected page is Home
@@ -54,7 +54,7 @@ const Home = () => {
         <Suspense
           fallback={
             <Box className={classes.suspense}>
-              <CircularProgress />
+              <Loading />
             </Box>
           }
         >

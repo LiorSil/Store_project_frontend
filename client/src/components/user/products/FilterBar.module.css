@@ -2,7 +2,7 @@
 
 .filterBarContainer {
   padding: 8px;
-  border: 2px solid var(--mui-palette-primary-main);
+  border: 2px solid var(--mui-color-primary-main);
   background-color: #d0ddf7;
   border-radius: 8px;
   box-shadow: 0;
@@ -68,8 +68,8 @@
 }
 
 .clearButton {
-  border-color: var(--mui-palette-primary-main);
-  color: var(--mui-palette-primary-main);
+  border-color: var(--mui-color-primary-main);
+  color: var(--mui-color-primary-main);
   font-weight: bold;
   padding: 8px 16px;
   border-radius: 8px;
@@ -86,7 +86,7 @@
 }
 
 .clearButton:hover {
-  background-color: var(--mui-palette-primary-main);
+  background-color: var(--mui-color-primary-main);
   color: white;
-  border-color: var(--mui-palette-primary-main);
+  border-color: var(--mui-color-primary-main);
 }
